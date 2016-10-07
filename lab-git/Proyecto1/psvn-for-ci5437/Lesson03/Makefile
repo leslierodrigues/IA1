@@ -4,34 +4,32 @@ OPT = -g -Wall -O3 -Wno-unused-function -Wno-unused-variable
 PSVNOPT = --state_map --no_abstraction --backwards_moves --history_len=0
 
 psvn2c_core.c:
-	cp ../psvn2c_core.c ./psvn2c_core.c
+	cp ../src/psvn2c_core.c ./psvn2c_core.c
 
 psvn2c_state_map.c:
-	cp ../psvn2c_state_map.c ./psvn2c_state_map.c
+	cp ../src/psvn2c_state_map.c ./psvn2c_state_map.c
 
 psvn2c_abstraction.c:
-	cp ../psvn2c_abstraction.c ./psvn2c_abstraction.c
+	cp ../src/psvn2c_abstraction.c ./psvn2c_abstraction.c
 
-%.c: %.psvn  psvn2c_core.c psvn2c_state_map.c psvn2c_abstraction.c
-	../psvn2c  $(PSVNOPT) --name=$(*F)  < $< > $@
+%.c: %.psvn psvn2c_core.c psvn2c_state_map.c psvn2c_abstraction.c
+	../bin/psvn2c $(PSVNOPT) --name=$(*F) < $< > $@
 	rm -f ./psvn2c_core.c ./psvn2c_state_map.c ./psvn2c_abstraction.c
 
 .PRECIOUS: %.c
 
-%.succ: %.c succ.c
-	$(CC) $(OPT) succ.c -include $< -o $@
+%.succ: %.c ../global/succ.c
+	$(CC) $(OPT) ../global/succ.c -include $< -o $@
+	rm -f $*.c
 
-priority_queue.hpp:
-	cp ../priority_queue.hpp ./priority_queue.hpp
+%.dist: %.c ../global/dist.cpp
+	$(CXX) $(OPT) ../global/dist.cpp -include $< -o $@
+	rm -f $*.c
 
-%.dist: %.c dist.cpp priority_queue.hpp
-	$(CXX) $(OPT) dist.cpp -include $< -o $@
-	rm -f ./priority_queue.hpp
-
-%.distSummary: %.c distSummary.cpp priority_queue.hpp
-	$(CXX) $(OPT) distSummary.cpp -include $< -o $@
-	rm -f ./priority_queue.hpp
+%.distSummary: %.c ../global/distSummary.cpp
+	$(CXX) $(OPT) ../global/distSummary.cpp -include $< -o $@
+	rm -f $*.c
 
 .PHONY: clean
 clean:
-	rm -f *.succ *.dist *.distSummary *.o  priority_queue.hpp hanoi4p03d.c  hanoi4p03d_bad.c psvn2c_core.c psvn2c_state_map.c psvn2c_abstraction.c *~
+	rm -fr *.succ *.dist *.distSummary psvn2c_core.c psvn2c_state_map.c psvn2c_abstraction.c *.dSYM *.o *~
