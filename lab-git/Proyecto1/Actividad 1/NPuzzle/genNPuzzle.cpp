@@ -59,7 +59,7 @@ void moverALaIzquierda(int x_dim, int y_dim, int *numeroRegla){
     int numeroTotal = x_dim * y_dim;
     
     // Mover el blanco a la izquierda
-    for(int posBlanca = 1; posBlanca < numeroTotal; posBlanca++){
+    for(int posBlanca = 1; posBlanca <= numeroTotal; posBlanca++){
         
         //Genero la fila si es válida
         if ((posBlanca-1) % y_dim == 0){continue;}
@@ -83,10 +83,10 @@ void moverALaIzquierda(int x_dim, int y_dim, int *numeroRegla){
         for(int posCelda = 1; posCelda <= numeroTotal; posCelda++){
             
             if (posBlanca == posCelda){
-                cout << "1 ";
+                cout << "X ";
             }
             else if (posBlanca - 1 == posCelda){
-                cout << "X ";
+                cout << "1 ";
             }
             else {
                 cout << "- ";
@@ -212,9 +212,13 @@ void imprimirDominio(int x_dim, int y_dim){
     
     printf("DOMAIN celda %d\n", numeroTotal);
     cout << "       ";
-    imprimirGoal(x_dim, y_dim);
+    
+    for(int celda = 1 ; celda <= numeroTotal; celda++){
+        printf("%d ", celda);
+    }
+    
     cout << endl;
-    printf("%d\n\n", numeroTotal);
+    printf("\n%d\n\n", numeroTotal);
     
     for(int numCelda = 1 ; numCelda <= numeroTotal; numCelda++){
         printf("celda ");
