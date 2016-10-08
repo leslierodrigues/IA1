@@ -191,12 +191,9 @@ void imprimirGoal(int x_dim, int y_dim){
     
     int numeroTotal = x_dim * y_dim;
     
-    cout << endl;
-    
     for(int celda = 1 ; celda <= numeroTotal; celda++){
         printf("%d ", celda);
     }
-    cout << endl;
 }
 
 void imprimirDominio(int x_dim, int y_dim){
@@ -244,7 +241,9 @@ int main(int argc, char *argv[]){
     moverALaIzquierda(x_dim, y_dim);
     moverArriba(x_dim, y_dim);
     moverAbajo(x_dim, y_dim);
+    cout << endl;
     imprimirGoal(x_dim, y_dim);
+    cout << endl;
     
     return (EXIT_SUCCESS);
 }
