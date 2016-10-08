@@ -9,7 +9,7 @@ int x_dim;
 int y_dim;
 
 
-void moverALaDerecha(int x_dim, int y_dim){
+void moverALaDerecha(int x_dim, int y_dim, int *numeroRegla){
     int numeroTotal = x_dim * y_dim;
     // Mover el blanco a la derecha
     for(int posBlanca = 1; posBlanca < numeroTotal; posBlanca++){
@@ -47,15 +47,17 @@ void moverALaDerecha(int x_dim, int y_dim){
             }
         
         }
-        
+        printf("LABEL Rev%d", *numeroRegla);
         cout << endl;
+        (*numeroRegla)++;
     }
     
 }
 
 
-void moverALaIzquierda(int x_dim, int y_dim){
+void moverALaIzquierda(int x_dim, int y_dim, int *numeroRegla){
     int numeroTotal = x_dim * y_dim;
+    
     // Mover el blanco a la izquierda
     for(int posBlanca = 1; posBlanca < numeroTotal; posBlanca++){
         
@@ -92,13 +94,15 @@ void moverALaIzquierda(int x_dim, int y_dim){
         
         }
         
+        printf("LABEL Rev%d", *numeroRegla);
         cout << endl;
-        
+        (*numeroRegla)++;
+       
     }
 }
 
 
-void moverArriba(int x_dim, int y_dim){
+void moverArriba(int x_dim, int y_dim, int *numeroRegla){
     int numeroTotal = x_dim * y_dim;
     // Mover el blanco arriba
     for(int posBlanca = 1; posBlanca <= numeroTotal; posBlanca++){
@@ -136,14 +140,16 @@ void moverArriba(int x_dim, int y_dim){
         
         }
         
+        printf("LABEL Rev%d", *numeroRegla);
         cout << endl;
+        (*numeroRegla)++;
         
     }
     
 }
 
 
-void moverAbajo(int x_dim, int y_dim){
+void moverAbajo(int x_dim, int y_dim, int *numeroRegla){
     int numeroTotal = x_dim * y_dim;
     // Mover el blanco arriba
     for(int posBlanca = 1; posBlanca <= numeroTotal; posBlanca++){
@@ -182,7 +188,9 @@ void moverAbajo(int x_dim, int y_dim){
         
         }
         
+        printf("LABEL Rev%d", *numeroRegla);
         cout << endl;
+        (*numeroRegla)++;
     }
     
 }
@@ -190,6 +198,8 @@ void moverAbajo(int x_dim, int y_dim){
 void imprimirGoal(int x_dim, int y_dim){
     
     int numeroTotal = x_dim * y_dim;
+    
+    cout << "GOAL ";
     
     for(int celda = 1 ; celda <= numeroTotal; celda++){
         printf("%d ", celda);
@@ -235,12 +245,13 @@ int main(int argc, char *argv[]){
         exit(0);
     }
     
+    int numeroRegla = 1;
     
     imprimirDominio(x_dim, y_dim);
-    moverALaDerecha(x_dim, y_dim);
-    moverALaIzquierda(x_dim, y_dim);
-    moverArriba(x_dim, y_dim);
-    moverAbajo(x_dim, y_dim);
+    moverALaDerecha(x_dim, y_dim, &numeroRegla);
+    moverALaIzquierda(x_dim, y_dim, &numeroRegla);
+    moverArriba(x_dim, y_dim, &numeroRegla);
+    moverAbajo(x_dim, y_dim, &numeroRegla);
     cout << endl;
     imprimirGoal(x_dim, y_dim);
     cout << endl;
