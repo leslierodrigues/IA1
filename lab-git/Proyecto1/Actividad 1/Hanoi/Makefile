@@ -1,7 +1,7 @@
 CC = gcc
 CXX = g++
 OPT = -g -Wall -O3 -Wno-unused-function -Wno-unused-variable
-PSVNOPT = --no_state_map --no_abstraction --backwards_moves --history_len=0
+PSVNOPT = --state_map --no_abstraction --backwards_moves --history_len=0
 
 psvn2c_core.c:
 	cp ../../psvn-for-ci5437/src/psvn2c_core.c ./psvn2c_core.c
@@ -18,11 +18,6 @@ psvn2c_abstraction.c:
 
 .PRECIOUS: %.c
 
-%.dfs: %.c ../dfs.cpp
-	$(CXX) $(OPT) ../dfs.cpp -include $< -o $@
-	rm -rf $*.c
-
-
 %.succ: %.c ../../psvn-for-ci5437/global/succ.c
 	$(CC) $(OPT) ../../psvn-for-ci5437/global/succ.c -include $< -o $@
 	rm -f $*.c
@@ -37,4 +32,4 @@ psvn2c_abstraction.c:
 
 .PHONY: clean
 clean:
-	rm -fr *.dfs *.succ *.dist *.distSummary psvn2c_core.c psvn2c_state_map.c psvn2c_abstraction.c *.dSYM *.o *~
+	rm -fr *.succ *.dist *.distSummary psvn2c_core.c psvn2c_state_map.c psvn2c_abstraction.c *.dSYM *.o *~
