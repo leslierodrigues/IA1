@@ -74,7 +74,6 @@ int iterative_deepening(state_t *start){
 
 
 int dfs(state_t *current, int cost, int max_cost, int history){
-	generated_states++;
 	if (cost + 1 >= max_cost) return -1;
 
 	int aux;
@@ -91,6 +90,7 @@ int dfs(state_t *current, int cost, int max_cost, int history){
 		new_hist = next_fwd_history(history,ruleID);
 
 		apply_fwd_rule(ruleID, current, &child);
+		generated_states++;
 
 		// Chequeamos si el nuevo hijo es un goal.
 		if (is_goal(&child)) return cost+1;
