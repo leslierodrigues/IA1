@@ -1,17 +1,14 @@
 #include <iostream>
 #include <string.h>
-#include <cstdio>
 
 using namespace std;
 
 #define MAX_DEPTH 50
 
 
-int backwards_dfs(state_t *current, int depth, int max_depth, long long *depth_size,int history){
+void backwards_dfs(state_t *current, int depth, int max_depth, long long *depth_size,int history){
 
-	depth_size[depth]++;
-
-	if (depth == max_depth) return 0;
+	if (depth == max_depth) return ;
 
 	int ruleID, new_hist;
 	state_t child;
@@ -21,14 +18,18 @@ int backwards_dfs(state_t *current, int depth, int max_depth, long long *depth_s
 	while((ruleID = next_ruleid( &iter )) >= 0) {
 		if (!bwd_rule_valid_for_history(history,ruleID)) continue;
 
+		depth_size[depth+1]++;
+		if (depth + 1 == max_depth) continue;
+
 		new_hist = next_bwd_history(history,ruleID);
 
 		apply_bwd_rule(ruleID, current, &child);
 
+
 		backwards_dfs(&child,depth+1,max_depth,depth_size,new_hist);
 	}
 
-	return 0;
+
 }
 
 
@@ -51,6 +52,7 @@ int main(){
 
 	memset(depth_sizes,0,sizeof(depth_sizes));
 
+	depth_sizes[0]++;
 	backwards_dfs(&goal,0,wanted_depth,depth_sizes,history);
 
 	cout << "Depth" << '\t' << "Moves" << endl;

@@ -1,22 +1,27 @@
 CC = gcc
 CXX = g++
 OPT = -g -Wall -O3 -Wno-unused-function -Wno-unused-variable
-PSVNOPT = --state_map --no_abstraction --backwards_moves --history_len=0
+PSVNOPT = --no_state_map --no_abstraction --backwards_moves --history_len=0
 
 psvn2c_core.c:
-	cp ../../psvn-for-ci5437/src/psvn2c_core.c ./psvn2c_core.c
+	cp ../psvn-for-ci5437/src/psvn2c_core.c ./psvn2c_core.c
 
 psvn2c_state_map.c:
-	cp ../../psvn-for-ci5437/src/psvn2c_state_map.c ./psvn2c_state_map.c
+	cp ../psvn-for-ci5437/src/psvn2c_state_map.c ./psvn2c_state_map.c
 
 psvn2c_abstraction.c:
-	cp ../../psvn-for-ci5437/src/psvn2c_abstraction.c ./psvn2c_abstraction.c
+	cp ../psvn-for-ci5437/src/psvn2c_abstraction.c ./psvn2c_abstraction.c
 
-%.c: %.psvn psvn2c_core.c psvn2c_state_map.c psvn2c_abstraction.c
-	../../psvn-for-ci5437/bin/psvn2c $(PSVNOPT) --name=$(*F) < $< > $@
+%.c: ../Problemas/%.psvn psvn2c_core.c psvn2c_state_map.c psvn2c_abstraction.c
+	../psvn-for-ci5437/bin/psvn2c $(PSVNOPT) --name=$(*F) < $< > $@
 	rm -f ./psvn2c_core.c ./psvn2c_state_map.c ./psvn2c_abstraction.c
 
 .PRECIOUS: %.c
+
+%.dfs: %.c dfs.cpp
+	$(CXX) $(OPT) dfs.cpp -include $< -o $@
+	rm -rf $*.c
+
 
 %.succ: %.c ../../psvn-for-ci5437/global/succ.c
 	$(CC) $(OPT) ../../psvn-for-ci5437/global/succ.c -include $< -o $@
@@ -32,4 +37,4 @@ psvn2c_abstraction.c:
 
 .PHONY: clean
 clean:
-	rm -fr *.succ *.dist *.distSummary psvn2c_core.c psvn2c_state_map.c psvn2c_abstraction.c *.dSYM *.o *~
+	rm -fr *.dfs *.succ *.dist *.distSummary psvn2c_core.c psvn2c_state_map.c psvn2c_abstraction.c *.dSYM *.o *~
