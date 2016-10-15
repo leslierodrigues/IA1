@@ -25,4 +25,5 @@ branching[$max]=${branching[$(($max-1))]}
 printf '%-20s %-20s %-20s\n' ${columna1[$max]} ${columna2[$max]} ${branching[$max]}
 promedio=$(echo "$promedio/$max" | bc -l)
 echo "Branching Factor Empírico (Promedio): $promedio"
+echo $promedio
 
