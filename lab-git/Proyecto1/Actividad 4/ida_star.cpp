@@ -70,7 +70,7 @@ int main(){
 
 	cout << "algorithm, heuristic, domain, instance, cost, h0, generated, time, gen_per_sec " << endl;
 
-	cout << " A*, gap, pancake28,\"" << state_string << "\", " << result << ", " << heuristic(&start);
+	cout << " IDA*, gap, pancake28,\"" << state_string << "\", " << result << ", " << heuristic(&start);
 	cout << ", " << generated_states << ", "  << elapsed_secs << ", ";
 	cout << gen_per_sec << endl;
 	
