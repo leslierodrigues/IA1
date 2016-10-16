@@ -13,8 +13,6 @@ long long generated_states;
 
 int a_star(state_t*);
 
-
-
 // Estructutura que se almacena en la cola de prioridades
 struct node{
 	int priority;
@@ -82,6 +80,7 @@ int a_star(state_t *start){
 	int cost, history;
 	int ruleID, new_hist;
 	ruleid_iterator_t iter;
+	int *aux;
 
 	if (is_goal(start)) return 0;
 	
@@ -95,7 +94,7 @@ int a_star(state_t *start){
 	n.history = init_history;
 	n.s = *start;   // Se almacena el estado 
 	
-	state_map_add(stateMap,start,n.cost); // Se mapea el nodo con la prioridad
+	//state_map_add(stateMap,start,1); // Se mapea el nodo con la prioridad
 	q.push(n); // Se inserta en la cola
 	
 	while (!q.empty()){
@@ -103,35 +102,30 @@ int a_star(state_t *start){
 		q.pop(); // Se desencola 
 		current_state = n.s; // Se almacena el estado desencolado
 
+		init_fwd_iter(&iter,&current_state);
+		//Expansión de nodos
+		while((ruleID = next_ruleid( &iter )) >= 0) {
 
-		// Eliminación de duplicados retardado
-		if (n.cost <= *state_map_get(stateMap,&current_state)){
-			state_map_add(stateMap,&current_state,n.cost); //Se modifica la prioridad del estado en el Map
-			if (is_goal(&current_state)) return n.cost; 
+			if (!fwd_rule_valid_for_history(n.history,ruleID)) continue;
 			
+			new_hist = next_fwd_history(n.history,ruleID);
 
-			init_fwd_iter(&iter,&current_state);
-			//Expansión de nodos
-			while((ruleID = next_ruleid( &iter )) >= 0) {
+			apply_fwd_rule(ruleID, &current_state, &child);
+			generated_states++;
 
-				if (!fwd_rule_valid_for_history(n.history,ruleID)) continue;
-				
-				new_hist = next_fwd_history(n.history,ruleID);
-
-				apply_fwd_rule(ruleID, &current_state, &child);
-				generated_states++;
-
-				// Chequeamos si el nuevo hijo es un goal.
-				if (is_goal(&child)) return n.cost + 1;
-				
-				h = heuristic(&child);
-				
-				if (h < UINT_MAX-1) {
-					struct node nodoHijo;
-					nodoHijo.priority = n.cost + get_fwd_rule_cost( ruleID ) + h;
-					nodoHijo.s = child;
-					nodoHijo.cost = n.cost + get_fwd_rule_cost( ruleID );
-					nodoHijo.history = new_hist;
+			// Chequeamos si el nuevo hijo es un goal.
+			if (is_goal(&child)) return n.cost + 1;
+			
+			h = heuristic(&child);
+			
+			if (h < UINT_MAX-1) {
+				struct node nodoHijo;
+				nodoHijo.priority = n.cost + get_fwd_rule_cost( ruleID ) + h;
+				nodoHijo.s = child;
+				nodoHijo.cost = n.cost + get_fwd_rule_cost( ruleID );
+				nodoHijo.history = new_hist;
+				aux = state_map_get(stateMap,&child);
+				if (aux == NULL or nodoHijo.cost < *aux){
 					state_map_add(stateMap,&child,nodoHijo.cost);
 					q.push(nodoHijo);
 				}
