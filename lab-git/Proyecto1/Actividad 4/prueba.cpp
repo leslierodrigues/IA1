@@ -3,13 +3,15 @@
 #include <cstdio>
 #include <queue>
 #include <map>
+#include <climits>
 #include "psvn2c_state_map.c"
+#include "heuristica.cpp"
 
 using namespace std;
 
 long long generated_states;
 
-int a_star(state_t*);
+int a_star(state_t*, unsigned int (*heuristica)(state_t));
 
 
 
@@ -54,26 +56,24 @@ int main(){
     generated_states = 0;
     
 	clock_t begin = clock();
-
-	result = a_star(&start);
+	
+	result = a_star(&start, &heuristic);
 
 	clock_t end = clock();
 
 	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
 	double gen_per_sec = double(generated_states)/elapsed_secs;
 
-	cout << " algorithm, domain, instance, cost, generated, time, gen_per_sec " << endl;
+	cout << "algorithm, heuristic, domain, instance, cost, h0, generated, time, gen_per_sec " << endl;
 
-	cout << " dfid , ______ , \"" << state_string << "\", " << result;
-	cout << ", " << generated_states << ", " << elapsed_secs << ", ";
+	cout << " A*, gap, pancake28,\"" << state_string << "\", " << result << ", " << heuristic(start);
+	cout << ", " << generated_states << ", "  << elapsed_secs << ", ";
 	cout << gen_per_sec << endl;
     
     return 0;
 }
 
-int a_star(state_t *start){
-    
-   
+int a_star(state_t *start, unsigned int (*heuristica)(state_t)){
     
 	if (is_goal(start)) return 0;
 	
@@ -118,7 +118,17 @@ int a_star(state_t *start){
 
 		        // Chequeamos si el nuevo hijo es un goal.
 		        if (is_goal(&child)) return n.priority + 1;
-
+                
+                unsigned int h = heuristica(child);
+                
+                if (h < UINT_MAX-1) {
+                    struct node nodoHijo;
+                    nodoHijo.priority = *state_map_get(stateMap,&state) + get_fwd_rule_cost( ruleID ) + h;
+                    nodoHijo.s = child;
+                    state_map_add(stateMap,&child,nodoHijo.priority);
+                    q.push(nodoHijo);
+                }
+                
 		        //aux = dfs(&child,cost+1,max_cost,new_hist);
 
 		        //if (aux != -1) return aux;
