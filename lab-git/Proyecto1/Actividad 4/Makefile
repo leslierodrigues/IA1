@@ -22,6 +22,9 @@ psvn2c_abstraction.c:
 	$(CXX) $(OPT) prueba.cpp  -include $< -o $@
 	
 
+%.ida_star: %.c ida_star.cpp
+	$(CXX) $(OPT) ida_star.cpp  -include $< -o $@
+	
 
 %.succ: %.c ../../psvn-for-ci5437/global/succ.c
 	$(CC) $(OPT) ../../psvn-for-ci5437/global/succ.c -include $< -o $@
