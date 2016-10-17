@@ -1,7 +1,7 @@
 CC = gcc
 CXX = g++
 OPT = -g -Wall -O3 -Wno-unused-function -Wno-unused-variable
-PSVNOPT = --no_state_map --no_abstraction --backwards_moves --history_len=1
+PSVNOPT = --state_map --abstraction --backwards_moves --history_len=1
 
 psvn2c_core.c:
 	cp ../psvn-for-ci5437/src/psvn2c_core.c ./psvn2c_core.c
@@ -20,17 +20,18 @@ psvn2c_abstraction.c:
 
 %.prueba: %.c prueba.cpp
 	$(CXX) $(OPT) prueba.cpp  -include $< -o $@
-	
 
 %.ida_star: %.c ida_star.cpp
 	$(CXX) $(OPT) ida_star.cpp  -include $< -o $@
-	
+
+%.a_starpbd: %.c a_starpbd.cpp
+	$(CXX) $(OPT) a_starpbd.cpp  -include $< -o $@
 
 %.succ: %.c ../../psvn-for-ci5437/global/succ.c
 	$(CC) $(OPT) ../../psvn-for-ci5437/global/succ.c -include $< -o $@
 	rm -f $*.c
 
-%.dist: %.c ../../psvn-for-ci5437/global/dist.cpp
+%.dist: %.c ../../psvn-for-ci5437/global/dist.cpps
 	$(CXX) $(OPT) ../../psvn-for-ci5437/global/dist.cpp -include $< -o $@
 	rm -f $*.c
 
@@ -40,4 +41,4 @@ psvn2c_abstraction.c:
 
 .PHONY: clean
 clean:
-	rm -fr *.prueba *.succ *.dist *.distSummary psvn2c_core.c psvn2c_state_map.c psvn2c_abstraction.c *.dSYM *.o *~
+	rm -fr *.ida_star *.a_starpbd *.prueba *.succ *.dist *.distSummary psvn2c_core.c psvn2c_state_map.c psvn2c_abstraction.c *.dSYM *.o *~
