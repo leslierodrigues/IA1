@@ -2,9 +2,7 @@
 #include <ctime>
 #include <cstdio>
 #include <queue>
-#include <map>
 #include <climits>
-#include "psvn2c_state_map.c"
 #include "heuristica.cpp"
 
 using namespace std;
@@ -94,7 +92,6 @@ int a_star(state_t *start){
 	n.history = init_history;
 	n.s = *start;   // Se almacena el estado 
 	
-	//state_map_add(stateMap,start,1); // Se mapea el nodo con la prioridad
 	q.push(n); // Se inserta en la cola
 	
 	while (!q.empty()){
@@ -125,6 +122,8 @@ int a_star(state_t *start){
 				nodoHijo.cost = n.cost + get_fwd_rule_cost( ruleID );
 				nodoHijo.history = new_hist;
 				aux = state_map_get(stateMap,&child);
+
+				// No se expanded los hijos a menos que tengan menor costo
 				if (aux == NULL or nodoHijo.cost < *aux){
 					state_map_add(stateMap,&child,nodoHijo.cost);
 					q.push(nodoHijo);
