@@ -14,15 +14,15 @@ long long generated_states;
 
 // Estructutura que se almacena en la cola de prioridades
 struct node{
-	state_t s;
-	unsigned int g;
-	unsigned int h;
+	state_t estado;
+	unsigned int costo;
+	unsigned int heuristica;
 	unsigned int history;
 };
 
 struct par{
-	node *n;
-	unsigned int f;
+	node *nodo;
+	unsigned int estimado;
 };
 
 struct node ida_star(state_t *);
@@ -61,7 +61,7 @@ int main(){
 	clock_t begin = clock();
 	
 	struct node nodo_result = ida_star(&start);
-	result = nodo_result.g;
+	result = nodo_result.costo;
 
 	clock_t end = clock();
 
@@ -79,55 +79,55 @@ int main(){
 
 
 struct node ida_star(state_t *start){
-    unsigned int b = heuristic(start);
-    struct node n;
-    n.s = *start;
-    n.g=0;
-    n.h=b;
-    n.history = init_history;
+    unsigned int cota = heuristic(start);
+    struct node nodo;
+    nodo.estado = *start;
+    nodo.costo=0;
+    nodo.heuristica=cota;
+    nodo.history = init_history;
     struct par p;
     state_map_t *stateMap = new_state_map();
     while(true){
-        p = bounded_a(n, b, stateMap);
-        if (p.n) {return *(p.n);}
-        b = p.f;
+        p = bounded_a(nodo, cota, stateMap);
+        if (p.nodo) {return *(p.nodo);}
+        cota = p.estimado;
     }
 }
 
-struct par bounded_a(node n, unsigned int b, state_map_t *stateMap){
-    unsigned int f = n.g + n.h;
-    if (f > b) {par p; p.n = NULL; p.f=f;return p;}
-    if (is_goal(&(n.s))) {par p; p.n=&n;p.f=n.g;return p;}
+struct par bounded_a(node nodo, unsigned int cota, state_map_t *stateMap){
+    unsigned int estimado = nodo.costo + nodo.heuristica;
+    if (estimado > cota) {par p; p.nodo = NULL; p.estimado=estimado;return p;}
+    if (is_goal(&(nodo.estado))) {par p; p.nodo=&nodo;p.estimado=nodo.costo;return p;}
     
-    unsigned int t = UINT_MAX;
+    unsigned int min_estimado = UINT_MAX;
     int ruleID, new_hist;
     ruleid_iterator_t iter;
-    state_map_add(stateMap,&(n.s),n.g);
+    state_map_add(stateMap,&(nodo.estado),nodo.costo);
     state_t hijo_estado;
-    state_t current_state = n.s;
+    state_t current_state = nodo.estado;
     
     init_fwd_iter(&iter,&current_state);
     struct node hijo;
     struct par p;
     while((ruleID = next_ruleid( &iter )) >= 0) {
         
-        if (!fwd_rule_valid_for_history(n.history,ruleID)) {continue;}
+        if (!fwd_rule_valid_for_history(nodo.history,ruleID)) {continue;}
         
-        new_hist = next_fwd_history(n.history,ruleID);;
+        new_hist = next_fwd_history(nodo.history,ruleID);;
         
         apply_fwd_rule(ruleID, &current_state, &hijo_estado);
         generated_states++;
         hijo.history = new_hist;
-        hijo.s = hijo_estado;
-        hijo.g = n.g + 1;
-        hijo.h = heuristic(&hijo_estado);
-        state_map_add(stateMap,&hijo_estado,hijo.g);
-        p = bounded_a(hijo,b, stateMap);
-        if (p.n) {return p;}
-        t = (t < p.f) ? t : p.f;
+        hijo.estado = hijo_estado;
+        hijo.costo = nodo.costo + 1;
+        hijo.heuristica = heuristic(&hijo_estado);
+        state_map_add(stateMap,&hijo_estado,hijo.costo);
+        p = bounded_a(hijo,cota, stateMap);
+        if (p.nodo) {return p;}
+        min_estimado = (min_estimado < p.estimado) ? min_estimado : p.estimado;
     }
-    p.n = NULL;
-    p.f = t;
+    p.nodo = NULL;
+    p.estimado = min_estimado;
     return p;
 }
 
