@@ -18,7 +18,9 @@ int main(){
 	int result;
 	cout << "Introduzca el estado del problema: " << endl;
 
-	getline(cin,state_string);
+	cout << " algorithm, domain, instance, cost, generated, time, gen_per_sec " << endl;
+
+	while (getline(cin,state_string) != 0){
 
 	if (read_state(state_string.c_str(),&start) == -1){
 
@@ -45,11 +47,12 @@ int main(){
 	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
 	double gen_per_sec = double(generated_states)/elapsed_secs;
 
-	cout << " algorithm, domain, instance, cost, generated, time, gen_per_sec " << endl;
 
-	cout << " dfid , ______ , \"" << state_string << "\", " << result;
+	cout << " dfid , 11puzzle , \"" << state_string << "\", " << result;
 	cout << ", " << generated_states << ", " << elapsed_secs << ", ";
 	cout << gen_per_sec << endl;
+
+	}
 
 }
 
