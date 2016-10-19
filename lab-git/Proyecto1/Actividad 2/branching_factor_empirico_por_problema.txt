@@ -1,0 +1,31 @@
+Problema                                                     BranchingFactorEmpírico(Promedio)
+hanoiPuzzle_4P_14D_depth12_TABLA.txt                                             
+hanoiPuzzle_4P_14D_history0_depth12.txt                      5.22924699786109842539
+hanoiPuzzle_4P_14D_history1_depth12.txt                      4.81026815433761566117
+hanoiPuzzle_4P_16D_depth12_TABLA.txt                                             
+hanoiPuzzle_4P_16D_history0_depth12.txt                      5.22924699786109842539
+hanoiPuzzle_4P_16D_history1_depth12.txt                      4.81026815433761566117
+npuzzle4x3_depth20_TABLA.txt                                                     
+npuzzle4x3_history0_depth20.txt                              2.97115742643780693371
+npuzzle4x3_history1_depth20.txt                              1.95925235231624487335
+npuzzle4x3_history2_depth20.txt                              1.95925235231624487335
+npuzzle4x4_depth20_TABLA.txt                                                     
+npuzzle4x4_history0_depth20.txt                              3.14835073415482342168
+npuzzle4x4_history1_depth20.txt                              2.14698924650066945378
+npuzzle4x4_history2_depth20.txt                              2.14698924650066945378
+pancake24_depth6_TABLA.txt                                                       
+pancake24_history0_depth6.txt                                23.00000000000000000000
+pancake24_history1_depth6.txt                                22.16666666666666666666
+pancake24_history2_depth6.txt                                22.16535032748525727961
+pancake26_depth6_TABLA.txt                                                       
+pancake28_history0_depth6.txt                                27.00000000000000000000
+pancake28_history1_depth6.txt                                26.16666666666666666666
+pancake28_history2_depth6.txt                                26.16571762352635467321
+topSpinCompactPuzzle22_4_depth7_TABLA.txt                                        
+topSpinCompactPuzzle22_4_history0_depth7.txt                 22.00000000000000000000
+topSpinCompactPuzzle22_4_history1_depth7.txt                 12.57622786978279071803
+topSpinCompactPuzzle22_4_history2_depth7.txt                 11.97374282910893670812
+topSpinCompactPuzzle26_4_depth7_TABLA.txt                                        
+topSpinCompactPuzzle26_4_history0_depth7.txt                 26.00000000000000000000
+topSpinCompactPuzzle26_4_history1_depth7.txt                 14.10270274416817896594
+topSpinCompactPuzzle26_4_history2_depth7.txt                 13.41670396992781027522

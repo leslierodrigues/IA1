@@ -10,17 +10,17 @@ int y_dim;
 
 
 void moverALaDerecha(int x_dim, int y_dim, int *numeroRegla){
-    int numeroTotal = x_dim * y_dim;
+    int numeroTotal = x_dim * y_dim -1;
     // Mover el blanco a la derecha
-    for(int posBlanca = 1; posBlanca < numeroTotal; posBlanca++){
+    for(int posBlanca = 0; posBlanca < numeroTotal; posBlanca++){
         
         //Genero la fila si es válida
-        if (posBlanca % y_dim == 0){continue;}
+        if ((posBlanca+1) % y_dim == 0){continue;}
             
-        for(int posCelda = 1; posCelda <= numeroTotal; posCelda++){
+        for(int posCelda = 0; posCelda <= numeroTotal; posCelda++){
             
             if (posBlanca == posCelda){
-                cout << "1 ";
+                cout << "B ";
             }
             else if (posBlanca + 1 == posCelda){
                 cout << "X ";
@@ -34,13 +34,13 @@ void moverALaDerecha(int x_dim, int y_dim, int *numeroRegla){
         cout << "=> ";
         
         //Después de mover a la derecha
-        for(int posCelda = 1; posCelda <= numeroTotal; posCelda++){
+        for(int posCelda = 0; posCelda <= numeroTotal; posCelda++){
             
             if (posBlanca == posCelda){
                 cout << "X ";
             }
             else if (posBlanca + 1 == posCelda){
-                cout << "1 ";
+                cout << "B ";
             }
             else {
                 cout << "- ";
@@ -56,18 +56,18 @@ void moverALaDerecha(int x_dim, int y_dim, int *numeroRegla){
 
 
 void moverALaIzquierda(int x_dim, int y_dim, int *numeroRegla){
-    int numeroTotal = x_dim * y_dim;
+    int numeroTotal = x_dim * y_dim -1;
     
     // Mover el blanco a la izquierda
-    for(int posBlanca = 1; posBlanca <= numeroTotal; posBlanca++){
+    for(int posBlanca = 0; posBlanca <= numeroTotal; posBlanca++){
         
         //Genero la fila si es válida
-        if ((posBlanca-1) % y_dim == 0){continue;}
+        if ((posBlanca) % y_dim == 0){continue;}
             
-        for(int posCelda = 1; posCelda <= numeroTotal; posCelda++){
+        for(int posCelda = 0; posCelda <= numeroTotal; posCelda++){
             
             if (posBlanca == posCelda){
-                cout << "1 ";
+                cout << "B ";
             }
             else if (posBlanca - 1 == posCelda){
                 cout << "X ";
@@ -80,13 +80,13 @@ void moverALaIzquierda(int x_dim, int y_dim, int *numeroRegla){
         
         cout << "=> ";
         
-        for(int posCelda = 1; posCelda <= numeroTotal; posCelda++){
+        for(int posCelda = 0; posCelda <= numeroTotal; posCelda++){
             
             if (posBlanca == posCelda){
                 cout << "X ";
             }
             else if (posBlanca - 1 == posCelda){
-                cout << "1 ";
+                cout << "B ";
             }
             else {
                 cout << "- ";
@@ -103,17 +103,17 @@ void moverALaIzquierda(int x_dim, int y_dim, int *numeroRegla){
 
 
 void moverArriba(int x_dim, int y_dim, int *numeroRegla){
-    int numeroTotal = x_dim * y_dim;
+    int numeroTotal = x_dim * y_dim-1;
     // Mover el blanco arriba
-    for(int posBlanca = 1; posBlanca <= numeroTotal; posBlanca++){
+    for(int posBlanca = 0; posBlanca <= numeroTotal; posBlanca++){
         
         //Genero la fila si es válida
-        if (posBlanca - y_dim <= 0){continue;}
+        if ((posBlanca+1) - y_dim <= 0){continue;}
             
-        for(int posCelda = 1; posCelda <= numeroTotal; posCelda++){
+        for(int posCelda = 0; posCelda <= numeroTotal; posCelda++){
             
             if (posBlanca == posCelda){
-                cout << "1 ";
+                cout << "B ";
             }
             else if (posBlanca - y_dim == posCelda){
                 cout << "X ";
@@ -126,13 +126,13 @@ void moverArriba(int x_dim, int y_dim, int *numeroRegla){
         
         cout << "=> ";
         
-        for(int posCelda = 1; posCelda <= numeroTotal; posCelda++){
+        for(int posCelda = 0; posCelda <= numeroTotal; posCelda++){
             
             if (posBlanca == posCelda){
                 cout << "X ";
             }
             else if (posBlanca - y_dim == posCelda){
-                cout << "1 ";
+                cout << "B ";
             }
             else {
                 cout << "- ";
@@ -150,17 +150,17 @@ void moverArriba(int x_dim, int y_dim, int *numeroRegla){
 
 
 void moverAbajo(int x_dim, int y_dim, int *numeroRegla){
-    int numeroTotal = x_dim * y_dim;
+    int numeroTotal = x_dim * y_dim-1;
     // Mover el blanco arriba
     for(int posBlanca = 1; posBlanca <= numeroTotal; posBlanca++){
         
         //Genero la fila si es válida
-        if (posBlanca + y_dim >= numeroTotal+1){continue;}
+        if ((posBlanca+1) + y_dim >= numeroTotal+1){continue;}
             
-        for(int posCelda = 1; posCelda <= numeroTotal; posCelda++){
+        for(int posCelda = 0; posCelda <= numeroTotal; posCelda++){
             
             if (posBlanca == posCelda){
-                cout << "1 ";
+                cout << "B ";
             }
             else if (posBlanca + y_dim == posCelda){
                 cout << "X ";
@@ -174,13 +174,13 @@ void moverAbajo(int x_dim, int y_dim, int *numeroRegla){
         cout << "=> ";
         
         
-        for(int posCelda = 1; posCelda <= numeroTotal; posCelda++){
+        for(int posCelda = 0; posCelda <= numeroTotal; posCelda++){
             
             if (posBlanca == posCelda){
                 cout << "X ";
             }
             else if (posBlanca + y_dim == posCelda){
-                cout << "1 ";
+                cout << "B ";
             }
             else {
                 cout << "- ";
@@ -201,18 +201,20 @@ void imprimirGoal(int x_dim, int y_dim){
     
     cout << "GOAL ";
     
-    for(int celda = 1 ; celda <= numeroTotal; celda++){
+    cout << "B ";
+    for(int celda = 2 ; celda <= numeroTotal; celda++){
         printf("%d ", celda);
     }
 }
 
 void imprimirDominio(int x_dim, int y_dim){
     
-    int numeroTotal = x_dim * y_dim;
+    int numeroTotal = x_dim * y_dim -1;
     
     printf("DOMAIN celda %d\n", numeroTotal);
     cout << "       ";
     
+    cout << "B ";
     for(int celda = 1 ; celda <= numeroTotal; celda++){
         printf("%d ", celda);
     }
@@ -220,7 +222,7 @@ void imprimirDominio(int x_dim, int y_dim){
     cout << endl;
     printf("\n%d\n\n", numeroTotal);
     
-    for(int numCelda = 1 ; numCelda <= numeroTotal; numCelda++){
+    for(int numCelda = 0 ; numCelda <= numeroTotal; numCelda++){
         printf("celda ");
     }
     
