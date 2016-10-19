@@ -1,20 +1,33 @@
 #include <iostream>
 #include <ctime>
 #include <cstdio>
+#include <csignal>
 
 using namespace std;
 
 #define MAX_DEPTH 50
 
 long long generated_states;
+string state_string;
+
+void manejadorSenalesKill( int signum )
+{
+   
+	cout << " dfid , 11puzzle , \"" << state_string << "\", ";
+	cout << "NA, NA, NA, NA" << endl;
+
+   exit(signum);  
+
+}
 
 
 int dfs(state_t*, int, int, int);
 int iterative_deepening(state_t*);
 
 int main(){
+	signal(SIGINT, manejadorSenalesKill); 
 	state_t start;
-	string state_string;
+	//string state_string;
 	int result;
 	cout << "Introduzca el estado del problema: " << endl;
 
