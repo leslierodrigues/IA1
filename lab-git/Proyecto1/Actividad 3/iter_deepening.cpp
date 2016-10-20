@@ -13,8 +13,7 @@ string state_string;
 long long generated_states;
 void manejadorSenalesKill( int signum ){
 
-	cout << " dfid , 11puzzle , \"" << state_string << "\", ";
-	cout << "na, na, na, na" << endl;
+	cout << " dfid , pancake16 , \"" << state_string << "\", na, na, na, na" << endl;
 
 	exit(signum);
 }
@@ -31,7 +30,9 @@ int main(){
 
 //	cout << " algorithm, domain, instance, cost, generated, time, gen_per_sec " << endl;
 
+
 	getline(cin,state_string);
+	state_string.pop_back();
 
 	if (read_state(state_string.c_str(),&start) == -1){
 
@@ -62,12 +63,12 @@ int main(){
 
 		double gen_per_sec = double(generated_states)/elapsed_secs;
 
-		cout << " dfid , 11puzzle , \"" << state_string << "\", " << result;
+		cout << " dfid , pancake16 , \"" << state_string << "\", " << result;
 		cout << ", " << generated_states << ", " << elapsed_secs << ", ";
 		cout << gen_per_sec << endl;
 	}
 	catch(int e){
-		cout << " dfid , 11puzzle , \"" << state_string << "\", na, na, na, na" << endl;
+		cout << " dfid , pancake16 , \"" << state_string << "\", na, na, na, na" << endl;
 		exit(0);
 	}
 }
