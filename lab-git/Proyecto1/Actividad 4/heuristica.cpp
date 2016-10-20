@@ -1,6 +1,6 @@
 #include <cstdio>
 #include <iostream>
-
+//gap
 using namespace std;
 
 unsigned int heuristic(state_t *state){

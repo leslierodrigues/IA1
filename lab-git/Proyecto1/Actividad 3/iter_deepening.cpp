@@ -1,13 +1,47 @@
 #include <iostream>
 #include <ctime>
 #include <cstdio>
+#include <chrono>
+#include <windows.h>
+
+// Cosas de tiempo temporales.
+
+
+double PCFreq = 0.0;
+__int64 CounterStart = 0;
 
 using namespace std;
 
 #define MAX_DEPTH 50
 
 long long generated_states;
+void manejadorSenalesKill( int signum )
+{
 
+ cout << " dfid , 11puzzle , \"" << state_string << "\", ";
+ cout << "na, na, na, na" << endl;
+
+   exit(signum);  
+
+}
+
+void StartCounter()
+{
+    LARGE_INTEGER li;
+    if(!QueryPerformanceFrequency(&li))
+	cout << "QueryPerformanceFrequency failed!\n";
+
+    PCFreq = double(li.QuadPart);
+
+    QueryPerformanceCounter(&li);
+    CounterStart = li.QuadPart;
+}
+double GetCounter()
+{
+    LARGE_INTEGER li;
+    QueryPerformanceCounter(&li);
+    return double(li.QuadPart-CounterStart)/PCFreq;
+}
 
 int dfs(state_t*, int, int, int);
 int iterative_deepening(state_t*);
@@ -16,11 +50,12 @@ int main(){
 	state_t start;
 	string state_string;
 	int result;
-	cout << "Introduzca el estado del problema: " << endl;
+	signal(SIGINT, manejadorSenalesKill);
+//	cout << "Introduzca el estado del problema: " << endl;
 
-	cout << " algorithm, domain, instance, cost, generated, time, gen_per_sec " << endl;
+//	cout << " algorithm, domain, instance, cost, generated, time, gen_per_sec " << endl;
 
-	while (getline(cin,state_string) != 0){
+	getline(cin,state_string);
 
 	if (read_state(state_string.c_str(),&start) == -1){
 
@@ -37,23 +72,33 @@ int main(){
 	}
 
 	generated_states = 0;
+	
 
-	clock_t begin = clock();
+//	auto begin = chrono::high_resolution_clock::now();
+
+	try{
+
+	StartCounter();
 
 	result = iterative_deepening(&start);
 
-	clock_t end = clock();
+//	auto end = chrono::high_resolution_clock::now();
 
-	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+//	long double elapsed_secs = (long double)chrono::duration_cast<chrono::nanoseconds>(end-begin).count();
+
+	long double elapsed_secs = GetCounter();
+
 	double gen_per_sec = double(generated_states)/elapsed_secs;
 
 
 	cout << " dfid , 11puzzle , \"" << state_string << "\", " << result;
 	cout << ", " << generated_states << ", " << elapsed_secs << ", ";
 	cout << gen_per_sec << endl;
-
 	}
-
+	catch(int e){
+			cout << " dfid , 11puzzle , \"" << state_string << "\", na, na, na, na" << endl;
+			exit(0);
+	}
 }
 
 

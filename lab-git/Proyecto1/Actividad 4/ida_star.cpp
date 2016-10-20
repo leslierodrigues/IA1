@@ -4,7 +4,6 @@
 #include <queue>
 #include <map>
 #include <climits>
-#include "psvn2c_state_map.c"
 #include "heuristica.cpp"
 
 using namespace std;

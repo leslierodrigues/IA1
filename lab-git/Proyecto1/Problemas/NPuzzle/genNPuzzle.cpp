@@ -202,27 +202,27 @@ void imprimirGoal(int x_dim, int y_dim){
     cout << "GOAL ";
     
     cout << "B ";
-    for(int celda = 2 ; celda <= numeroTotal; celda++){
+    for(int celda = 1 ; celda < numeroTotal; celda++){
         printf("%d ", celda);
     }
 }
 
 void imprimirDominio(int x_dim, int y_dim){
     
-    int numeroTotal = x_dim * y_dim -1;
+    int numeroTotal = x_dim * y_dim;
     
     printf("DOMAIN celda %d\n", numeroTotal);
     cout << "       ";
     
     cout << "B ";
-    for(int celda = 1 ; celda <= numeroTotal; celda++){
+    for(int celda = 1 ; celda < numeroTotal; celda++){
         printf("%d ", celda);
     }
     
     cout << endl;
     printf("\n%d\n\n", numeroTotal);
     
-    for(int numCelda = 0 ; numCelda <= numeroTotal; numCelda++){
+    for(int numCelda = 0 ; numCelda < numeroTotal; numCelda++){
         printf("celda ");
     }
     

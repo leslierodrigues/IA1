@@ -1,0 +1,41 @@
+DOMAIN celda 12
+       B 1 2 3 4 5 6 7 8 9 10 11 
+
+12
+
+celda celda celda celda celda celda celda celda celda celda celda celda 
+
+B X - - - - - - - - - - => X B - - - - - - - - - - LABEL Rev1
+- B X - - - - - - - - - => - X B - - - - - - - - - LABEL Rev2
+- - - B X - - - - - - - => - - - X B - - - - - - - LABEL Rev3
+- - - - B X - - - - - - => - - - - X B - - - - - - LABEL Rev4
+- - - - - - B X - - - - => - - - - - - X B - - - - LABEL Rev5
+- - - - - - - B X - - - => - - - - - - - X B - - - LABEL Rev6
+- - - - - - - - - B X - => - - - - - - - - - X B - LABEL Rev7
+- - - - - - - - - - B X => - - - - - - - - - - X B LABEL Rev8
+X B - - - - - - - - - - => B X - - - - - - - - - - LABEL Rev9
+- X B - - - - - - - - - => - B X - - - - - - - - - LABEL Rev10
+- - - X B - - - - - - - => - - - B X - - - - - - - LABEL Rev11
+- - - - X B - - - - - - => - - - - B X - - - - - - LABEL Rev12
+- - - - - - X B - - - - => - - - - - - B X - - - - LABEL Rev13
+- - - - - - - X B - - - => - - - - - - - B X - - - LABEL Rev14
+- - - - - - - - - X B - => - - - - - - - - - B X - LABEL Rev15
+- - - - - - - - - - X B => - - - - - - - - - - B X LABEL Rev16
+X - - B - - - - - - - - => B - - X - - - - - - - - LABEL Rev17
+- X - - B - - - - - - - => - B - - X - - - - - - - LABEL Rev18
+- - X - - B - - - - - - => - - B - - X - - - - - - LABEL Rev19
+- - - X - - B - - - - - => - - - B - - X - - - - - LABEL Rev20
+- - - - X - - B - - - - => - - - - B - - X - - - - LABEL Rev21
+- - - - - X - - B - - - => - - - - - B - - X - - - LABEL Rev22
+- - - - - - X - - B - - => - - - - - - B - - X - - LABEL Rev23
+- - - - - - - X - - B - => - - - - - - - B - - X - LABEL Rev24
+- - - - - - - - X - - B => - - - - - - - - B - - X LABEL Rev25
+- B - - X - - - - - - - => - X - - B - - - - - - - LABEL Rev26
+- - B - - X - - - - - - => - - X - - B - - - - - - LABEL Rev27
+- - - B - - X - - - - - => - - - X - - B - - - - - LABEL Rev28
+- - - - B - - X - - - - => - - - - X - - B - - - - LABEL Rev29
+- - - - - B - - X - - - => - - - - - X - - B - - - LABEL Rev30
+- - - - - - B - - X - - => - - - - - - X - - B - - LABEL Rev31
+- - - - - - - B - - X - => - - - - - - - X - - B - LABEL Rev32
+
+GOAL B 1 2 3 4 5 6 7 8 9 10 11 
