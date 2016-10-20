@@ -13,7 +13,7 @@ string state_string;
 long long generated_states;
 void manejadorSenalesKill( int signum ){
 
-	cout << " dfid , pancake16 , \"" << state_string << "\", na, na, na, na" << endl;
+	cout << " dfid , 11puzzle , \"" << state_string << "\", na, na, na, na" << endl;
 
 	exit(signum);
 }
@@ -32,7 +32,6 @@ int main(){
 
 
 	getline(cin,state_string);
-	state_string.pop_back();
 
 	if (read_state(state_string.c_str(),&start) == -1){
 
@@ -47,6 +46,7 @@ int main(){
 		cout << endl;
 		return 0;
 	}
+	state_string.pop_back();
 
 	generated_states = 0;
 	
@@ -59,16 +59,16 @@ int main(){
 
 		clock_t end = clock();
 
-		long double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+		long double elapsed_secs = (long double)(end - begin) / CLOCKS_PER_SEC;
 
-		double gen_per_sec = double(generated_states)/elapsed_secs;
+		long double gen_per_sec = (long double)(generated_states)/elapsed_secs;
 
-		cout << " dfid , pancake16 , \"" << state_string << "\", " << result;
+		cout << " dfid , 11puzzle , \"" << state_string << "\", " << result;
 		cout << ", " << generated_states << ", " << elapsed_secs << ", ";
 		cout << gen_per_sec << endl;
 	}
 	catch(int e){
-		cout << " dfid , pancake16 , \"" << state_string << "\", na, na, na, na" << endl;
+		cout << " dfid , 11puzzle , 	\"" << state_string << "\", na, na, na, na" << endl;
 		exit(0);
 	}
 }
