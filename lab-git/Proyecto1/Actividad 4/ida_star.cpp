@@ -4,7 +4,7 @@
 #include <queue>
 #include <map>
 #include <climits>
-#include "heuristica.cpp"
+#include "heuristica_gap.cpp"
 
 using namespace std;
 
