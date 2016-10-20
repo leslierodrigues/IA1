@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
@@ -152,11 +151,11 @@ void moverArriba(int x_dim, int y_dim, int *numeroRegla){
 
 void moverAbajo(int x_dim, int y_dim, int *numeroRegla){
     int numeroTotal = x_dim * y_dim-1;
-    // Mover el blanco arriba
-    for(int posBlanca = 1; posBlanca <= numeroTotal; posBlanca++){
+    
+    for(int posBlanca = 0; posBlanca <= numeroTotal; posBlanca++){
         
         //Genero la fila si es válida
-        if ((posBlanca+1) + y_dim >= numeroTotal+1){continue;}
+        if ((posBlanca+1) + y_dim > numeroTotal+1){continue;}
             
         for(int posCelda = 0; posCelda <= numeroTotal; posCelda++){
             
@@ -210,20 +209,20 @@ void imprimirGoal(int x_dim, int y_dim){
 
 void imprimirDominio(int x_dim, int y_dim){
     
-    int numeroTotal = x_dim * y_dim;
+    int numeroTotal = x_dim * y_dim -1;
     
-    printf("DOMAIN celda %d\n", numeroTotal);
+    printf("DOMAIN celda %d\n", numeroTotal+1);
     cout << "       ";
     
     cout << "B ";
-    for(int celda = 1 ; celda < numeroTotal; celda++){
+    for(int celda = 1 ; celda <= numeroTotal; celda++){
         printf("%d ", celda);
     }
     
     cout << endl;
-    printf("\n%d\n\n", numeroTotal);
+    printf("\n%d\n\n", numeroTotal+1);
     
-    for(int numCelda = 0 ; numCelda < numeroTotal; numCelda++){
+    for(int numCelda = 0 ; numCelda <= numeroTotal; numCelda++){
         printf("celda ");
     }
     
