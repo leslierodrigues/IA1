@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <chrono>
 #include <windows.h>
+#include <csignal>
 
 // Cosas de tiempo temporales.
 
@@ -21,10 +22,6 @@ void manejadorSenalesKill( int signum )
  cout << " dfid , 11puzzle , \"" << state_string << "\", ";
  cout << "na, na, na, na" << endl;
 
-   exit(signum);  
-
-}
-
 void StartCounter()
 {
     LARGE_INTEGER li;
@@ -32,7 +29,6 @@ void StartCounter()
 	cout << "QueryPerformanceFrequency failed!\n";
 
     PCFreq = double(li.QuadPart);
-
     QueryPerformanceCounter(&li);
     CounterStart = li.QuadPart;
 }
@@ -47,10 +43,10 @@ int dfs(state_t*, int, int, int);
 int iterative_deepening(state_t*);
 
 int main(){
+	signal(SIGINT, manejadorSenalesKill); 
 	state_t start;
-	string state_string;
+	//string state_string;
 	int result;
-	signal(SIGINT, manejadorSenalesKill);
 //	cout << "Introduzca el estado del problema: " << endl;
 
 //	cout << " algorithm, domain, instance, cost, generated, time, gen_per_sec " << endl;
