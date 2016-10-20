@@ -52,7 +52,7 @@ int main(){
 
 		clock_t begin = clock();
 
-		result = interative_deepening(&start);
+		result = iterative_deepening(&start);
 
 		clock_t end = clock();
 
