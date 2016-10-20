@@ -8,6 +8,8 @@ using namespace std;
 
 #define MAX_DEPTH 50
 
+string state_string;
+
 long long generated_states;
 void manejadorSenalesKill( int signum ){
 
