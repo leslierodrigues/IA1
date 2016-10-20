@@ -18,13 +18,13 @@ psvn2c_abstraction.c:
 
 .PRECIOUS: %.c
 
-%.prueba: %.c prueba.cpp
+%.a_star_gap: %.c prueba.cpp
 	$(CXX) $(OPT) prueba.cpp  -include $< -o $@
 
 %.ida_star: %.c ida_star.cpp
 	$(CXX) $(OPT) ida_star.cpp  -include $< -o $@
 
-%.a_starpbd: %.c a_starpbd.cpp
+%.a_star_pbd: %.c a_starpbd.cpp
 	$(CXX) $(OPT) a_starpbd.cpp  -include $< -o $@
 
 %.succ: %.c ../../psvn-for-ci5437/global/succ.c

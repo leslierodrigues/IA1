@@ -1,49 +1,28 @@
 #include <iostream>
 #include <ctime>
 #include <cstdio>
-#include <chrono>
-#include <windows.h>
 #include <csignal>
 
-// Cosas de tiempo temporales.
-
-
-double PCFreq = 0.0;
-__int64 CounterStart = 0;
 
 using namespace std;
 
 #define MAX_DEPTH 50
 
+string state_string;
+
 long long generated_states;
-void manejadorSenalesKill( int signum )
-{
+void manejadorSenalesKill( int signum ){
 
- cout << " dfid , 11puzzle , \"" << state_string << "\", ";
- cout << "na, na, na, na" << endl;
+	cout << " dfid , pancake16 , \"" << state_string << "\", na, na, na, na" << endl;
 
-void StartCounter()
-{
-    LARGE_INTEGER li;
-    if(!QueryPerformanceFrequency(&li))
-	cout << "QueryPerformanceFrequency failed!\n";
-
-    PCFreq = double(li.QuadPart);
-    QueryPerformanceCounter(&li);
-    CounterStart = li.QuadPart;
-}
-double GetCounter()
-{
-    LARGE_INTEGER li;
-    QueryPerformanceCounter(&li);
-    return double(li.QuadPart-CounterStart)/PCFreq;
+	exit(signum);
 }
 
 int dfs(state_t*, int, int, int);
 int iterative_deepening(state_t*);
 
 int main(){
-	signal(SIGINT, manejadorSenalesKill); 
+	signal(SIGTERM, manejadorSenalesKill); 
 	state_t start;
 	//string state_string;
 	int result;
@@ -51,7 +30,9 @@ int main(){
 
 //	cout << " algorithm, domain, instance, cost, generated, time, gen_per_sec " << endl;
 
+
 	getline(cin,state_string);
+	state_string.pop_back();
 
 	if (read_state(state_string.c_str(),&start) == -1){
 
@@ -70,30 +51,25 @@ int main(){
 	generated_states = 0;
 	
 
-//	auto begin = chrono::high_resolution_clock::now();
-
 	try{
 
-	StartCounter();
+		clock_t begin = clock();
 
-	result = iterative_deepening(&start);
+		result = iterative_deepening(&start);
 
-//	auto end = chrono::high_resolution_clock::now();
+		clock_t end = clock();
 
-//	long double elapsed_secs = (long double)chrono::duration_cast<chrono::nanoseconds>(end-begin).count();
+		long double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
 
-	long double elapsed_secs = GetCounter();
+		double gen_per_sec = double(generated_states)/elapsed_secs;
 
-	double gen_per_sec = double(generated_states)/elapsed_secs;
-
-
-	cout << " dfid , 11puzzle , \"" << state_string << "\", " << result;
-	cout << ", " << generated_states << ", " << elapsed_secs << ", ";
-	cout << gen_per_sec << endl;
+		cout << " dfid , pancake16 , \"" << state_string << "\", " << result;
+		cout << ", " << generated_states << ", " << elapsed_secs << ", ";
+		cout << gen_per_sec << endl;
 	}
 	catch(int e){
-			cout << " dfid , 11puzzle , \"" << state_string << "\", na, na, na, na" << endl;
-			exit(0);
+		cout << " dfid , pancake16 , \"" << state_string << "\", na, na, na, na" << endl;
+		exit(0);
 	}
 }
 

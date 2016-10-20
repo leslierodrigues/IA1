@@ -16,6 +16,10 @@ unsigned int heuristic(state_t *state){
         }
         
     }
+
+    if (state->vars[tam-1] != 27){
+        number_not_adjacent++;
+    }
     
     return number_not_adjacent;
 }
