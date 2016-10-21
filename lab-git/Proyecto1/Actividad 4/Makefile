@@ -38,6 +38,11 @@ psvn2c_abstraction.c:
 	$(CXX) $(OPT) a_star_pdb.cpp  -include $< -o $@
 	rm -f $*.c
 
+%.ida_star_pdb: %.c ida_star_pdb.cpp
+	$(CXX) $(OPT) ida_star_pdb.cpp  -include $< -o $@
+	rm -f $*.c
+
+
 %.succ: %.c ../../psvn-for-ci5437/global/succ.c
 	$(CC) $(OPT) ../../psvn-for-ci5437/global/succ.c -include $< -o $@
 	rm -f $*.c
@@ -58,4 +63,4 @@ psvn2c_abstraction.c:
 
 .PHONY: clean
 clean:
-	rm -fr *.a_star.manhattan *.a_star.gap *.ida_star.manhattan *.ida_star.gap *.a_star_pbd *.a_star_gap *.succ *.dist *.distSummary psvn2c_core.c psvn2c_state_map.c psvn2c_abstraction.c *.dSYM *.o *~
+	rm -fr *.ida_star_pdb *.a_star.manhattan *.a_star.gap *.ida_star.manhattan *.ida_star.gap *.a_star_pbd *.a_star_gap *.succ *.dist *.distSummary psvn2c_core.c psvn2c_state_map.c psvn2c_abstraction.c *.dSYM *.o *~
