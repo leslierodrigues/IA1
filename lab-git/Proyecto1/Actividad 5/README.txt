@@ -40,13 +40,13 @@
         <nombre_del_ejecutable>
             nombre del ejecutable generado al compilar
         
-        timeout --signal=SIGTERM 10m ./hanoi_4_14.iter_deepening
+        timeout --signal=SIGTERM 10m ./<nombre_del_ejecutable>
             orden que permite ejecutar IDDFS para hanoi con un límite de 
             tiempo de 10 minutos. Si se pasa de este tiempo, se envía la señal
             SIGTERM, especificada como argumento allí.
         
         while read in; do echo "$in"
-            lee cada línea obtenida a partir de "done < tower14_4_100_150.txt"
+            lee cada línea obtenida a partir de "done < <archivo_de_instancias>"
             y se la pasa a la variable "in". Luego le pasa esta variable a la
             orden de arriba como argumento.
     
