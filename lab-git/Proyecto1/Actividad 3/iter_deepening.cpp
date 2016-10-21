@@ -11,9 +11,9 @@ using namespace std;
 string state_string;
 
 long long generated_states;
-void manejadorSenalesKill( int signum ){
+void manejadorTimeout( int signum ){
 
-	cout << " dfid , 11puzzle , \"" << state_string << "\", na, na, na, na" << endl;
+	cout << "dfid ,11puzzle , \"" << state_string << "\", na, na, na, na" << endl;
 
 	exit(signum);
 }
@@ -22,14 +22,9 @@ int dfs(state_t*, int, int, int);
 int iterative_deepening(state_t*);
 
 int main(){
-	signal(SIGTERM, manejadorSenalesKill); 
+	signal(SIGTERM, manejadorTimeout); 
 	state_t start;
-	//string state_string;
 	int result;
-//	cout << "Introduzca el estado del problema: " << endl;
-
-//	cout << " algorithm, domain, instance, cost, generated, time, gen_per_sec " << endl;
-
 
 	getline(cin,state_string);
 
@@ -47,7 +42,7 @@ int main(){
 		return 0;
 	}
 
-	if (state_string[len(state_string)-1] == '\n'){
+	if (state_string[state_string.length()-1] == '\n'){
 		state_string.pop_back();
 	}
 
@@ -55,23 +50,28 @@ int main(){
 	
 
 	try{
-
+		// medimos el tiempo con clock_t
 		clock_t begin = clock();
 
+		// Empezamos el algoritmo
 		result = iterative_deepening(&start);
 
+
 		clock_t end = clock();
+
 
 		long double elapsed_secs = (long double)(end - begin) / CLOCKS_PER_SEC;
 
 		long double gen_per_sec = (long double)(generated_states)/elapsed_secs;
 
-		cout << " dfid , 11puzzle , \"" << state_string << "\", " << result;
+		// Imprimimos Resultados
+		cout << "dfid ,11puzzle , \"" << state_string << "\", " << result;
 		cout << ", " << generated_states << ", " << elapsed_secs << ", ";
 		cout << gen_per_sec << endl;
 	}
 	catch(int e){
-		cout << " dfid , 11puzzle , 	\"" << state_string << "\", na, na, na, na" << endl;
+		// En caso de una excepcion, solo imprimimos que no se puede.
+		cout << "dfid, 11puzzle, \"" << state_string << "\", na, na, na, na" << endl;
 		exit(0);
 	}
 }
@@ -79,6 +79,7 @@ int main(){
 
 int iterative_deepening(state_t *start){
 
+	// Si el estado es el goal ya solo retornamos 0
 	if (is_goal(start)) return 0;
 
 	int bound = 0;
@@ -86,7 +87,8 @@ int iterative_deepening(state_t *start){
 	int path_cost;
 
 	while (1){
-
+		//Vamos incrementando la cota hasta que path_cost sea positivo
+		// que es cuando terminamos.
 		path_cost = dfs(start,0,bound,history);
 
 		if (path_cost != -1) return path_cost;
@@ -97,6 +99,7 @@ int iterative_deepening(state_t *start){
 
 
 int dfs(state_t *current, int cost, int max_cost, int history){
+	// Si nos pasamos de la cota retornamos.
 	if (cost + 1 >= max_cost) return -1;
 
 	int aux;
@@ -104,14 +107,16 @@ int dfs(state_t *current, int cost, int max_cost, int history){
 	state_t child;
 	ruleid_iterator_t iter;
 
+	// Inicializamos las reglas.
 	init_fwd_iter(&iter,current);
 	while((ruleID = next_ruleid( &iter )) >= 0) {
 
+		//Chequeamos con el automata de movimientos que sea valido
 		if (!fwd_rule_valid_for_history(history,ruleID)) continue;
 
 		if (cost + 1 >= max_cost) return -1;
+		// Generamos la nueva historia y el hijo
 		new_hist = next_fwd_history(history,ruleID);
-
 		apply_fwd_rule(ruleID, current, &child);
 		generated_states++;
 
