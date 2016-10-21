@@ -73,7 +73,7 @@
     generadas por el algoritmo por cada problema. Los scripts disponibles
     son:
         
-        generar_tablas.sh [tabla1] [tabla2] [tabla3]
+        generar_tablas.sh tabla1 tabla2 [tabla3]
             
             Este script recibe como argumento a las tablas básicas generadas
             por sendas corridas de dfs para un mismo problema y distintos
