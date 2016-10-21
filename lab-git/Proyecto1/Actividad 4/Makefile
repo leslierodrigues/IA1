@@ -63,4 +63,4 @@ psvn2c_abstraction.c:
 
 .PHONY: clean
 clean:
-	rm -fr *.ida_star_pdb *.a_star.manhattan *.a_star.gap *.ida_star.manhattan *.ida_star.gap *.a_star_pbd *.a_star_gap *.succ *.dist *.distSummary psvn2c_core.c psvn2c_state_map.c psvn2c_abstraction.c *.dSYM *.o *~
+	rm -fr *.ida_star_pdb *.a_star.manhattan *.a_star.gap *.ida_star.manhattan *.ida_star.gap *.a_star_pdb *.a_star_gap *.succ *.dist *.distSummary psvn2c_core.c psvn2c_state_map.c psvn2c_abstraction.c *.dSYM *.o *~
