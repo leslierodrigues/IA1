@@ -26,7 +26,7 @@ string state_string;
 // Manejador que se usa para imprimir que fallo en caso de un timeout.
 void manejador_timeout( int signum ){
 
-	cout << "A*, gap, pancake28,\"" << state_string << "\", na, " << heuristic(&start) <<" ,na, na, na" << endl;
+	cout << "IDA*, gap, pancake28,\"" << state_string << "\", na, " << heuristic(&start) <<" ,na, na, na" << endl;
 
 	exit(signum);
 }
@@ -37,8 +37,6 @@ pair<unsigned int,bool> bounded_a(node *, unsigned int);
 
 int main(){
 	
-	state_t start; 
-	string state_string; // Almacena el estado dado por el usuario
 	int result; // Valor retornado por la función
 	int goalID;
 	

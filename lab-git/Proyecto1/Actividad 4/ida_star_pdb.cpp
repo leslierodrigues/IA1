@@ -30,7 +30,7 @@ unsigned int heuristic(state_t *);
 // Manejador que se usa para imprimir que fallo en caso de un timeout.
 void manejador_timeout( int signum ){
 
-	cout << "A*, gap, pancake28,\"" << state_string << "\", na, " << heuristic(&start) <<" ,na, na, na" << endl;
+	cout << "IDA*, PDB555, 15puzzle,\"" << state_string << "\", na, " << heuristic(&start) <<" ,na, na, na" << endl;
 
 	exit(signum);
 }
@@ -46,9 +46,7 @@ int main(){
 	string state_string; // Almacena el estado dado por el usuario
 	int result; // Valor retornado por la función
 	int goalID;
-	
-	cout << "Introduzca el estado del problema: " << endl;
-	
+		
 	getline(cin,state_string);
 
 	if (read_state(state_string.c_str(),&start) == -1){
@@ -64,11 +62,11 @@ int main(){
 		cout << endl;
 		return 0;
 	}
-	state_string.pop_back();
-
-	generated_states = 0;
-	generated_states = 0;
+	if (state_string[state_string.size()-1] == '\n'){
+		state_string.pop_back();
+	}
 	
+	generated_states = 0;	
 
 	// Se leen las abstracciones
 	abs1 = read_abstraction_from_file("Abstracciones/PDB1/grupo1.abst");
