@@ -42,8 +42,8 @@ pair<unsigned int,bool> bounded_a(node *, unsigned int);
 
 int main(){
 	
-	state_t start; 
-	string state_string; // Almacena el estado dado por el usuario
+	//state_t start; 
+	//string state_string; // Almacena el estado dado por el usuario
 	int result; // Valor retornado por la función
 	int goalID;
 		

@@ -42,8 +42,8 @@ abstraction_t *abs1, *abs2, *abs3;
 
 int main(){
 	
-	state_t start; 
-	string state_string; // Almacena el estado dado por el usuario
+	//state_t start; 
+	//string state_string; // Almacena el estado dado por el usuario
 	int result; // Valor retornado por la función
 	int goalID;
 	
