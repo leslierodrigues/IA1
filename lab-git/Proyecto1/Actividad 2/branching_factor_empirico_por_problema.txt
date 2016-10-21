@@ -13,6 +13,10 @@ npuzzle4x4_depth20_TABLA.txt
 npuzzle4x4_history0_depth20.txt                              3.14835073415482342168
 npuzzle4x4_history1_depth20.txt                              2.14698924650066945378
 npuzzle4x4_history2_depth20.txt                              2.14698924650066945378
+pancake16_depth6_TABLA.txt                                                       
+pancake16_history0_depth6.txt                                15.00000000000000000000
+pancake16_history1_depth6.txt                                14.16666666666666666666
+pancake16_history2_depth6.txt                                14.16349854925307404524
 pancake24_depth6_TABLA.txt                                                       
 pancake24_history0_depth6.txt                                23.00000000000000000000
 pancake24_history1_depth6.txt                                22.16666666666666666666
@@ -21,6 +25,10 @@ pancake26_depth6_TABLA.txt
 pancake28_history0_depth6.txt                                27.00000000000000000000
 pancake28_history1_depth6.txt                                26.16666666666666666666
 pancake28_history2_depth6.txt                                26.16571762352635467321
+topSpinCompactPuzzle16_4_depth7_TABLA.txt                                        
+topSpinCompactPuzzle16_4_history0_depth7.txt                 16.00000000000000000000
+topSpinCompactPuzzle16_4_history1_depth7.txt                 10.22471962846942846494
+topSpinCompactPuzzle16_4_history2_depth7.txt                 9.79175620117978833973
 topSpinCompactPuzzle22_4_depth7_TABLA.txt                                        
 topSpinCompactPuzzle22_4_history0_depth7.txt                 22.00000000000000000000
 topSpinCompactPuzzle22_4_history1_depth7.txt                 12.57622786978279071803
