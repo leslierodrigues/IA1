@@ -15,13 +15,25 @@
     maximo va a tomar 2 gb de ram y no va a hacer swap con el disco para
     conseguir mas.)
     
-    Compilar
-        - Para 28-panquecas:
-            make pancakePuzzle28.wida.gap
-        - Para 15-puzzle con heurística Manhanttan:
-            make npuzzle4x4.wida.manhattan
-        - Para 15-puzzle con PDB 5 + 5 + 5:
-            make npuzzle4x4.wida_pdb
+    
+    Para compilar un programa, use:
+        - con las heurísticas gap y manhattan
+            make <nombre_psvn>.<nombre_cpp>.<heuristica>        
+        - con PDB 5 5 5
+            make <nombre_psvn>.<nombre_cpp>
+
+    en donde:
+        <nombre_psvn> 
+            nombre del archivo psvn 
+        <nombre_cpp>
+            nombre del archivo C++ correspondiente al algoritmo que 
+            se desea utilizar.
+                wida_star  : para WIDA*
+                wida_star_pdb : para WIDA* con PDB 5+5+5
+        <heuristica>
+            nombre de la heuristica a utilizar
+                gap       : para la heurística gap. Utilizada para n-pancakes.
+                manhattan : para la heurística gap. Utilizada para n-puzzle.       
     
     Ejecutar:         
         while read in; do echo "$in" | timeout --signal=SIGTERM 10m 
