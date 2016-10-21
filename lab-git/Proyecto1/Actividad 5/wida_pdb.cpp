@@ -9,8 +9,7 @@ using namespace std;
 
 long long generated_states;
 
-#define WEIGHT 2.0
-
+#define WEIGHT 2
 
 // Estructutura que se almacena en la cola de prioridades
 struct node{
@@ -20,10 +19,14 @@ struct node{
 	unsigned int history;
 };
 
+state_map_t * grupo1, *grupo2, *grupo3;
+abstraction_t *abs1, *abs2, *abs3;
 
 
 state_t start;
 string state_string;
+
+unsigned int heuristic(state_t*);
 
 
 void manejador_timeout( int signum ){
@@ -33,9 +36,7 @@ void manejador_timeout( int signum ){
 	exit(signum);
 }
 
-
 unsigned int wida_star(state_t *);
-
 pair<unsigned int,bool> bounded_a(node *, unsigned int);
 
 
@@ -67,6 +68,23 @@ int main(){
 
 	generated_states = 0;
 
+
+	abs1 = read_abstraction_from_file("Abstracciones/PDB1/grupo1.abst");
+	abs2 = read_abstraction_from_file("Abstracciones/PDB1/grupo2.abst");
+	abs3 = read_abstraction_from_file("Abstracciones/PDB1/grupo3.abst");
+
+
+	FILE* faux = fopen("Abstracciones/PDB1/grupo1.pdb", "r");
+	grupo1 = read_state_map(faux);
+	fclose(faux);
+
+	faux = fopen("Abstracciones/PDB1/grupo2.pdb", "r");
+	grupo2 = read_state_map(faux);
+	fclose(faux);
+
+	faux = fopen("Abstracciones/PDB1/grupo3.pdb", "r");
+	grupo3 = read_state_map(faux);
+	fclose(faux);
 
 	try{	
 	clock_t begin = clock();
@@ -174,3 +192,30 @@ pair<unsigned int,bool> bounded_a(node *nodo, unsigned int cota){
 }
 
 
+
+// Heuristica
+unsigned int heuristic(state_t *state){
+
+	unsigned int heuristicValue = 0;
+	int *aux;
+	state_t abstract_transform;
+
+
+	abstract_state(abs1, state, &abstract_transform);
+	aux = state_map_get(grupo1, &abstract_transform);
+	heuristicValue += *aux;
+
+	assert(aux != NULL);
+	abstract_state(abs2, state, &abstract_transform);
+	aux = state_map_get(grupo2, &abstract_transform);
+
+	heuristicValue += *aux;
+
+	abstract_state(abs3, state, &abstract_transform);
+	aux = state_map_get(grupo3, &abstract_transform);
+
+	heuristicValue += *aux;
+
+	return heuristicValue;
+
+}
