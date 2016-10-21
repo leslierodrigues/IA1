@@ -27,7 +27,7 @@
         <nombre_del_ejecutable>
             nombre del ejecutable generado al compilar
         
-        timeout --signal=SIGTERM 10m ./hanoi_4_14.iter_deepening
+        timeout --signal=SIGTERM 10m ././<nombre_del_ejecutable>
             orden que permite ejecutar IDDFS para hanoi con un límite de 
             tiempo de 10 minutos. Si se pasa de este tiempo, se envía la señal
             SIGTERM, especificada como argumento allí.
@@ -37,8 +37,25 @@
             y se la pasa a la variable "in". Luego le pasa esta variable a la
             orden de arriba como argumento.
     
-    
+    Puesto que no se puede detectar la heuristica ni el dominio del problema
+    (Al menos no sin recurrir a ifdefs de C) estas son colocadas en un valor
+    default que se puede cambiar facilmente
+
     Abstracciones ------------------------------------------------------------
     
     Contiene las abtracciones utilizadas para generar los resultados 
     correspondientes a 15-puzzle con A* e IDA* con PDB 5+5+5.  
+
+    Para generar los PDBs de esto, solo se debe usar el comando
+
+    make <nombre_problema>/<nombretxt>.pdb
+
+    En el caso del PDB 5+5+5 se deben generar
+
+    make npuzzle4x4/grupo1.pdb
+    make npuzzle4x4/grupo2.pdb
+    make npuzzle4x4/grupo3.pdb
+
+    para generar los 3 pdbs necesarios.
+
+    make clean limpiara la carpeta y dejara solo los .txt

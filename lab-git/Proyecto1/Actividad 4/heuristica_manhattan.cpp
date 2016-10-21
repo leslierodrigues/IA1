@@ -17,6 +17,8 @@ unsigned manhattan15[16] = {6,5,4,3,5,4,3,2,4,3,2,1,3,2,1,0};
 
 unsigned* manhattan[16] = {manhattan0,manhattan1,manhattan2,manhattan3,manhattan4,manhattan5,manhattan6,manhattan7,manhattan8,manhattan9,manhattan10,manhattan11,manhattan12,manhattan13,manhattan14,manhattan15};
 
+// Heuristica manhattan
+
 unsigned int heuristic(state_t *state){
 
 	unsigned int tam = sizeof(state->vars)/sizeof(state->vars[0]);

@@ -15,10 +15,10 @@ int heuristic(state_t*);
 state_t start;
 string state_string;
 
-
+// Manejador que se usa para imprimir que fallo en caso de un timeout.
 void manejador_timeout( int signum ){
 
-	cout << "A*, gap, pancake28,\"" << state_string << "\", na, " << heuristic(&start) <<" ,na, na, na" << endl;
+	cout << "A*, PDB555, puzzle15,\"" << state_string << "\", na, " << heuristic(&start) <<" ,na, na, na" << endl;
 
 	exit(0);
 }
@@ -47,10 +47,7 @@ int main(){
 	int result; // Valor retornado por la función
 	int goalID;
 	
-	//map <state_t,int> m; //mapea un estado con su prioridad
-	
-//	cout << "Introduzca el estado del problema: " << endl;
-	
+		
 	getline(cin,state_string);
 	if (read_state(state_string.c_str(),&start) == -1){
 
@@ -68,11 +65,13 @@ int main(){
 	
 	generated_states = 0;
 	
+
+	// Se leen las abstracciones
 	abs1 = read_abstraction_from_file("Abstracciones/PDB1/grupo1.abst");
 	abs2 = read_abstraction_from_file("Abstracciones/PDB1/grupo2.abst");
 	abs3 = read_abstraction_from_file("Abstracciones/PDB1/grupo3.abst");
 
-
+	// Se leen los mapas
 	FILE* faux = fopen("Abstracciones/PDB1/grupo1.pdb", "r");
 	grupo1 = read_state_map(faux);
 	fclose(faux);
@@ -84,27 +83,30 @@ int main(){
 	faux = fopen("Abstracciones/PDB1/grupo3.pdb", "r");
 	grupo3 = read_state_map(faux);
 	fclose(faux);
-try{
-	clock_t begin = clock();
-	auto start_time = chrono::high_resolution_clock::now();
 
-	result = a_star(&start);
+	// Se empieza a correr el programa
+	try{
 
-	auto end_time = chrono::high_resolution_clock::now();
-	clock_t end = clock();
+		// Se usa chrono de c++11 para medicion mas exacta del tiempo en algunas maquinas.
+		auto start_time = chrono::high_resolution_clock::now();
 
-	long double elapsed_secs = chrono::duration_cast<std::chrono::duration<long double> >(end_time - start_time).count();
-	long double gen_per_sec = (long double)(generated_states)/elapsed_secs;
+		result = a_star(&start);
 
-//	cout << "algorithm, heuristic, domain, instance, cost, h0, generated, time, gen_per_sec " << endl;
+		auto end_time = chrono::high_resolution_clock::now();
 
-	cout << "A*, gap, pancake28,\"" << state_string << "\", " << result << ", " << heuristic(&start);
-	cout << ", " << generated_states << ", "  << elapsed_secs << ", ";
-	cout << gen_per_sec << endl;
-	}catch (const std::bad_alloc&){
-	cout << " IDA*, gap, pancake28,\"" << state_string << "\", na, " << heuristic(&start);
-	cout << ", na, na, na" << endl;
-	exit(0);
+		long double elapsed_secs = chrono::duration_cast<std::chrono::duration<long double> >(end_time - start_time).count();
+		long double gen_per_sec = (long double)(generated_states)/elapsed_secs;
+
+		cout << "A*, PDB555, puzzle15,\"" << state_string << "\", " << result << ", " << heuristic(&start);
+		cout << ", " << generated_states << ", "  << elapsed_secs << ", ";
+		cout << gen_per_sec << endl;
+
+	}catch (int e){
+
+		cout << "A*, PDB555, puzzle15,\"" << state_string << "\", na, " << heuristic(&start);
+		cout << ", na, na, na" << endl;
+		exit(0);
+
 	}
 }
 
@@ -172,7 +174,7 @@ int a_star(state_t *start){
 }
 
 
-// Heuristica
+// Heuristica pdb
 int heuristic(state_t *state){
 
 	int heuristicValue = 0;

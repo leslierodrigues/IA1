@@ -27,7 +27,7 @@ psvn2c_abstraction.c:
 	rm -f $*.c
 
 %.ida_star.gap: %.c ida_star.cpp heuristica_gap.cpp
-	$(CXX) $(OPT) ida_star.cpp  -include $< -include heuristica_gap -o $@
+	$(CXX) $(OPT) ida_star.cpp  -include $< -include heuristica_gap.cpp -o $@
 	rm -f $*.c
 
 %.ida_star.manhattan: %.c ida_star.cpp heuristica_manhattan.cpp

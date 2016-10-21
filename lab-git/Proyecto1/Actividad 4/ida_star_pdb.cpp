@@ -25,7 +25,9 @@ abstraction_t *abs1, *abs2, *abs3;
 state_t start;
 string state_string;
 
+unsigned int heuristic(state_t *);
 
+// Manejador que se usa para imprimir que fallo en caso de un timeout.
 void manejador_timeout( int signum ){
 
 	cout << "A*, gap, pancake28,\"" << state_string << "\", na, " << heuristic(&start) <<" ,na, na, na" << endl;
@@ -35,7 +37,6 @@ void manejador_timeout( int signum ){
 
 
 unsigned int ida_star(state_t *);
-
 pair<unsigned int,bool> bounded_a(node *, unsigned int);
 
 
@@ -66,13 +67,15 @@ int main(){
 	state_string.pop_back();
 
 	generated_states = 0;
+	generated_states = 0;
+	
 
-
+	// Se leen las abstracciones
 	abs1 = read_abstraction_from_file("Abstracciones/PDB1/grupo1.abst");
 	abs2 = read_abstraction_from_file("Abstracciones/PDB1/grupo2.abst");
 	abs3 = read_abstraction_from_file("Abstracciones/PDB1/grupo3.abst");
 
-
+	// Se leen los mapas
 	FILE* faux = fopen("Abstracciones/PDB1/grupo1.pdb", "r");
 	grupo1 = read_state_map(faux);
 	fclose(faux);
@@ -85,38 +88,32 @@ int main(){
 	grupo3 = read_state_map(faux);
 	fclose(faux);
 
-	try{	
-	clock_t begin = clock();
-	auto start_time = chrono::high_resolution_clock::now();
-	
-	result = ida_star(&start);
+	// Se empieza a correr el programa
+	try{
 
-	auto end_time = chrono::high_resolution_clock::now();
-	clock_t end = clock();
+		// Se usa chrono de c++11 para medicion mas exacta del tiempo en algunas maquinas.
+		auto start_time = chrono::high_resolution_clock::now();
 
+		result = ida_star(&start);
 
-	long double elapsed_secs = chrono::duration_cast<std::chrono::duration<long double> >(end_time - start_time).count();
-	long double gen_per_sec = (long double)(generated_states)/elapsed_secs;
+		auto end_time = chrono::high_resolution_clock::now();
 
+		long double elapsed_secs = chrono::duration_cast<std::chrono::duration<long double> >(end_time - start_time).count();
+		long double gen_per_sec = (long double)(generated_states)/elapsed_secs;
 
+		cout << "IDA*, PDB555, puzzle15,\"" << state_string << "\", " << result << ", " << heuristic(&start);
+		cout << ", " << generated_states << ", "  << elapsed_secs << ", ";
+		cout << gen_per_sec << endl;
 
+	}catch (int e){
 
-//	cout << "algorithm, heuristic, domain, instance, cost, h0, generated, time, gen_per_sec " << endl;
-
-	cout << " IDA*, gap, pancake28,\"" << state_string << "\", " << result << ", " << heuristic(&start);
-	cout << ", " << generated_states << ", "  << elapsed_secs << ", ";
-	cout << gen_per_sec << endl;
-	
-	}
-	catch(int e){
-
-	cout << " IDA*, gap, pancake28,\"" << state_string << "\", na, " << heuristic(&start);
-	cout << ", na, na, na" << endl;
+		cout << "IDA*, PDB555, puzzle15,\"" << state_string << "\", na, " << heuristic(&start);
+		cout << ", na, na, na" << endl;
+		exit(0);
 
 	}
-
-	return 0;
 }
+
 
 
 unsigned int ida_star(state_t *start){
@@ -130,8 +127,11 @@ unsigned int ida_star(state_t *start){
 	nodo.heuristic = heuristic(start);
 	nodo.history = init_history;
 
+	// se calcula la cota inicial
 	cota = nodo.heuristic + nodo.cost;
 
+	//Se realiza una busqueda en profundida subiendo la cota con el primer
+	// valor del par hasta que el segundo miembro del par sea verdad.
 	while(true){
 		result = bounded_a(&nodo, cota);
 		if (result.second) return (result.first);
@@ -139,9 +139,19 @@ unsigned int ida_star(state_t *start){
 	}
 }
 
+// Se realiza dfs acotado pero con la heeuristica
 pair<unsigned int,bool> bounded_a(node *nodo, unsigned int cota){
 	pair<unsigned int,bool> result;
 	unsigned int estimado = nodo->cost + nodo->heuristic;
+
+	// Se chequea si el estimado esta sobre una cota o si es goal
+	//  se chequea si es goal primero para no descubrir accidentalmente
+	//  el goal e ignorarlo por otra iteracion.
+	if (is_goal((nodo->state))) {
+		result.first = nodo->cost;
+		result.second = true;
+		return result;
+	}
 
 	if (estimado > cota){
 		result.first = estimado;
@@ -149,11 +159,6 @@ pair<unsigned int,bool> bounded_a(node *nodo, unsigned int cota){
 		return result;
 	}
 
-	if (is_goal((nodo->state))) {
-		result.first = nodo->cost;
-		result.second = true;
-		return result;
-	}
 	
 	unsigned int min_estimado = UINT_MAX;
 
@@ -165,7 +170,7 @@ pair<unsigned int,bool> bounded_a(node *nodo, unsigned int cota){
 	state_t *current_state = nodo->state;
 	
 	init_fwd_iter(&iter,current_state);
-
+	// Expansion de nodos
 	while((ruleID = next_ruleid( &iter )) >= 0) {
 
 		if (!fwd_rule_valid_for_history(nodo->history,ruleID)) continue;
@@ -180,10 +185,14 @@ pair<unsigned int,bool> bounded_a(node *nodo, unsigned int cota){
 		hijo.heuristic = heuristic(&hijo_estado);
 
 		result = bounded_a(&hijo,cota);
+		// Si el segundo del par es verdad entonces ya terminamos.
 		if (result.second) return result;
+
+		// Si el segundo del par es false, solo seguimos calculando el minimo.
+		//  estimado mayor a la cota.
 		min_estimado = min_estimado < result.first ? min_estimado : result.first;
 	}
-
+	// No encontramos el goal, devolvemos el minimo estimado mayor a la cota.
 	result.first = min_estimado;
 	result.second = false;
 
@@ -192,10 +201,10 @@ pair<unsigned int,bool> bounded_a(node *nodo, unsigned int cota){
 
 
 
-// Heuristica
-int heuristic(state_t *state){
+// Heuristica pdb
+unsigned int heuristic(state_t *state){
 
-	int heuristicValue = 0;
+	unsigned int heuristicValue = 0;
 	int *aux;
 	state_t abstract_transform;
 

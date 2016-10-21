@@ -14,9 +14,8 @@ int a_star(state_t*);
 state_t start;
 string state_string;
 
-
+// Manejador que imprime el fallo en caso de un timeout.
 void manejador_timeout( int signum ){
-
 	cout << "A*, gap, pancake28,\"" << state_string << "\", na, " << heuristic(&start) <<" ,na, na, na" << endl;
 
 	exit(0);
@@ -43,8 +42,6 @@ int main(){
 	int result; // Valor retornado por la función
 	int goalID;
 		
-//	cout << "Introduzca el estado del problema: " << endl;
-	
 	getline(cin,state_string);
 	if (read_state(state_string.c_str(),&start) == -1){
 
@@ -59,31 +56,30 @@ int main(){
 		cout << endl;
 		return 0;
 	}
-	state_string.pop_back();
+	if (state_string[state_string.length()-1] == '\n'){
+		state_string.pop_back();
+	}
 	
 	generated_states = 0;
 	
+	// Se empieza el programa
 	try{
-	clock_t begin = clock();
-	auto start_time = chrono::high_resolution_clock::now();
+		auto start_time = chrono::high_resolution_clock::now();
 
-	result = a_star(&start);
+		result = a_star(&start);
 
-	auto end_time = chrono::high_resolution_clock::now();
-	clock_t end = clock();
+		auto end_time = chrono::high_resolution_clock::now();
 
-	long double elapsed_secs = chrono::duration_cast<std::chrono::duration<long double> >(end_time - start_time).count();
-	long double gen_per_sec = (long double)(generated_states)/elapsed_secs;
+		long double elapsed_secs = chrono::duration_cast<std::chrono::duration<long double> >(end_time - start_time).count();
+		long double gen_per_sec = (long double)(generated_states)/elapsed_secs;
 
-//	cout << "algorithm, heuristic, domain, instance, cost, h0, generated, time, gen_per_sec " << endl;
-
-	cout << "A*, gap, pancake28,\"" << state_string << "\", " << result << ", " << heuristic(&start);
-	cout << ", " << generated_states << ", "  << elapsed_secs << ", ";
-	cout << gen_per_sec << endl;
-	}catch (const std::bad_alloc&){
-	cout << " IDA*, gap, pancake28,\"" << state_string << "\", na, " << heuristic(&start);
-	cout << ", na, na, na" << endl;
-	exit(0);
+		cout << "A*, gap, pancake28,\"" << state_string << "\", " << result << ", " << heuristic(&start);
+		cout << ", " << generated_states << ", "  << elapsed_secs << ", ";
+		cout << gen_per_sec << endl;
+	}catch (int e){
+		cout << " IDA*, gap, pancake28,\"" << state_string << "\", na, " << heuristic(&start);
+		cout << ", na, na, na" << endl;
+		exit(0);
 	}
 
 
@@ -153,4 +149,3 @@ int a_star(state_t *start){
 	return -1;
 }
 
-//5 6 10 11 14 12 13 18 17 16 15 3 0 1 2 26 25 24 23 4 19 9 8 7 20 21 22 27
