@@ -10,15 +10,22 @@
     
     Generación de resultados
     
-    Para compilar un programa, use:
+     Para compilar un programa, use:
+        - con las heurísticas gap y manhattan
+            make <nombre_psvn>.<nombre_cpp>.<gap/manhattan>        
+        - con PDB 5 5 5
+            make <nombre_psvn>.<nombre_cpp>
 
-        make <nombre_psvn>.<nombre_cpp>.<gap/manhattan>
-        
-        o
-
-        make <nombre_psvn>.<nombre_cpp>
-
-        para los que usan pdb555
+    en donde:
+        <nombre_psvn> 
+            nombre del archivo psvn 
+        <nombre_cpp>
+            nombre del archivo C++ correspondiente al algoritmo que 
+            se desea utilizar.
+                a_star     : para A*
+                ida_star   : para IDA*
+                a_star_pdb : para A* con PDB 5+5+5
+                a_star_pdb : para IDA* con PDB 5+5+5
 
     (El history_len se debe cambiar a mano en el makefile)
     
