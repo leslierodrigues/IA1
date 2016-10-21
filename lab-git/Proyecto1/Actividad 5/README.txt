@@ -76,7 +76,7 @@
 
     make <nombre_problema>/<nombretxt>.pdb
 
-    En el caso del PDB 5+5+5 se deben generar
+    En el caso del PDB 5+5+5 se debe compilar
 
     make npuzzle4x4/grupo1.pdb
     make npuzzle4x4/grupo2.pdb
