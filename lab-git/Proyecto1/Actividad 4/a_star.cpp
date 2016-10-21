@@ -132,7 +132,7 @@ int a_star(state_t *start){
 			generated_states++;
 
 			// Chequeamos si el nuevo hijo es un goal.
-			if (is_goal(&child)) return current_cost + 1;
+			if (is_goal(&child)) return current_cost + get_fwd_rule_cost(ruleID);
 			
 			h = heuristic(&child);
 			
