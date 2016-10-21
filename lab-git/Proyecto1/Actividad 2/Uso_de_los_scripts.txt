@@ -1,5 +1,0 @@
-Uso de los scripts:
-
-    . branching_script.sh nombre_del_archivo_existente_de_resultados.txt
-
-    . calcular_todos_los_branching_factors.sh nombre_del_nuevo_archivo_de_destino.txt
