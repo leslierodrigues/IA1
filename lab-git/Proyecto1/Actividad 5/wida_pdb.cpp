@@ -9,7 +9,7 @@ using namespace std;
 
 long long generated_states;
 
-#define WEIGHT 2
+#define WEIGHT 1.5
 
 // Estructutura que se almacena en la cola de prioridades
 struct node{
@@ -46,9 +46,7 @@ int main(){
 	string state_string; // Almacena el estado dado por el usuario
 	int result; // Valor retornado por la función
 	int goalID;
-	
-	cout << "Introduzca el estado del problema: " << endl;
-	
+		
 	getline(cin,state_string);
 
 	if (read_state(state_string.c_str(),&start) == -1){
@@ -64,8 +62,9 @@ int main(){
 		cout << endl;
 		return 0;
 	}
-	state_string.pop_back();
-
+	if (state_string[state_string.size()-1] == '\n'){
+		state_string.pop_back();
+	}
 	generated_states = 0;
 
 
@@ -128,11 +127,15 @@ unsigned int wida_star(state_t *start){
 
 	nodo.state = start;
 	nodo.cost=0;
+	// Se le multiplica por un peso a la heuristica por ser wida*
 	nodo.heuristic = WEIGHT*heuristic(start);
 	nodo.history = init_history;
 
+	// se calcula la cota inicial
 	cota = nodo.heuristic + nodo.cost;
 
+	//Se realiza una busqueda en profundida subiendo la cota con el primer
+	// valor del par hasta que el segundo miembro del par sea verdad.
 	while(true){
 		result = bounded_a(&nodo, cota);
 		if (result.second) return (result.first);
@@ -140,9 +143,19 @@ unsigned int wida_star(state_t *start){
 	}
 }
 
+// Se realiza dfs acotado pero con la heeuristica
 pair<unsigned int,bool> bounded_a(node *nodo, unsigned int cota){
 	pair<unsigned int,bool> result;
 	unsigned int estimado = nodo->cost + nodo->heuristic;
+
+	// Se chequea si el estimado esta sobre una cota o si es goal
+	//  se chequea si es goal primero para no descubrir accidentalmente
+	//  el goal e ignorarlo por otra iteracion.
+	if (is_goal((nodo->state))) {
+		result.first = nodo->cost;
+		result.second = true;
+		return result;
+	}
 
 	if (estimado > cota){
 		result.first = estimado;
@@ -150,11 +163,6 @@ pair<unsigned int,bool> bounded_a(node *nodo, unsigned int cota){
 		return result;
 	}
 
-	if (is_goal((nodo->state))) {
-		result.first = nodo->cost;
-		result.second = true;
-		return result;
-	}
 	
 	unsigned int min_estimado = UINT_MAX;
 
@@ -166,7 +174,7 @@ pair<unsigned int,bool> bounded_a(node *nodo, unsigned int cota){
 	state_t *current_state = nodo->state;
 	
 	init_fwd_iter(&iter,current_state);
-
+	// Expansion de nodos
 	while((ruleID = next_ruleid( &iter )) >= 0) {
 
 		if (!fwd_rule_valid_for_history(nodo->history,ruleID)) continue;
@@ -181,15 +189,21 @@ pair<unsigned int,bool> bounded_a(node *nodo, unsigned int cota){
 		hijo.heuristic = WEIGHT*heuristic(&hijo_estado);
 
 		result = bounded_a(&hijo,cota);
+		// Si el segundo del par es verdad entonces ya terminamos.
 		if (result.second) return result;
+
+		// Si el segundo del par es false, solo seguimos calculando el minimo.
+		//  estimado mayor a la cota.
 		min_estimado = min_estimado < result.first ? min_estimado : result.first;
 	}
-
+	// No encontramos el goal, devolvemos el minimo estimado mayor a la cota.
 	result.first = min_estimado;
 	result.second = false;
 
 	return result;
 }
+
+
 
 
 
