@@ -45,7 +45,7 @@
             nombre del ejecutable generado al compilar
         
         timeout --signal=SIGTERM 10m ./<nombre_del_ejecutable>
-            orden que permite ejecutar IDDFS para hanoi con un límite de 
+            orden que permite ejecutar el algoritmo en el ejecutable con un
             tiempo de 10 minutos. Si se pasa de este tiempo, se envía la señal
             SIGTERM, especificada como argumento allí.
         
