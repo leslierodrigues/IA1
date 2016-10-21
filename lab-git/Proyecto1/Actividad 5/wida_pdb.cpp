@@ -31,7 +31,7 @@ unsigned int heuristic(state_t*);
 
 void manejador_timeout( int signum ){
 
-	cout << "A*, gap, pancake28,\"" << state_string << "\", na, " << WEIGHT*heuristic(&start) <<" ,na, na, na" << endl;
+	cout << "WIDA*, PDB555, " << WEIGHT << ", 15puzzle,\"" << state_string << "\", na, " << WEIGHT*heuristic(&start) <<" ,na, na, na" << endl;
 
 	exit(signum);
 }
@@ -43,9 +43,6 @@ pair<unsigned int,bool> bounded_a(node *, unsigned int);
 int main(){
 	signal(SIGTERM, manejador_timeout); 
 
-
-	state_t start; 
-	string state_string; // Almacena el estado dado por el usuario
 	int result; // Valor retornado por la función
 	int goalID;
 		
@@ -67,14 +64,15 @@ int main(){
 	if (state_string[state_string.size()-1] == '\n'){
 		state_string.pop_back();
 	}
+
 	generated_states = 0;
 
-
+	// Se leen las abstracciones
 	abs1 = read_abstraction_from_file("Abstracciones/PDB1/grupo1.abst");
 	abs2 = read_abstraction_from_file("Abstracciones/PDB1/grupo2.abst");
 	abs3 = read_abstraction_from_file("Abstracciones/PDB1/grupo3.abst");
 
-
+	// Se leen los mapas
 	FILE* faux = fopen("Abstracciones/PDB1/grupo1.pdb", "r");
 	grupo1 = read_state_map(faux);
 	fclose(faux);
@@ -87,37 +85,30 @@ int main(){
 	grupo3 = read_state_map(faux);
 	fclose(faux);
 
-	try{	
-	clock_t begin = clock();
-	auto start_time = chrono::high_resolution_clock::now();
-	
-	result = wida_star(&start);
+	// Se empieza a correr el programa
+	try{
 
-	auto end_time = chrono::high_resolution_clock::now();
-	clock_t end = clock();
+		// Se usa chrono de c++11 para medicion mas exacta del tiempo en algunas maquinas.
+		auto start_time = chrono::high_resolution_clock::now();
 
+		result = wida_star(&start);
 
-	long double elapsed_secs = chrono::duration_cast<std::chrono::duration<long double> >(end_time - start_time).count();
-	long double gen_per_sec = (long double)(generated_states)/elapsed_secs;
+		auto end_time = chrono::high_resolution_clock::now();
 
+		long double elapsed_secs = chrono::duration_cast<std::chrono::duration<long double> >(end_time - start_time).count();
+		long double gen_per_sec = (long double)(generated_states)/elapsed_secs;
 
+		cout << "WIDA*, PDB555, " << WEIGHT << ", puzzle15,\"" << state_string << "\", " << result << ", " << heuristic(&start);
+		cout << ", " << generated_states << ", "  << elapsed_secs << ", ";
+		cout << gen_per_sec << endl;
 
+	}catch (int e){
 
-//	cout << "algorithm, heuristic, domain, instance, cost, h0, generated, time, gen_per_sec " << endl;
-
-	cout << " IDA*, gap, pancake28,\"" << state_string << "\", " << result << ", " << WEIGHT*heuristic(&start);
-	cout << ", " << generated_states << ", "  << elapsed_secs << ", ";
-	cout << gen_per_sec << endl;
-	
-	}
-	catch(int e){
-
-	cout << " IDA*, gap, pancake28,\"" << state_string << "\", na, " << WEIGHT*heuristic(&start);
-	cout << ", na, na, na" << endl;
+		cout << "WIDA*, PDB555, " << WEIGHT << ", puzzle15,\"" << state_string << "\", na, " << heuristic(&start);
+		cout << ", na, na, na" << endl;
+		exit(0);
 
 	}
-
-	return 0;
 }
 
 

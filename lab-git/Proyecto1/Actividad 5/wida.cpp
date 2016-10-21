@@ -28,7 +28,7 @@ string state_string;
 // manejador en caso de un timeout
 void manejador_timeout( int signum ){
 
-	cout << "A*, gap, pancake28,\"" << state_string << "\", na, " << WEIGHT*heuristic(&start) <<" ,na, na, na" << endl;
+	cout << "WIDA*, gap, " << WEIGHT << ",pancake28,\"" << state_string << "\", na, " << WEIGHT*heuristic(&start) <<" ,na, na, na" << endl;
 
 	exit(signum);
 }
@@ -42,9 +42,6 @@ pair<unsigned int,bool> bounded_a(node *, unsigned int);
 int main(){
 	signal(SIGTERM, manejador_timeout); 
 
-
-	state_t start; 
-	string state_string; // Almacena el estado dado por el usuario
 	int result; // Valor retornado por la función
 	int goalID;
 		
@@ -88,14 +85,14 @@ int main(){
 
 //	cout << "algorithm, heuristic, domain, instance, cost, h0, generated, time, gen_per_sec " << endl;
 
-	cout << " IDA*, gap, pancake28,\"" << state_string << "\", " << result << ", " << WEIGHT*heuristic(&start);
+	cout << "WIDA*, gap, " << WEIGHT << ",pancake28,\"" << state_string << "\", " << result << ", " << WEIGHT*heuristic(&start);
 	cout << ", " << generated_states << ", "  << elapsed_secs << ", ";
 	cout << gen_per_sec << endl;
 	
 	}
 	catch(int e){
 
-	cout << " IDA*, gap, pancake28,\"" << state_string << "\", na, " << WEIGHT*heuristic(&start);
+	cout << "WIDA*, gap, " << WEIGHT << ",pancake28,\"" << state_string << "\", na, " << WEIGHT*heuristic(&start);
 	cout << ", na, na, na" << endl;
 
 	}
