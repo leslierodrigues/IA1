@@ -2,9 +2,9 @@
 #include <ctime>
 #include <cstdio>
 #include <queue>
-#include <map>
 #include <climits>
 #include <chrono>
+#include <csignal>
 using namespace std;
 
 long long generated_states;

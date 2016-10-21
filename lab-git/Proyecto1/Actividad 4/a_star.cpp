@@ -37,11 +37,10 @@ return a.priority>b.priority;
 
 int main(){
 	signal(SIGTERM, manejador_timeout); 
-	signal(SIGSEGV, manejador_timeout); 
 
 	int result; // Valor retornado por la función
 	int goalID;
-		
+
 	getline(cin,state_string);
 	if (read_state(state_string.c_str(),&start) == -1){
 

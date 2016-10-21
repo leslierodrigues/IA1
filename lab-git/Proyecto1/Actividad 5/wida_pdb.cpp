@@ -41,7 +41,9 @@ pair<unsigned int,bool> bounded_a(node *, unsigned int);
 
 
 int main(){
-	
+	signal(SIGTERM, manejador_timeout); 
+
+
 	state_t start; 
 	string state_string; // Almacena el estado dado por el usuario
 	int result; // Valor retornado por la función

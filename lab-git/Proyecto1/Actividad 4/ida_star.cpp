@@ -59,8 +59,9 @@ int main(){
 		cout << endl;
 		return 0;
 	}
-	state_string.pop_back();
-
+	if (state_string[state_string.size()-1] == '\n'){
+		state_string.pop_back();
+	}
 	generated_states = 0;
 
 
