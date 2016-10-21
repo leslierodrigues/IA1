@@ -9,6 +9,11 @@
     el history_len usado. 
     
     Generación de resultados
+
+    Se uso ulimit -Sv 2000000 para calcular cada resultado, esto limita
+    la memoria virtual disponible para el proceso a 2GB (es decir, como
+    maximo va a tomar 2 gb de ram y no va a hacer swap con el disco para
+    conseguir mas.)
     
     Compilar
         - Para 28-panquecas:

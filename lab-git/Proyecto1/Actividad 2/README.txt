@@ -44,6 +44,10 @@
         hanoiPuzzle_Results/hanoiPuzzle_4P_16D_history0_depth12.txt_branching_factor.txt
         hanoiPuzzle_Results/hanoiPuzzle_4P_16D_history1_depth12.txt_branching_factor.txt
 
+    Se puede notar que en algunos problemas, history_len = 2 tiene el mismo
+    factor de ramificacion que history_len = 1, esto es porque en estos
+    problemas no hay ninguna secuencia de 3 movimientos que te lleve al estado
+    inicial.
 
     Resultados (Primer Nivel donde el Número de estados < Número de Nodos)
         

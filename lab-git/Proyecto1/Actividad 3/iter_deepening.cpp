@@ -11,6 +11,7 @@ using namespace std;
 string state_string;
 
 long long generated_states;
+// manejador en caso de un timeout
 void manejadorTimeout( int signum ){
 
 	cout << "dfid ,11puzzle , \"" << state_string << "\", na, na, na, na" << endl;
@@ -42,7 +43,7 @@ int main(){
 		return 0;
 	}
 
-	if (state_string[state_string.length()-1] == '\n'){
+	if (state_string[state_string.size()-1] == '\n'){
 		state_string.pop_back();
 	}
 

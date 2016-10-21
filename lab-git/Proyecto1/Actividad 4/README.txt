@@ -10,6 +10,23 @@
     
     Generación de resultados
     
+    Para compilar un programa, use:
+
+        make <nombre_psvn>.<nombre_cpp>.<gap/manhattan>
+        
+        o
+
+        make <nombre_psvn>.<nombre_cpp>
+
+        para los que usan pdb555
+
+    (El history_len se debe cambiar a mano en el makefile)
+    
+    Se uso ulimit -Sv 2000000 para calcular cada resultado, esto limita
+    la memoria virtual disponible para el proceso a 2GB (es decir, como
+    maximo va a tomar 2 gb de ram y no va a hacer swap con el disco para
+    conseguir mas.)
+
     Ejecutar:         
         while read in; do echo "$in" | timeout --signal=SIGTERM 10m 
         ./<nombre_del_ejecutable> \ >> <archivo_de_resultados>;
