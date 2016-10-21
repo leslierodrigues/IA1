@@ -1,10 +1,9 @@
 #include <iostream>
 #include <ctime>
 #include <cstdio>
-#include <queue>
-#include <map>
 #include <climits>
-#include "heuristica_gap.cpp"
+#include <utility>
+#include <chrono>
 
 using namespace std;
 
@@ -13,20 +12,29 @@ long long generated_states;
 
 // Estructutura que se almacena en la cola de prioridades
 struct node{
-	state_t estado;
-	unsigned int costo;
-	unsigned int heuristica;
+	state_t *state;
+	unsigned int cost;
+	unsigned int heuristic;
 	unsigned int history;
 };
 
-struct par{
-	node *nodo;
-	unsigned int estimado;
-};
 
-struct node ida_star(state_t *);
 
-struct par bounded_a(node, unsigned int,state_map_t *);
+state_t start;
+string state_string;
+
+
+void manejador_timeout( int signum ){
+
+	cout << "A*, gap, pancake28,\"" << state_string << "\", na, " << heuristic(&start) <<" ,na, na, na" << endl;
+
+	exit(signum);
+}
+
+int heuristic(state_t*);
+unsigned int ida_star(state_t *);
+
+pair<unsigned int,bool> bounded_a(node *, unsigned int);
 
 
 int main(){
@@ -36,11 +44,10 @@ int main(){
 	int result; // Valor retornado por la función
 	int goalID;
 	
-	//map <state_t,int> m; //mapea un estado con su prioridad
-	
 	cout << "Introduzca el estado del problema: " << endl;
 	
 	getline(cin,state_string);
+
 	if (read_state(state_string.c_str(),&start) == -1){
 
 		cout << "No pudimos transformar tu input a un estado" << endl;
@@ -54,80 +61,114 @@ int main(){
 		cout << endl;
 		return 0;
 	}
-	
-	generated_states = 0;
-	
-	clock_t begin = clock();
-	
-	struct node nodo_result = ida_star(&start);
-	result = nodo_result.costo;
+	state_string.pop_back();
 
+	generated_states = 0;
+
+
+	try{	
+	clock_t begin = clock();
+	auto start_time = chrono::high_resolution_clock::now();
+	
+	result = ida_star(&start);
+
+	auto end_time = chrono::high_resolution_clock::now();
 	clock_t end = clock();
 
-	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-	double gen_per_sec = double(generated_states)/elapsed_secs;
 
-	cout << "algorithm, heuristic, domain, instance, cost, h0, generated, time, gen_per_sec " << endl;
+	long double elapsed_secs = chrono::duration_cast<std::chrono::duration<long double> >(end_time - start_time).count();
+	long double gen_per_sec = (long double)(generated_states)/elapsed_secs;
+
+
+
+
+//	cout << "algorithm, heuristic, domain, instance, cost, h0, generated, time, gen_per_sec " << endl;
 
 	cout << " IDA*, gap, pancake28,\"" << state_string << "\", " << result << ", " << heuristic(&start);
 	cout << ", " << generated_states << ", "  << elapsed_secs << ", ";
 	cout << gen_per_sec << endl;
 	
+	}
+	catch(int e){
+
+	cout << " IDA*, gap, pancake28,\"" << state_string << "\", na, " << heuristic(&start);
+	cout << ", na, na, na" << endl;
+
+	}
+
 	return 0;
 }
 
 
-struct node ida_star(state_t *start){
-    unsigned int cota = heuristic(start);
-    struct node nodo;
-    nodo.estado = *start;
-    nodo.costo=0;
-    nodo.heuristica=cota;
-    nodo.history = init_history;
-    struct par p;
-    state_map_t *stateMap = new_state_map();
-    while(true){
-        p = bounded_a(nodo, cota, stateMap);
-        if (p.nodo) {return *(p.nodo);}
-        cota = p.estimado;
-    }
+unsigned int ida_star(state_t *start){
+	unsigned int cota;
+	struct node nodo;
+	pair<int,bool> result;
+
+
+	nodo.state = start;
+	nodo.cost=0;
+	nodo.heuristic = heuristic(start);
+	nodo.history = init_history;
+
+	cota = nodo.heuristic + nodo.cost;
+
+	while(true){
+		result = bounded_a(&nodo, cota);
+		if (result.second) return (result.first);
+		cota = result.first;
+	}
 }
 
-struct par bounded_a(node nodo, unsigned int cota, state_map_t *stateMap){
-    unsigned int estimado = nodo.costo + nodo.heuristica;
-    if (estimado > cota) {par p; p.nodo = NULL; p.estimado=estimado;return p;}
-    if (is_goal(&(nodo.estado))) {par p; p.nodo=&nodo;p.estimado=nodo.costo;return p;}
-    
-    unsigned int min_estimado = UINT_MAX;
-    int ruleID, new_hist;
-    ruleid_iterator_t iter;
-    state_map_add(stateMap,&(nodo.estado),nodo.costo);
-    state_t hijo_estado;
-    state_t current_state = nodo.estado;
-    
-    init_fwd_iter(&iter,&current_state);
-    struct node hijo;
-    struct par p;
-    while((ruleID = next_ruleid( &iter )) >= 0) {
-        
-        if (!fwd_rule_valid_for_history(nodo.history,ruleID)) {continue;}
-        
-        new_hist = next_fwd_history(nodo.history,ruleID);;
-        
-        apply_fwd_rule(ruleID, &current_state, &hijo_estado);
-        generated_states++;
-        hijo.history = new_hist;
-        hijo.estado = hijo_estado;
-        hijo.costo = nodo.costo + 1;
-        hijo.heuristica = heuristic(&hijo_estado);
-        state_map_add(stateMap,&hijo_estado,hijo.costo);
-        p = bounded_a(hijo,cota, stateMap);
-        if (p.nodo) {return p;}
-        min_estimado = (min_estimado < p.estimado) ? min_estimado : p.estimado;
-    }
-    p.nodo = NULL;
-    p.estimado = min_estimado;
-    return p;
+pair<unsigned int,bool> bounded_a(node *nodo, unsigned int cota){
+	pair<unsigned int,bool> result;
+	unsigned int estimado = nodo->cost + nodo->heuristic;
+
+	if (estimado > cota){
+		result.first = estimado;
+		result.second = false;
+		return result;
+	}
+
+	if (is_goal((nodo->state))) {
+		result.first = nodo->cost;
+		result.second = true;
+		return result;
+	}
+	
+	unsigned int min_estimado = UINT_MAX;
+
+	int ruleID, new_hist;
+	ruleid_iterator_t iter;
+
+	struct node hijo;
+	state_t hijo_estado;
+	state_t *current_state = nodo->state;
+	
+	init_fwd_iter(&iter,current_state);
+
+	while((ruleID = next_ruleid( &iter )) >= 0) {
+
+		if (!fwd_rule_valid_for_history(nodo->history,ruleID)) continue;
+
+		new_hist = next_fwd_history(nodo->history,ruleID);
+
+		apply_fwd_rule(ruleID, current_state, &hijo_estado);
+		generated_states++;
+		hijo.history = new_hist;
+		hijo.state = &hijo_estado;
+		hijo.cost = nodo->cost + 1;
+		hijo.heuristic = heuristic(&hijo_estado);
+
+		result = bounded_a(&hijo,cota);
+		if (result.second) return result;
+		min_estimado = min_estimado < result.first ? min_estimado : result.first;
+	}
+
+	result.first = min_estimado;
+	result.second = false;
+
+	return result;
 }
 
 

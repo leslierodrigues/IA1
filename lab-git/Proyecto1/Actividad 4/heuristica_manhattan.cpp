@@ -23,7 +23,7 @@ unsigned int heuristic(state_t *state){
 	unsigned int h = 0;
 
 	for(unsigned int i=0; i< tam; i++){
-		h += manhattan[state->vars[i]][i];
+			h += manhattan[state->vars[i]][i];
 	}
 	
     return h;

@@ -1,7 +1,6 @@
-#include <cstdio>
-#include <iostream>
-//gap
-using namespace std;
+//Heuristica GAP
+//
+
 
 unsigned int heuristic(state_t *state){
     
@@ -17,7 +16,7 @@ unsigned int heuristic(state_t *state){
         
     }
 
-    if (state->vars[tam-1] != 27){
+    if (state->vars[tam-1] != (int)tam-1){
         number_not_adjacent++;
     }
     
