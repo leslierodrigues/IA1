@@ -12,7 +12,7 @@
     
      Para compilar un programa, use:
         - con las heurísticas gap y manhattan
-            make <nombre_psvn>.<nombre_cpp>.<gap/manhattan>        
+            make <nombre_psvn>.<nombre_cpp>.<heuristica>        
         - con PDB 5 5 5
             make <nombre_psvn>.<nombre_cpp>
 
@@ -26,6 +26,10 @@
                 ida_star   : para IDA*
                 a_star_pdb : para A* con PDB 5+5+5
                 a_star_pdb : para IDA* con PDB 5+5+5
+        <heuristica>
+            nombre de la heuristica a utilizar
+                gap       : para la heurística gap. Utilizada para n-pancakes.
+                manhattan : para la heurística gap. Utilizada para n-puzzle.
 
     (El history_len se debe cambiar a mano en el makefile)
     
@@ -74,7 +78,7 @@
 
     make <nombre_problema>/<nombretxt>.pdb
 
-    En el caso del PDB 5+5+5 se deben generar
+    En el caso del PDB 5+5+5 se compilar
 
     make npuzzle4x4/grupo1.pdb
     make npuzzle4x4/grupo2.pdb
