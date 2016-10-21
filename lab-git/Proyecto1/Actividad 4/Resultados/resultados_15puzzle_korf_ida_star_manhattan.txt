@@ -1,3 +1,4 @@
+algorithm, heuristic, domain, instance, cost, h0, generated, time, gen_per_sec
 IDA*, manhattan, 15puzzle,"7 15 8 2 13 6 3 12 11 B 4 10 9 5 1 14", 53, 41, 12434133, 0.457739, 2.71642e+07
 IDA*, manhattan, 15puzzle,"14 13 15 7 11 12 9 5 6 B 2 1 4 8 10 3", 57, 41, 611486124, 21.8799, 2.79474e+07
 IDA*, manhattan, 15puzzle,"13 5 4 10 9 12 8 14 2 3 7 1 B 15 11 6", 55, 43, 21083027, 0.747299, 2.82123e+07
