@@ -22,8 +22,6 @@
         
         hanoi_4_14.psvn
         hanoi_4_16.psvn
-        hanoiPuzzle14_4.psvn
-        hanoiPuzzle16_4.psvn
         npuzzle4x3.psvn
         npuzzle4x4.psvn
         pancakePuzzle16.psvn
