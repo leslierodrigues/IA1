@@ -4,6 +4,8 @@
 // Last Revision: 1/11/16
 // Modified by: 
 
+#include <algorithm>
+#include <climits>
 #include <iostream>
 #include <limits>
 #include "othello_cut.h" // won't work correctly until .h is fixed!
@@ -12,6 +14,10 @@
 #include <unordered_map>
 
 using namespace std;
+
+#define MAX_DEPTH 15
+#define BLACK 0
+#define WHITE 1
 
 unsigned expanded = 0;
 unsigned generated = 0;
@@ -36,7 +42,6 @@ class hash_table_t : public unordered_map<state_t, stored_info_t, hash_function_
 
 hash_table_t TTable[2];
 
-int maxmin(state_t state, int depth, bool use_tt);
 int minmax(state_t state, int depth, bool use_tt = false);
 int maxmin(state_t state, int depth, bool use_tt = false);
 int negamax(state_t state, int depth, int color, bool use_tt = false);
@@ -100,15 +105,15 @@ int main(int argc, const char **argv) {
 
         try {
             if( algorithm == 0 ) {
-                //value = color * (color == 1 ? maxmin(pv[i], 0, use_tt) : minmax(pv[i], 0, use_tt));
+                value = color * (color == 1 ? maxmin(pv[i], MAX_DEPTH, use_tt) : minmax(pv[i], MAX_DEPTH, use_tt));
             } else if( algorithm == 1 ) {
-                //value = negamax(pv[i], 0, color, use_tt);
+                //value = negamax(pv[i], MAX_DEPTH, color, use_tt);
             } else if( algorithm == 2 ) {
-                //value = negamax(pv[i], 0, -200, 200, color, use_tt);
+                //value = negamax(pv[i], MAX_DEPTH, -200, 200, color, use_tt);
             } else if( algorithm == 3 ) {
-                //value = scout(pv[i], 0, color, use_tt);
+                //value = scout(pv[i], MAX_DEPTH, color, use_tt);
             } else if( algorithm == 4 ) {
-                //value = negascout(pv[i], 0, -200, 200, color, use_tt);
+                //value = negascout(pv[i], MAX_DEPTH, -200, 200, color, use_tt);
             }
         } catch( const bad_alloc &e ) {
             cout << "size TT[0]: size=" << TTable[0].size() << ", #buckets=" << TTable[0].bucket_count() << endl;
@@ -125,8 +130,71 @@ int main(int argc, const char **argv) {
              << ", seconds=" << elapsed_time
              << ", #generated/second=" << generated/elapsed_time
              << endl;
+
     }
 
     return 0;
 }
 
+int minmax(state_t state, int depth, bool use_tt){
+    if (depth == 0 or state.terminal()) return state.value();
+
+    int score = INT_MAX;
+    depth--;
+
+    vector<int> valid_moves;
+    for (int move = 0; move < DIM; move++){
+        if (state.is_white_move(move)) valid_moves.push_back(move);
+    }
+
+    if (valid_moves.empty()){
+        valid_moves.push_back(36); // The "Do nothing" move
+    }
+
+    random_shuffle(valid_moves.begin(),valid_moves.end());
+
+    state_t child;
+    for (int pos : valid_moves){
+        child = state.white_move(pos);
+        generated++;
+        score = min(score,maxmin(child,depth,use_tt));
+        expanded++;
+    }
+
+    return score;
+}
+
+
+int maxmin(state_t state, int depth, bool use_tt){
+    if (depth == 0 or state.terminal()) return state.value();
+
+    int score = INT_MIN;
+    depth--;
+
+    vector<int> valid_moves;
+    for (int move = 0; move < DIM; move++){
+        if (state.is_black_move(move)) valid_moves.push_back(move);
+    }
+
+    if (valid_moves.empty()){
+        valid_moves.push_back(36); // The "Do nothing" move
+    }
+
+    random_shuffle(valid_moves.begin(),valid_moves.end());
+
+    state_t child;
+    for (int pos : valid_moves){
+        child = state.black_move(pos);
+        generated++;
+        score = max(score,minmax(child,depth,use_tt));
+        expanded++;
+    }
+
+    return score;
+}
+
+
+int negamax(state_t state, int depth, int color, bool use_tt);
+int negamax(state_t state, int depth, int alpha, int beta, int color, bool use_tt);
+int scout(state_t state, int depth, int color, bool use_tt);
+int negascout(state_t state, int depth, int alpha, int beta, int color, bool use_tt);

@@ -84,6 +84,7 @@ const int dia2[][7] = {
 };
 
 // moves on the principal variation
+
 static int PV[] = {
     12, 21, 26, 13, 22, 18,  7,  6,  5, 27, 33, 23, 17, 11, 19, 15,
     14, 31, 20, 32, 30, 10, 25, 24, 34, 28, 16,  4, 29, 35, 36,  8,
@@ -202,6 +203,7 @@ inline bool state_t::outflank(bool color, int pos) const {
     
     //CREO que es esto? pero no estoy seguro
     // dia1 y dia2 las declara el al pincipio.
+
     x = dia1[pos - 4];
     while( *x != pos ) ++x;
     if( *(x+1) != -1 ) {
