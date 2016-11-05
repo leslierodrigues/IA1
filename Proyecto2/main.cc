@@ -15,7 +15,7 @@
 
 using namespace std;
 
-#define MAX_DEPTH 15
+#define MAX_DEPTH 100
 #define BLACK 0
 #define WHITE 1
 
@@ -109,7 +109,7 @@ int main(int argc, const char **argv) {
             } else if( algorithm == 1 ) {
                 value = negamax(pv[i], MAX_DEPTH, color, use_tt);
             } else if( algorithm == 2 ) {
-                //value = negamax(pv[i], MAX_DEPTH, -200, 200, color, use_tt);
+                value = negamax(pv[i], MAX_DEPTH, -200, 200, color, use_tt);
             } else if( algorithm == 3 ) {
                 //value = scout(pv[i], MAX_DEPTH, color, use_tt);
             } else if( algorithm == 4 ) {
@@ -225,7 +225,46 @@ int negamax(state_t state, int depth, int color, bool use_tt){
     return alpha;
 }
 
+int negamax(state_t state, int depth, int alpha, int beta, int color, bool use_tt){
+    if (depth == 0 or state.terminal()) return color*state.value();
 
-int negamax(state_t state, int depth, int alpha, int beta, int color, bool use_tt);
+    int val,score = INT_MIN;
+    depth--;
+
+    vector<int> valid_moves;
+    for (int move = 0; move < DIM; move++){
+        if ((color == -1 and state.is_white_move(move)) or
+                (color == 1 and state.is_black_move(move))){
+            valid_moves.push_back(move);
+        }
+    }
+
+    if (valid_moves.empty()){
+        valid_moves.push_back(36); // The "Do nothing" move
+    }
+
+    random_shuffle(valid_moves.begin(),valid_moves.end());
+
+    state_t child;
+    for (int pos : valid_moves){
+        child = color == 1 ? state.black_move(pos): state.white_move(pos);
+        generated++;
+
+        val = -negamax(child,depth,-beta,-alpha,-color,use_tt);
+
+        score = max(score,val);
+        alpha = max(alpha,val);
+        expanded++;
+
+        if (alpha >= beta){
+            break;
+        }
+
+    }
+
+    return score;
+}
+
+
 int scout(state_t state, int depth, int color, bool use_tt);
 int negascout(state_t state, int depth, int alpha, int beta, int color, bool use_tt);
