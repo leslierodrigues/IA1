@@ -15,9 +15,7 @@
 
 using namespace std;
 
-#define MAX_DEPTH 100
-#define BLACK 0
-#define WHITE 1
+#define MAX_DEPTH 5000
 
 unsigned expanded = 0;
 unsigned generated = 0;
@@ -48,6 +46,7 @@ int negamax(state_t state, int depth, int color, bool use_tt = false);
 int negamax(state_t state, int depth, int alpha, int beta, int color, bool use_tt = false);
 int scout(state_t state, int depth, int color, bool use_tt = false);
 int negascout(state_t state, int depth, int alpha, int beta, int color, bool use_tt = false);
+bool TEST(state_t state, int score, int depth, int color,int condition);
 
 int main(int argc, const char **argv) {
     state_t pv[128];
@@ -111,7 +110,7 @@ int main(int argc, const char **argv) {
             } else if( algorithm == 2 ) {
                 value = negamax(pv[i], MAX_DEPTH, -200, 200, color, use_tt);
             } else if( algorithm == 3 ) {
-                //value = scout(pv[i], MAX_DEPTH, color, use_tt);
+                value = color * scout(pv[i], MAX_DEPTH, color, use_tt);
             } else if( algorithm == 4 ) {
                 //value = negascout(pv[i], MAX_DEPTH, -200, 200, color, use_tt);
             }
@@ -266,5 +265,122 @@ int negamax(state_t state, int depth, int alpha, int beta, int color, bool use_t
 }
 
 
-int scout(state_t state, int depth, int color, bool use_tt);
-int negascout(state_t state, int depth, int alpha, int beta, int color, bool use_tt);
+int scout(state_t state, int depth, int color, bool use_tt){
+    if (depth == 0 or state.terminal()) return state.value();
+
+    int score = 0;
+    depth--;
+    vector<int> valid_moves;
+
+    for (int move = 0; move < DIM; move++){
+        if ((color == -1 and state.is_white_move(move)) or
+                (color == 1 and state.is_black_move(move))){
+            valid_moves.push_back(move);
+        }
+    }
+
+    if (valid_moves.empty()){
+        valid_moves.push_back(36); // The "Do nothing" move
+    }
+
+    random_shuffle(valid_moves.begin(),valid_moves.end());
+
+    state_t child;
+    bool is_first = true;
+
+    for (int pos : valid_moves){
+        child = color == 1 ? state.black_move(pos): state.white_move(pos);
+        generated++;
+        if (is_first){
+            score = scout(child, depth, -color, use_tt);
+            expanded++;
+            is_first = false;
+        }
+        else{
+            if ((color == 1 and TEST(child,score,depth,-color,0)) or
+                    (color == -1 and !TEST(child,score,depth,-color,1))){
+                score = scout(child, depth, -color, use_tt);
+                expanded++;
+            }
+        }
+    }
+
+    return score;
+}
+
+bool TEST(state_t state, int score, int depth, int color, int condition){
+    if (depth == 0 or state.terminal()){
+        return condition == 1 ? state.value() >= score : state.value() > score;
+    }   
+    depth--;
+
+    vector<int> valid_moves;
+    for (int move = 0; move < DIM; move++){
+        if ((color == -1 and state.is_white_move(move)) or
+                (color == 1 and state.is_black_move(move))){
+            valid_moves.push_back(move);
+        }
+    }
+
+
+    if (valid_moves.empty()){
+        valid_moves.push_back(36); // The "Do nothing" move
+    }
+
+    random_shuffle(valid_moves.begin(),valid_moves.end());
+
+    state_t child;
+    for (int pos : valid_moves){
+        child = color == 1 ? state.black_move(pos): state.white_move(pos);        
+        if (color == 1 and TEST(child,score,depth,-color,condition)){
+            return true;
+        }
+        else if (color == -1 and !TEST(child,score,depth,-color,condition)){
+            return false;
+        }
+    }
+
+    return color != 1; // No es necesario, el juego termina.
+}
+
+
+
+int negascout(state_t state, int depth, int alpha, int beta, int color, bool use_tt){
+    if (depth == 0 or state.terminal()) return color*state.value();
+
+    int val,score = INT_MIN;
+    depth--;
+
+    vector<int> valid_moves;
+    for (int move = 0; move < DIM; move++){
+        if ((color == -1 and state.is_white_move(move)) or
+                (color == 1 and state.is_black_move(move))){
+            valid_moves.push_back(move);
+        }
+    }
+
+    if (valid_moves.empty()){
+        valid_moves.push_back(36); // The "Do nothing" move
+    }
+
+    random_shuffle(valid_moves.begin(),valid_moves.end());
+
+    state_t child;
+    for (int pos : valid_moves){
+        child = color == 1 ? state.black_move(pos): state.white_move(pos);
+        generated++;
+
+        val = -negamax(child,depth,-beta,-alpha,-color,use_tt);
+
+        score = max(score,val);
+        alpha = max(alpha,val);
+        expanded++;
+
+        if (alpha >= beta){
+            break;
+        }
+
+    }
+
+    return score;
+}
