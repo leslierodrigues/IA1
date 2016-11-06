@@ -111,8 +111,8 @@ int main(int argc, const char **argv) {
                 value = negamax(pv[i], MAX_DEPTH, -200, 200, color, use_tt);
             } else if( algorithm == 3 ) {
                 value = color * scout(pv[i], MAX_DEPTH, color, use_tt);
-            } else if( algorithm == 4 ) {
-                //value = negascout(pv[i], MAX_DEPTH, -200, 200, color, use_tt);
+                } else if( algorithm == 4 ) {
+                value = negascout(pv[i], MAX_DEPTH, -200, 200, color, use_tt);
             }
         } catch( const bad_alloc &e ) {
             cout << "size TT[0]: size=" << TTable[0].size() << ", #buckets=" << TTable[0].bucket_count() << endl;
@@ -348,7 +348,8 @@ bool TEST(state_t state, int score, int depth, int color, int condition){
 int negascout(state_t state, int depth, int alpha, int beta, int color, bool use_tt){
     if (depth == 0 or state.terminal()) return color*state.value();
 
-    int val,score = INT_MIN;
+    int score = 0;
+    bool is_first = true;
     depth--;
 
     vector<int> valid_moves;
@@ -370,17 +371,24 @@ int negascout(state_t state, int depth, int alpha, int beta, int color, bool use
         child = color == 1 ? state.black_move(pos): state.white_move(pos);
         generated++;
 
-        val = -negamax(child,depth,-beta,-alpha,-color,use_tt);
-
-        score = max(score,val);
-        alpha = max(alpha,val);
-        expanded++;
-
-        if (alpha >= beta){
-            break;
+        if (is_first){
+            score = -negascout(child, depth, -beta, -alpha, -color);
+            expanded++;
+        }
+        else{
+            score = -negascout(child, depth, -alpha - 1, -alpha, -color);
+            if (alpha < score and score < beta){
+                score = -negascout(child,depth,-beta,-score, -color);
+                expanded++;
+            }
         }
 
+        alpha = max(alpha,score);
+
+        if ( alpha >= beta){
+            break;
+        }
     }
 
-    return score;
+    return alpha;
 }
