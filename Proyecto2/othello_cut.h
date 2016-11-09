@@ -199,11 +199,9 @@ inline bool state_t::outflank(bool color, int pos) const {
         if( (p < x - 1) && (p >= cols[pos - 4]) && !is_free(*p) ) return true;
     }
 
-    // [CHECK OVER DIAGONALS REMOVED]
-    
-    //CREO que es esto? pero no estoy seguro
-    // dia1 y dia2 las declara el al pincipio.
+    // Check diagonals
 
+    // Check first diagonal
     x = dia1[pos - 4];
     while( *x != pos ) ++x;
     if( *(x+1) != -1 ) {
@@ -215,6 +213,8 @@ inline bool state_t::outflank(bool color, int pos) const {
         if( (p < x - 1) && (p >= dia1[pos - 4]) && !is_free(*p) ) return true;
     }
 
+
+    // Check second diagonal
     x = dia2[pos - 4];
     while( *x != pos ) ++x;
     if( *(x+1) != -1 ) {
@@ -291,9 +291,9 @@ inline state_t state_t::move(bool color, int pos) const {
         }
     }
 
-    // [PROCESS OF DIAGONALS REMOVED]
+    // Process diagonals
 
-    //Diagonal 1
+    // Proccess first diagonal
     x = dia1[pos - 4];
     while( *x != pos ) ++x;
     if( *(x+1) != -1 ) {
@@ -310,7 +310,7 @@ inline state_t state_t::move(bool color, int pos) const {
     }
 
 
-    //Diagonal 2
+    // Proccess second diagonal
     x = dia2[pos - 4];
     while( *x != pos ) ++x;
     if( *(x+1) != -1 ) {

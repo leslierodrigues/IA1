@@ -2,7 +2,9 @@
 // Universidad Simon Bolivar, 2012.
 // Author: Blai Bonet
 // Last Revision: 1/11/16
-// Modified by: 
+// Modified by: Georvic Tur
+//              Leslie Rodrigues
+//              Erick Silva
 
 #include <algorithm>
 #include <climits>
@@ -134,6 +136,10 @@ int main(int argc, const char **argv) {
 
     return 0;
 }
+
+
+
+
 
 int minmax(state_t state, int depth, bool use_tt){
     if (depth == 0 or state.terminal()) return state.value();
