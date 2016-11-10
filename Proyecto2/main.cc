@@ -14,6 +14,7 @@
 #include "utils.h"
 
 #include <unordered_map>
+#include <queue>
 
 using namespace std;
 
@@ -45,7 +46,9 @@ struct hash_function_t {
 class hash_table_t : public unordered_map<state_t, stored_info_t, hash_function_t> {
 };
 
+// We'll save white on 0 and black on 1.
 hash_table_t TTable[2];
+
 
 int minmax(state_t state, int depth, bool use_tt = false);
 int maxmin(state_t state, int depth, bool use_tt = false);
@@ -118,7 +121,7 @@ int main(int argc, const char **argv) {
                 value = negamax(pv[i], MAX_DEPTH, -200, 200, color, use_tt);
             } else if( algorithm == 3 ) {
                 value = color * scout(pv[i], MAX_DEPTH, color, use_tt);
-                } else if( algorithm == 4 ) {
+            } else if( algorithm == 4 ) {
                 value = negascout(pv[i], MAX_DEPTH, -200, 200, color, use_tt);
             }
         } catch( const bad_alloc &e ) {
@@ -176,10 +179,19 @@ int minmax(state_t state, int depth, bool use_tt){
             expanded++;
         }
         else{
-            ;
-//            score = min(score,)
+            // We look in black's table for the child
+            if (TTable[1].find(child) != TTable[1].end()){
+                score = min(score,TTable[1][child].value_);
+            }
+            else{
+                score = min(score,maxmin(child,depth,use_tt));
+                expanded++;
+            }
+
         }
     }
+
+    TTable[0][state] = score;
 
     return score;
 }
@@ -209,10 +221,23 @@ int maxmin(state_t state, int depth, bool use_tt){
     for (int pos : valid_moves){
         child = state.black_move(pos);
         generated++;
-        score = max(score,minmax(child,depth,use_tt));
-        expanded++;
+        if (!use_tt){        
+            score = max(score,minmax(child,depth,use_tt));
+            expanded++;
+        }
+        else{
+            // We look in White's table for the child
+            if (TTable[0].find(child) != TTable[0].end()){
+                score = max(score,TTable[0][child].value_);
+            }
+            else{
+                score = max(score,minmax(child,depth,use_tt));
+                expanded++;
+            }            
+        }
     }
 
+    TTable[1][state] = score;
     return score;
 }
 
@@ -222,7 +247,6 @@ int negamax(state_t state, int depth, int color, bool use_tt){
 
     int alpha = INT_MIN;
     depth--;
-
 
     // Generating the moves 
     vector<int> valid_moves;
@@ -249,6 +273,7 @@ int negamax(state_t state, int depth, int color, bool use_tt){
         expanded++;
     }
 
+    TTable[color == 1 ? 1: 0][state] = alpha;
     return alpha;
 }
 
