@@ -17,18 +17,23 @@
 
 using namespace std;
 
-#define MAX_DEPTH 5000
+// Max depth to search at, changing it to a lower value may not guarantee
+//  a correct result.
+#define MAX_DEPTH 50
 
 unsigned expanded = 0;
 unsigned generated = 0;
+int tt_saved = 0;
 int tt_threshold = 32; // threshold to save entries in TT
 
 // Transposition table
 struct stored_info_t {
     int value_;
     int type_;
+    int priority_;
     enum { EXACT, LOWER, UPPER };
-    stored_info_t(int value = -100, int type = LOWER) : value_(value), type_(type) { }
+    stored_info_t(int value = -100, int type = LOWER, int priority = 0):
+                         value_(value), type_(type), priority_(priority){}
 };
 
 struct hash_function_t {
@@ -137,33 +142,43 @@ int main(int argc, const char **argv) {
     return 0;
 }
 
-
-
-
-
+// minmax Algorithm
 int minmax(state_t state, int depth, bool use_tt){
+    // If the state is terminal or we have reached the depth limit.
+    //  just return the value.
     if (depth == 0 or state.terminal()) return state.value();
 
+    // We initialize the score at the lowest value and decrease the depth.
     int score = INT_MAX;
     depth--;
 
+
+    // Generating the moves 
     vector<int> valid_moves;
     for (int move = 0; move < DIM; move++){
         if (state.is_white_move(move)) valid_moves.push_back(move);
     }
 
+    // If there are no valid moves for this player, we have to skip the turn.
     if (valid_moves.empty()){
         valid_moves.push_back(36); // The "Do nothing" move
     }
 
+    // We shuffle the moves
     random_shuffle(valid_moves.begin(),valid_moves.end());
 
     state_t child;
     for (int pos : valid_moves){
         child = state.white_move(pos);
         generated++;
-        score = min(score,maxmin(child,depth,use_tt));
-        expanded++;
+        if (!use_tt){
+            score = min(score,maxmin(child,depth,use_tt));
+            expanded++;
+        }
+        else{
+            ;
+//            score = min(score,)
+        }
     }
 
     return score;
@@ -176,15 +191,18 @@ int maxmin(state_t state, int depth, bool use_tt){
     int score = INT_MIN;
     depth--;
 
+    // Generating the moves 
     vector<int> valid_moves;
     for (int move = 0; move < DIM; move++){
         if (state.is_black_move(move)) valid_moves.push_back(move);
     }
 
+    // If there are no valid moves for this player, we have to skip the turn.
     if (valid_moves.empty()){
         valid_moves.push_back(36); // The "Do nothing" move
     }
 
+    // We shuffle the moves
     random_shuffle(valid_moves.begin(),valid_moves.end());
 
     state_t child;
@@ -205,6 +223,8 @@ int negamax(state_t state, int depth, int color, bool use_tt){
     int alpha = INT_MIN;
     depth--;
 
+
+    // Generating the moves 
     vector<int> valid_moves;
     for (int move = 0; move < DIM; move++){
         if ((color == -1 and state.is_white_move(move)) or
@@ -213,10 +233,12 @@ int negamax(state_t state, int depth, int color, bool use_tt){
         }
     }
 
+    // If there are no valid moves for this player, we have to skip the turn.
     if (valid_moves.empty()){
         valid_moves.push_back(36); // The "Do nothing" move
     }
 
+    // We shuffle the moves
     random_shuffle(valid_moves.begin(),valid_moves.end());
 
     state_t child;
@@ -236,6 +258,7 @@ int negamax(state_t state, int depth, int alpha, int beta, int color, bool use_t
     int val,score = INT_MIN;
     depth--;
 
+    // Generating the moves 
     vector<int> valid_moves;
     for (int move = 0; move < DIM; move++){
         if ((color == -1 and state.is_white_move(move)) or
@@ -244,10 +267,12 @@ int negamax(state_t state, int depth, int alpha, int beta, int color, bool use_t
         }
     }
 
+    // If there are no valid moves for this player, we have to skip the turn.
     if (valid_moves.empty()){
         valid_moves.push_back(36); // The "Do nothing" move
     }
 
+    // We shuffle the moves
     random_shuffle(valid_moves.begin(),valid_moves.end());
 
     state_t child;
@@ -276,8 +301,9 @@ int scout(state_t state, int depth, int color, bool use_tt){
 
     int score = 0;
     depth--;
-    vector<int> valid_moves;
 
+    // Generating the moves 
+    vector<int> valid_moves;
     for (int move = 0; move < DIM; move++){
         if ((color == -1 and state.is_white_move(move)) or
                 (color == 1 and state.is_black_move(move))){
@@ -285,10 +311,12 @@ int scout(state_t state, int depth, int color, bool use_tt){
         }
     }
 
+    // If there are no valid moves for this player, we have to skip the turn.
     if (valid_moves.empty()){
         valid_moves.push_back(36); // The "Do nothing" move
     }
 
+    // We shuffle the moves
     random_shuffle(valid_moves.begin(),valid_moves.end());
 
     state_t child;
@@ -320,6 +348,7 @@ bool TEST(state_t state, int score, int depth, int color, int condition){
     }   
     depth--;
 
+    // Generating the moves 
     vector<int> valid_moves;
     for (int move = 0; move < DIM; move++){
         if ((color == -1 and state.is_white_move(move)) or
@@ -328,12 +357,14 @@ bool TEST(state_t state, int score, int depth, int color, int condition){
         }
     }
 
-
+    // If there are no valid moves for this player, we have to skip the turn.
     if (valid_moves.empty()){
         valid_moves.push_back(36); // The "Do nothing" move
     }
 
+    // We shuffle the moves
     random_shuffle(valid_moves.begin(),valid_moves.end());
+
 
     state_t child;
     for (int pos : valid_moves){
@@ -358,6 +389,7 @@ int negascout(state_t state, int depth, int alpha, int beta, int color, bool use
     bool is_first = true;
     depth--;
 
+    // Generating the moves 
     vector<int> valid_moves;
     for (int move = 0; move < DIM; move++){
         if ((color == -1 and state.is_white_move(move)) or
@@ -366,10 +398,12 @@ int negascout(state_t state, int depth, int alpha, int beta, int color, bool use
         }
     }
 
+    // If there are no valid moves for this player, we have to skip the turn.
     if (valid_moves.empty()){
         valid_moves.push_back(36); // The "Do nothing" move
     }
 
+    // We shuffle the moves
     random_shuffle(valid_moves.begin(),valid_moves.end());
 
     state_t child;
@@ -378,13 +412,14 @@ int negascout(state_t state, int depth, int alpha, int beta, int color, bool use
         generated++;
 
         if (is_first){
-            score = -negascout(child, depth, -beta, -alpha, -color);
+            score = -negascout(child, depth, -beta, -alpha, -color, use_tt);
             expanded++;
+            is_first = false;
         }
         else{
-            score = -negascout(child, depth, -alpha - 1, -alpha, -color);
+            score = -negascout(child, depth, -alpha - 1, -alpha, -color, use_tt);
             if (alpha < score and score < beta){
-                score = -negascout(child,depth,-beta,-score, -color);
+                score = -negascout(child,depth,-beta,-score, -color, use_tt);
                 expanded++;
             }
         }
