@@ -20,7 +20,7 @@ using namespace std;
 
 // Max depth to search at, changing it to a lower value may not guarantee
 //  a correct result.
-#define MAX_DEPTH 50
+#define MAX_DEPTH 500
 
 unsigned expanded = 0;
 unsigned generated = 0;
@@ -151,9 +151,9 @@ void populate_valid_moves(state_t *state, vector<int> *valid_moves, int color){
     // Generating the moves 
     //  We test for each possible move (from 0 to 35) wether it's possible for
     //   the current color.
-    for (int possible_move = 0; move < DIM; possible_move++){
-        if (state->is_white_move(move) and color == -1) valid_moves->push_back(possible_move);
-        if (state->is_black_move(move) and color == 1) valid_moves->push_back(possible_move);
+    for (int pos = 0; pos < DIM; pos++){
+        if (state->is_white_move(pos) and color == -1) valid_moves->push_back(pos);
+        if (state->is_black_move(pos) and color == 1) valid_moves->push_back(pos);
     }
 
     // If there are no valid moves for this player, we have to skip the turn.
@@ -162,7 +162,8 @@ void populate_valid_moves(state_t *state, vector<int> *valid_moves, int color){
     }
 
     // We shuffle the moves
-    random_shuffle(valid_moves.begin(),valid_moves.end());
+    // Author's Note: shuffling seems to actually DECREASE the efficiency.
+    //    random_shuffle(valid_moves->begin(),valid_moves->end());
 }
 
 
@@ -179,7 +180,7 @@ int minmax(state_t state, int depth, bool use_tt){
 
     // Generating the moves 
     vector<int> valid_moves;
-    possible_valid_moves(&state,&valid_moves,-1);
+    populate_valid_moves(&state,&valid_moves,-1);
 
 
     state_t child;
@@ -202,8 +203,11 @@ int minmax(state_t state, int depth, bool use_tt){
         }
     }
 
+    if (use_tt){
     TTable[0][state].value_ = score;
     TTable[0][state].type_ = stored_info_t::EXACT;
+    }
+
     return score;
 }
 
@@ -216,7 +220,7 @@ int maxmin(state_t state, int depth, bool use_tt){
 
     // Generating the moves 
     vector<int> valid_moves;
-    possible_valid_moves(&state,&valid_moves,1);
+    populate_valid_moves(&state,&valid_moves,1);
 
     state_t child;
     for (int pos : valid_moves){
@@ -237,9 +241,11 @@ int maxmin(state_t state, int depth, bool use_tt){
             expanded++;
         }
     }
+    if (use_tt){
+        TTable[1][state].value_ = score;
+        TTable[1][state].type_ = stored_info_t::EXACT;
+    }
 
-    TTable[1][state].value_ = score;
-    TTable[1][state].type_ = stored_info_t::EXACT;
     return score;
 }
 
@@ -247,25 +253,23 @@ int maxmin(state_t state, int depth, bool use_tt){
 int negamax(state_t state, int depth, int color, bool use_tt){
     if (depth == 0 or state.terminal()) return color*state.value();
 
-    int table_to_check, alpha = INT_MIN;
+    int table_to_check = color == 1 ? 1: 0;
+    int alpha = INT_MIN;
     depth--;
 
     // Generating the moves 
     vector<int> valid_moves;
-    possible_valid_moves(&state,&valid_moves,color);
+    populate_valid_moves(&state,&valid_moves,color);
 
     state_t child;
-
-    // We'll look in the opposite of the actual table for the child.
-    table_to_check = color == 1 ? 0: 1;
 
     for (int pos : valid_moves){
         child = color == 1 ? state.black_move(pos): state.white_move(pos);
         generated++;
         if (use_tt){
             // We look in the opposite table for the child
-            if (TTable[table_to_check].find(child) != TTable[table_to_check].end()){
-                alpha = max(alpha,-TTable[table_to_check][child].value_);
+            if (TTable[!table_to_check].find(child) != TTable[!table_to_check].end()){
+                alpha = max(alpha,-TTable[!table_to_check][child].value_);
             }
             else{
                 alpha = max(alpha,-negamax(child,depth,-color,use_tt));
@@ -279,9 +283,10 @@ int negamax(state_t state, int depth, int color, bool use_tt){
     }
 
 
-
-    TTable[color == 1 ? 1: 0][state].value_ = alpha;
-    TTable[color == 1 ? 1: 0][state].type_ = stored_info_t::EXACT;
+    if (use_tt){
+        TTable[table_to_check][state].value_ = alpha;
+        TTable[table_to_check][state].type_ = stored_info_t::EXACT;
+    }
 
     return alpha;
 }
@@ -289,45 +294,50 @@ int negamax(state_t state, int depth, int color, bool use_tt){
 int negamax(state_t state, int depth, int alpha, int beta, int color, bool use_tt){
     // For alpha beta pruning, we need to take a different approach to the
     //  transposition table.
+
+    int table_to_check = color == 1 ? 1 : 0;
+    int original_alpha = alpha;
+    int value,type;
+    
     if (use_tt){
-        int original_alpha = alpha;
-
-
+        if (TTable[table_to_check].find(state) != TTable[table_to_check].end() and
+                 TTable[table_to_check][state].depth_ >= depth){
+            type = TTable[table_to_check][state].type_;
+            value = TTable[table_to_check][state].value_;
+            if (type == stored_info_t::EXACT){
+                return value;
+            }
+            else if (type == stored_info_t::LOWER){
+                alpha = max(alpha,value);
+            }
+            else if (type == stored_info_t::UPPER){
+                beta = min(beta,value);
+            }
+            if (alpha >= beta){
+                return value;
+            }
+       }
     }
 
 
 
     if (depth == 0 or state.terminal()) return color*state.value();
 
-    int table_to_check, val, score = INT_MIN;
+
+    int val, score = INT_MIN;
     depth--;
+    expanded++;
 
     // Generating the moves 
     vector<int> valid_moves;
-    possible_valid_moves(&state,&valid_moves,color);
+    populate_valid_moves(&state,&valid_moves,color);
 
-    // We'll look in the opposite of the actual table for the child.
-    table_to_check = color == 1 ? 0: 1;
-
+    // We iterate over all the children and call negamax on them.
     state_t child;
     for (int pos : valid_moves){
         child = color == 1 ? state.black_move(pos): state.white_move(pos);
         generated++;
-
-        if (use_tt){
-            // We look in the opposite table for the child
-            if (TTable[table_to_check].find(child) != TTable[table_to_check].end()){
-                val = -TTable[table_to_check][child].value_;
-            }
-            else{
-                val = -negamax(child,depth,-beta,-alpha,-color,use_tt);
-                expanded++;
-            }
-        }
-        else{
-            val = -negamax(child,depth,-beta,-alpha,-color,use_tt);
-            expanded++;
-        }
+        val = -negamax(child,depth,-beta,-alpha,-color,use_tt);
         score = max(score,val);
         alpha = max(alpha,val);
         if (alpha >= beta){
@@ -335,14 +345,35 @@ int negamax(state_t state, int depth, int alpha, int beta, int color, bool use_t
         }
     }
 
-    TTable[color == 1 ? 1: 0][state].value_ = score;
-    TTable[color == 1 ? 1: 0][state].type_ = stored_info_t::EXACT;
+    // Storing on the transposition table.
+    if (use_tt){
+        TTable[table_to_check][state].value_ = score;
+        TTable[table_to_check][state].depth_ = depth + 1;
+        if (score <= original_alpha){
+            TTable[table_to_check][state] = stored_info_t::UPPER;
+        }
+        else if (score >= beta){
+            TTable[table_to_check][state] = stored_info_t::LOWER;
+        }
+        else{
+            TTable[table_to_check][state] = stored_info_t::EXACT;
+        }
+    }
 
     return score;
 }
 
 
 int scout(state_t state, int depth, int color, bool use_tt){
+    // We check if we have an answer for this node already.
+    int table_to_check = color == 1 ? 1 : 0;
+
+    if (use_tt){
+        if (TTable[table_to_check].find(state) != TTable[table_to_check].end()){
+            return TTable[table_to_check][state].value_;
+        }
+    }
+
     if (depth == 0 or state.terminal()) return state.value();
 
     int score = 0;
@@ -350,7 +381,7 @@ int scout(state_t state, int depth, int color, bool use_tt){
 
     // Generating the moves 
     vector<int> valid_moves;
-    possible_valid_moves(&state,&valid_moves,color);
+    populate_valid_moves(&state,&valid_moves,color);
 
     state_t child;
     bool is_first = true;
@@ -372,6 +403,11 @@ int scout(state_t state, int depth, int color, bool use_tt){
         }
     }
 
+    if (use_tt){
+        TTable[table_to_check][state].value_ = score;
+        TTable[table_to_check][state].type_ = stored_info_t::EXACT;
+    }
+
     return score;
 }
 
@@ -383,7 +419,7 @@ bool TEST(state_t state, int score, int depth, int color, int condition){
 
     // Generating the moves 
     vector<int> valid_moves;
-    possible_valid_moves(&state,&valid_moves,color);
+    populate_valid_moves(&state,&valid_moves,color);
 
 
 
@@ -404,15 +440,45 @@ bool TEST(state_t state, int score, int depth, int color, int condition){
 
 
 int negascout(state_t state, int depth, int alpha, int beta, int color, bool use_tt){
+    // As negascout also uses alpha-beta pruning, we have to use the
+    //  same approach.
+
+    int table_to_check = color == 1 ? 1 : 0;
+    int original_alpha = alpha;
+    int type, value;
+
+    if (use_tt){
+        if (TTable[table_to_check].find(state) != TTable[table_to_check].end() and
+                 TTable[table_to_check][state].depth_ >= depth){
+            type = TTable[table_to_check][state].type_;
+            value = TTable[table_to_check][state].value_;
+            if (type == stored_info_t::EXACT){
+                return value;
+            }
+            else if (type == stored_info_t::LOWER){
+                alpha = max(alpha,value);
+            }
+            else if (type == stored_info_t::UPPER){
+                beta = min(beta,value);
+            }
+            if (alpha >= beta){
+                return value;
+            }
+       }
+    }
+
+
+
     if (depth == 0 or state.terminal()) return color*state.value();
+
+    expanded++;
 
     int score = 0;
     bool is_first = true;
-    depth--;
 
     // Generating the moves 
     vector<int> valid_moves;
-    possible_valid_moves(&state,&valid_moves,color);
+    populate_valid_moves(&state,&valid_moves,color);
 
 
     state_t child;
@@ -421,15 +487,13 @@ int negascout(state_t state, int depth, int alpha, int beta, int color, bool use
         generated++;
 
         if (is_first){
-            score = -negascout(child, depth, -beta, -alpha, -color, use_tt);
-            expanded++;
+            score = -negascout(child, depth-1, -beta, -alpha, -color, use_tt);
             is_first = false;
         }
         else{
-            score = -negascout(child, depth, -alpha - 1, -alpha, -color, use_tt);
+            score = -negascout(child, depth-1, -alpha - 1, -alpha, -color, use_tt);
             if (alpha < score and score < beta){
-                score = -negascout(child,depth,-beta,-score, -color, use_tt);
-                expanded++;
+                score = -negascout(child,depth-1,-beta,-score, -color, use_tt);
             }
         }
 
@@ -439,6 +503,21 @@ int negascout(state_t state, int depth, int alpha, int beta, int color, bool use
             break;
         }
     }
+
+    if (use_tt){
+        TTable[table_to_check][state].value_ = score;
+        TTable[table_to_check][state].depth_ = depth;
+        if (score <= original_alpha){
+            TTable[table_to_check][state] = stored_info_t::UPPER;
+        }
+        else if (score >= beta){
+            TTable[table_to_check][state] = stored_info_t::LOWER;
+        }
+        else{
+            TTable[table_to_check][state] = stored_info_t::EXACT;
+        }
+    }
+
 
     return alpha;
 }
