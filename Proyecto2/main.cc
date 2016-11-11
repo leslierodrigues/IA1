@@ -31,10 +31,10 @@ int tt_threshold = 32; // threshold to save entries in TT
 struct stored_info_t {
     int value_;
     int type_;
-    int priority_;
+    int depth_; 
     enum { EXACT, LOWER, UPPER };
-    stored_info_t(int value = -100, int type = LOWER, int priority = 0):
-                         value_(value), type_(type), priority_(priority){}
+    stored_info_t(int value = -100, int type = LOWER, int depth = 0):
+                         value_(value), type_(type), depth_(depth){ }
 };
 
 struct hash_function_t {
@@ -57,6 +57,8 @@ int negamax(state_t state, int depth, int alpha, int beta, int color, bool use_t
 int scout(state_t state, int depth, int color, bool use_tt = false);
 int negascout(state_t state, int depth, int alpha, int beta, int color, bool use_tt = false);
 bool TEST(state_t state, int score, int depth, int color,int condition);
+void populate_valid_moves(state_t *state, vector<int> *valid_moves, int color);
+
 
 int main(int argc, const char **argv) {
     state_t pv[128];
@@ -145,6 +147,25 @@ int main(int argc, const char **argv) {
     return 0;
 }
 
+void populate_valid_moves(state_t *state, vector<int> *valid_moves, int color){
+    // Generating the moves 
+    //  We test for each possible move (from 0 to 35) wether it's possible for
+    //   the current color.
+    for (int possible_move = 0; move < DIM; possible_move++){
+        if (state->is_white_move(move) and color == -1) valid_moves->push_back(possible_move);
+        if (state->is_black_move(move) and color == 1) valid_moves->push_back(possible_move);
+    }
+
+    // If there are no valid moves for this player, we have to skip the turn.
+    if (valid_moves->empty()){
+        valid_moves->push_back(36); // The "Do nothing" move
+    }
+
+    // We shuffle the moves
+    random_shuffle(valid_moves.begin(),valid_moves.end());
+}
+
+
 // minmax Algorithm
 int minmax(state_t state, int depth, bool use_tt){
     // If the state is terminal or we have reached the depth limit.
@@ -158,27 +179,14 @@ int minmax(state_t state, int depth, bool use_tt){
 
     // Generating the moves 
     vector<int> valid_moves;
-    for (int move = 0; move < DIM; move++){
-        if (state.is_white_move(move)) valid_moves.push_back(move);
-    }
+    possible_valid_moves(&state,&valid_moves,-1);
 
-    // If there are no valid moves for this player, we have to skip the turn.
-    if (valid_moves.empty()){
-        valid_moves.push_back(36); // The "Do nothing" move
-    }
-
-    // We shuffle the moves
-    random_shuffle(valid_moves.begin(),valid_moves.end());
 
     state_t child;
     for (int pos : valid_moves){
         child = state.white_move(pos);
         generated++;
-        if (!use_tt){
-            score = min(score,maxmin(child,depth,use_tt));
-            expanded++;
-        }
-        else{
+        if (use_tt){
             // We look in black's table for the child
             if (TTable[1].find(child) != TTable[1].end()){
                 score = min(score,TTable[1][child].value_);
@@ -187,12 +195,15 @@ int minmax(state_t state, int depth, bool use_tt){
                 score = min(score,maxmin(child,depth,use_tt));
                 expanded++;
             }
-
+        }
+        else{
+            score = min(score,maxmin(child,depth,use_tt));
+            expanded++;
         }
     }
 
-    TTable[0][state] = score;
-
+    TTable[0][state].value_ = score;
+    TTable[0][state].type_ = stored_info_t::EXACT;
     return score;
 }
 
@@ -205,27 +216,13 @@ int maxmin(state_t state, int depth, bool use_tt){
 
     // Generating the moves 
     vector<int> valid_moves;
-    for (int move = 0; move < DIM; move++){
-        if (state.is_black_move(move)) valid_moves.push_back(move);
-    }
-
-    // If there are no valid moves for this player, we have to skip the turn.
-    if (valid_moves.empty()){
-        valid_moves.push_back(36); // The "Do nothing" move
-    }
-
-    // We shuffle the moves
-    random_shuffle(valid_moves.begin(),valid_moves.end());
+    possible_valid_moves(&state,&valid_moves,1);
 
     state_t child;
     for (int pos : valid_moves){
         child = state.black_move(pos);
         generated++;
-        if (!use_tt){        
-            score = max(score,minmax(child,depth,use_tt));
-            expanded++;
-        }
-        else{
+        if (use_tt){        
             // We look in White's table for the child
             if (TTable[0].find(child) != TTable[0].end()){
                 score = max(score,TTable[0][child].value_);
@@ -235,9 +232,14 @@ int maxmin(state_t state, int depth, bool use_tt){
                 expanded++;
             }            
         }
+        else{
+            score = max(score,minmax(child,depth,use_tt));
+            expanded++;
+        }
     }
 
-    TTable[1][state] = score;
+    TTable[1][state].value_ = score;
+    TTable[1][state].type_ = stored_info_t::EXACT;
     return score;
 }
 
@@ -245,77 +247,96 @@ int maxmin(state_t state, int depth, bool use_tt){
 int negamax(state_t state, int depth, int color, bool use_tt){
     if (depth == 0 or state.terminal()) return color*state.value();
 
-    int alpha = INT_MIN;
+    int table_to_check, alpha = INT_MIN;
     depth--;
 
     // Generating the moves 
     vector<int> valid_moves;
-    for (int move = 0; move < DIM; move++){
-        if ((color == -1 and state.is_white_move(move)) or
-                (color == 1 and state.is_black_move(move))){
-            valid_moves.push_back(move);
-        }
-    }
-
-    // If there are no valid moves for this player, we have to skip the turn.
-    if (valid_moves.empty()){
-        valid_moves.push_back(36); // The "Do nothing" move
-    }
-
-    // We shuffle the moves
-    random_shuffle(valid_moves.begin(),valid_moves.end());
+    possible_valid_moves(&state,&valid_moves,color);
 
     state_t child;
+
+    // We'll look in the opposite of the actual table for the child.
+    table_to_check = color == 1 ? 0: 1;
+
     for (int pos : valid_moves){
         child = color == 1 ? state.black_move(pos): state.white_move(pos);
         generated++;
-        alpha = max(alpha,-negamax(child,depth,-color,use_tt));
-        expanded++;
+        if (use_tt){
+            // We look in the opposite table for the child
+            if (TTable[table_to_check].find(child) != TTable[table_to_check].end()){
+                alpha = max(alpha,-TTable[table_to_check][child].value_);
+            }
+            else{
+                alpha = max(alpha,-negamax(child,depth,-color,use_tt));
+                expanded++;
+            }
+        }
+        else{
+            alpha = max(alpha,-negamax(child,depth,-color,use_tt));
+            expanded++;
+        }
     }
 
-    TTable[color == 1 ? 1: 0][state] = alpha;
+
+
+    TTable[color == 1 ? 1: 0][state].value_ = alpha;
+    TTable[color == 1 ? 1: 0][state].type_ = stored_info_t::EXACT;
+
     return alpha;
 }
 
 int negamax(state_t state, int depth, int alpha, int beta, int color, bool use_tt){
+    // For alpha beta pruning, we need to take a different approach to the
+    //  transposition table.
+    if (use_tt){
+        int original_alpha = alpha;
+
+
+    }
+
+
+
     if (depth == 0 or state.terminal()) return color*state.value();
 
-    int val,score = INT_MIN;
+    int table_to_check, val, score = INT_MIN;
     depth--;
 
     // Generating the moves 
     vector<int> valid_moves;
-    for (int move = 0; move < DIM; move++){
-        if ((color == -1 and state.is_white_move(move)) or
-                (color == 1 and state.is_black_move(move))){
-            valid_moves.push_back(move);
-        }
-    }
+    possible_valid_moves(&state,&valid_moves,color);
 
-    // If there are no valid moves for this player, we have to skip the turn.
-    if (valid_moves.empty()){
-        valid_moves.push_back(36); // The "Do nothing" move
-    }
-
-    // We shuffle the moves
-    random_shuffle(valid_moves.begin(),valid_moves.end());
+    // We'll look in the opposite of the actual table for the child.
+    table_to_check = color == 1 ? 0: 1;
 
     state_t child;
     for (int pos : valid_moves){
         child = color == 1 ? state.black_move(pos): state.white_move(pos);
         generated++;
 
-        val = -negamax(child,depth,-beta,-alpha,-color,use_tt);
-
+        if (use_tt){
+            // We look in the opposite table for the child
+            if (TTable[table_to_check].find(child) != TTable[table_to_check].end()){
+                val = -TTable[table_to_check][child].value_;
+            }
+            else{
+                val = -negamax(child,depth,-beta,-alpha,-color,use_tt);
+                expanded++;
+            }
+        }
+        else{
+            val = -negamax(child,depth,-beta,-alpha,-color,use_tt);
+            expanded++;
+        }
         score = max(score,val);
         alpha = max(alpha,val);
-        expanded++;
-
         if (alpha >= beta){
             break;
         }
-
     }
+
+    TTable[color == 1 ? 1: 0][state].value_ = score;
+    TTable[color == 1 ? 1: 0][state].type_ = stored_info_t::EXACT;
 
     return score;
 }
@@ -329,20 +350,7 @@ int scout(state_t state, int depth, int color, bool use_tt){
 
     // Generating the moves 
     vector<int> valid_moves;
-    for (int move = 0; move < DIM; move++){
-        if ((color == -1 and state.is_white_move(move)) or
-                (color == 1 and state.is_black_move(move))){
-            valid_moves.push_back(move);
-        }
-    }
-
-    // If there are no valid moves for this player, we have to skip the turn.
-    if (valid_moves.empty()){
-        valid_moves.push_back(36); // The "Do nothing" move
-    }
-
-    // We shuffle the moves
-    random_shuffle(valid_moves.begin(),valid_moves.end());
+    possible_valid_moves(&state,&valid_moves,color);
 
     state_t child;
     bool is_first = true;
@@ -375,20 +383,8 @@ bool TEST(state_t state, int score, int depth, int color, int condition){
 
     // Generating the moves 
     vector<int> valid_moves;
-    for (int move = 0; move < DIM; move++){
-        if ((color == -1 and state.is_white_move(move)) or
-                (color == 1 and state.is_black_move(move))){
-            valid_moves.push_back(move);
-        }
-    }
+    possible_valid_moves(&state,&valid_moves,color);
 
-    // If there are no valid moves for this player, we have to skip the turn.
-    if (valid_moves.empty()){
-        valid_moves.push_back(36); // The "Do nothing" move
-    }
-
-    // We shuffle the moves
-    random_shuffle(valid_moves.begin(),valid_moves.end());
 
 
     state_t child;
@@ -402,7 +398,7 @@ bool TEST(state_t state, int score, int depth, int color, int condition){
         }
     }
 
-    return color != 1; // No es necesario, el juego termina.
+    return color != 1; // Not neccesary the game ends.
 }
 
 
@@ -416,20 +412,8 @@ int negascout(state_t state, int depth, int alpha, int beta, int color, bool use
 
     // Generating the moves 
     vector<int> valid_moves;
-    for (int move = 0; move < DIM; move++){
-        if ((color == -1 and state.is_white_move(move)) or
-                (color == 1 and state.is_black_move(move))){
-            valid_moves.push_back(move);
-        }
-    }
+    possible_valid_moves(&state,&valid_moves,color);
 
-    // If there are no valid moves for this player, we have to skip the turn.
-    if (valid_moves.empty()){
-        valid_moves.push_back(36); // The "Do nothing" move
-    }
-
-    // We shuffle the moves
-    random_shuffle(valid_moves.begin(),valid_moves.end());
 
     state_t child;
     for (int pos : valid_moves){
