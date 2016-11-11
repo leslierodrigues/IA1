@@ -46,7 +46,8 @@ struct hash_function_t {
 class hash_table_t : public unordered_map<state_t, stored_info_t, hash_function_t> {
 };
 
-// We'll save white on 0 and black on 1.
+// We'll save white moves on position 0
+//  and black moves on position 1.
 hash_table_t TTable[2];
 
 
@@ -166,8 +167,12 @@ void populate_valid_moves(state_t *state, vector<int> *valid_moves, int color){
     //    random_shuffle(valid_moves->begin(),valid_moves->end());
 }
 
+/*
 
-// minmax Algorithm
+    Minmax/Maxmin algorithms.
+
+*/
+
 int minmax(state_t state, int depth, bool use_tt){
     // If the state is terminal or we have reached the depth limit.
     //  just return the value.
@@ -213,10 +218,13 @@ int minmax(state_t state, int depth, bool use_tt){
 
 
 int maxmin(state_t state, int depth, bool use_tt){
+    // If we dont have any remaining depth or the state is terminal
+    //  we just return the state's value
     if (depth == 0 or state.terminal()) return state.value();
 
     int score = INT_MIN;
     depth--;
+    expanded++;
 
     // Generating the moves 
     vector<int> valid_moves;
@@ -233,12 +241,10 @@ int maxmin(state_t state, int depth, bool use_tt){
             }
             else{
                 score = max(score,minmax(child,depth,use_tt));
-                expanded++;
             }            
         }
         else{
             score = max(score,minmax(child,depth,use_tt));
-            expanded++;
         }
     }
     if (use_tt){
@@ -249,8 +255,17 @@ int maxmin(state_t state, int depth, bool use_tt){
     return score;
 }
 
+/*
+
+    Negamax algorithm.
+
+*/
+
 
 int negamax(state_t state, int depth, int color, bool use_tt){
+
+    // If we dont have any remaining depth or the state is terminal
+    //  we just return the state's value (multiplied by the color for proper signs)
     if (depth == 0 or state.terminal()) return color*state.value();
 
     int table_to_check = color == 1 ? 1: 0;
@@ -291,19 +306,32 @@ int negamax(state_t state, int depth, int color, bool use_tt){
     return alpha;
 }
 
+/*
+
+    Negamax algorithm with alpha-beta pruning.
+
+*/
+
+
 int negamax(state_t state, int depth, int alpha, int beta, int color, bool use_tt){
     // For alpha beta pruning, we need to take a different approach to the
     //  transposition table.
 
     int table_to_check = color == 1 ? 1 : 0;
+    // We save the original alpha for future use.
     int original_alpha = alpha;
     int value,type;
-    
+
     if (use_tt){
+        // We have to check if the state is in the table and if it's
+        //  on a lower depth.
         if (TTable[table_to_check].find(state) != TTable[table_to_check].end() and
                  TTable[table_to_check][state].depth_ >= depth){
             type = TTable[table_to_check][state].type_;
             value = TTable[table_to_check][state].value_;
+            // If the type of the node is EXACT, then we just return the value,
+            //  if it's a lower bound, we use it to grow alpha if possible
+            //  and if it's an upper bound, we'll use it to make beta smaller.
             if (type == stored_info_t::EXACT){
                 return value;
             }
@@ -313,6 +341,9 @@ int negamax(state_t state, int depth, int alpha, int beta, int color, bool use_t
             else if (type == stored_info_t::UPPER){
                 beta = min(beta,value);
             }
+
+            // if after making beta lower or alpha higher we reach
+            //  alpha >= beta, we can just return the value.
             if (alpha >= beta){
                 return value;
             }
@@ -320,7 +351,8 @@ int negamax(state_t state, int depth, int alpha, int beta, int color, bool use_t
     }
 
 
-
+    // If we dont have any remaining depth or the state is terminal
+    //  we just return the state's value (multiplied by the color for proper signs)
     if (depth == 0 or state.terminal()) return color*state.value();
 
 
@@ -363,6 +395,11 @@ int negamax(state_t state, int depth, int alpha, int beta, int color, bool use_t
     return score;
 }
 
+/*
+
+    Scout algorithm along with it's TEST algorithm.
+
+*/ 
 
 int scout(state_t state, int depth, int color, bool use_tt){
     // We check if we have an answer for this node already.
@@ -374,6 +411,8 @@ int scout(state_t state, int depth, int color, bool use_tt){
         }
     }
 
+    // If we dont have any remaining depth or the state is terminal
+    //  we just return the state's value.
     if (depth == 0 or state.terminal()) return state.value();
 
     int score = 0;
@@ -412,10 +451,15 @@ int scout(state_t state, int depth, int color, bool use_tt){
 }
 
 bool TEST(state_t state, int score, int depth, int color, int condition){
+
+    // If we dont have any remaining depth or the state is terminal
+    //  we just return the condition applied to the state's value
+    //  and the initial one.
     if (depth == 0 or state.terminal()){
         return condition == 1 ? state.value() >= score : state.value() > score;
     }   
     depth--;
+    expanded++;
 
     // Generating the moves 
     vector<int> valid_moves;
@@ -425,7 +469,8 @@ bool TEST(state_t state, int score, int depth, int color, int condition){
 
     state_t child;
     for (int pos : valid_moves){
-        child = color == 1 ? state.black_move(pos): state.white_move(pos);        
+        child = color == 1 ? state.black_move(pos): state.white_move(pos);
+        generated++;     
         if (color == 1 and TEST(child,score,depth,-color,condition)){
             return true;
         }
@@ -434,10 +479,14 @@ bool TEST(state_t state, int score, int depth, int color, int condition){
         }
     }
 
-    return color != 1; // Not neccesary the game ends.
+    return color != 1;
 }
 
+/*
 
+    Negascout algorithm.
+
+*/
 
 int negascout(state_t state, int depth, int alpha, int beta, int color, bool use_tt){
     // As negascout also uses alpha-beta pruning, we have to use the
@@ -468,7 +517,8 @@ int negascout(state_t state, int depth, int alpha, int beta, int color, bool use
     }
 
 
-
+    // If we dont have any remaining depth or the state is terminal
+    //  we just return the state's value (multiplied by the color for proper signs)
     if (depth == 0 or state.terminal()) return color*state.value();
 
     expanded++;
