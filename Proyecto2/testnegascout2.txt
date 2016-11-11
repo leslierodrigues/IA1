@@ -1,0 +1,23 @@
+Extracting principal variation (PV) with 33 plays ... done!
+Algorithm: Negascout w/ transposition table
+Moving along PV:
+34. White moves: value=-4, #expanded=0, #generated=0, seconds=1.40001e-05, #generated/second=0
+33. Black moves: value=-4, #expanded=1, #generated=1, seconds=3.20002e-05, #generated/second=31249.8
+32. White moves: value=-4, #expanded=3, #generated=4, seconds=4.19999e-05, #generated/second=95238.4
+31. Black moves: value=-4, #expanded=4, #generated=5, seconds=2.39997e-05, #generated/second=208336
+30. White moves: value=-4, #expanded=14, #generated=17, seconds=8.09999e-05, #generated/second=209877
+29. Black moves: value=-4, #expanded=15, #generated=18, seconds=6.99996e-05, #generated/second=257144
+28. White moves: value=-4, #expanded=26, #generated=31, seconds=0.000127, #generated/second=244095
+27. Black moves: value=-4, #expanded=64, #generated=81, seconds=0.000271, #generated/second=298893
+26. White moves: value=-4, #expanded=312, #generated=389, seconds=0.001087, #generated/second=357866
+25. Black moves: value=-4, #expanded=1275, #generated=1631, seconds=0.004177, #generated/second=390472
+24. White moves: value=-4, #expanded=1894, #generated=2421, seconds=0.002814, #generated/second=860341
+23. Black moves: value=-4, #expanded=3051, #generated=3843, seconds=0.002924, #generated/second=1.3143e+06
+22. White moves: value=-4, #expanded=9329, #generated=11979, seconds=0.008505, #generated/second=1.40847e+06
+21. Black moves: value=-4, #expanded=37988, #generated=48477, seconds=0.036438, #generated/second=1.3304e+06
+20. White moves: value=-4, #expanded=63570, #generated=81631, seconds=0.062783, #generated/second=1.30021e+06
+19. Black moves: value=-4, #expanded=142595, #generated=184144, seconds=0.141732, #generated/second=1.29924e+06
+18. White moves: value=-4, #expanded=466161, #generated=605947, seconds=0.49551, #generated/second=1.22288e+06
+17. Black moves: value=-4, #expanded=870050, #generated=1134288, seconds=0.984881, #generated/second=1.1517e+06
+16. White moves: value=-4, #expanded=5518091, #generated=7221811, seconds=6.52263, #generated/second=1.10719e+06
+15. Black moves: value=-4, #expanded=19705373, #generated=25831374, seconds=26.2087, #generated/second=985605

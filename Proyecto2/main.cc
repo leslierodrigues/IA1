@@ -24,7 +24,7 @@ using namespace std;
 
 unsigned expanded = 0;
 unsigned generated = 0;
-int tt_saved = 0;
+
 int tt_threshold = 32; // threshold to save entries in TT
 
 // Transposition table
@@ -329,6 +329,7 @@ int negamax(state_t state, int depth, int alpha, int beta, int color, bool use_t
                  TTable[table_to_check][state].depth_ >= depth){
             type = TTable[table_to_check][state].type_;
             value = TTable[table_to_check][state].value_;
+            cout << type << endl;
             // If the type of the node is EXACT, then we just return the value,
             //  if it's a lower bound, we use it to grow alpha if possible
             //  and if it's an upper bound, we'll use it to make beta smaller.
@@ -470,7 +471,7 @@ bool TEST(state_t state, int score, int depth, int color, int condition){
     state_t child;
     for (int pos : valid_moves){
         child = color == 1 ? state.black_move(pos): state.white_move(pos);
-        generated++;     
+        generated++;
         if (color == 1 and TEST(child,score,depth,-color,condition)){
             return true;
         }
@@ -555,16 +556,21 @@ int negascout(state_t state, int depth, int alpha, int beta, int color, bool use
     }
 
     if (use_tt){
-        TTable[table_to_check][state].value_ = score;
+        if (TTable[table_to_check].find(state) == TTable[table_to_check].end() and
+                 (TTable[table_to_check][state].depth_ < depth or 
+                    TTable[table_to_check][state].type_ == stored_info_t::EXACT))
+        {
+        TTable[table_to_check][state].value_ = alpha;
         TTable[table_to_check][state].depth_ = depth;
-        if (score <= original_alpha){
+        if (alpha <= original_alpha){
             TTable[table_to_check][state] = stored_info_t::UPPER;
         }
-        else if (score >= beta){
+        else if (alpha >= beta){
             TTable[table_to_check][state] = stored_info_t::LOWER;
         }
         else{
             TTable[table_to_check][state] = stored_info_t::EXACT;
+        }
         }
     }
 
