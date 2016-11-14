@@ -29,9 +29,9 @@ Resultados
             El orden esta dado por la cantidad de poda que se le hace al arbol,
             es obvio que entre mas nodos se poden, mas rapida sera la busqueda.
 
-            Ademas, aunque Negamax (Minimax) y Minimax-maxmin sean los mismos
+            Además, aunque Negamax (Minimax) y Minimax-maxmin sean los mismos
             algoritmos, hay una pequeña ganancia en eficiencia en el primero
-            gracias a que no utiliza doble recursion sino recursion simple.
+            gracias a que no utiliza doble recursión sino recursión simple.
 
             Formalmente las complejidades son:
                 Para Negascout y Scout son similares O(b^(d/2))
