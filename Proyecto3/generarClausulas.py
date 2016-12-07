@@ -621,26 +621,204 @@ def generarRestriccionesVertical(clausulas, extremoSuperior, extremoInferior) :
     abajo = mapaBordes.get((j,j+numeroColumnas+1), "")
     abajoDerecha = mapaBordes.get((j,j+1), "")
     
+    
+    # esquina superior izquierda
+    if (arriba == "") and (arribaIzquierda == "") and (arribaDerecha != "") and (abajo != "") :
+        clausulas.append(" ".join([negar(variable)     # Si el borde se usa,entonces 
+                                  ,arribaDerecha]))    # la superior derecha siempre se debe usar
+        
+        clausulas.append(" ".join([negar(variable)     # No se deben usar los dos inferiores
+                                  ,negar(abajo)        # al mismo tiempo
+                                  ,negar(abajoDerecha)]))
+        
+        clausulas.append(" ".join([negar(variable)     # Los dos inferiores no pueden 
+                                  ,      abajo         # estar apagados al mismo tiempo
+                                  ,      abajoDerecha]))
+        
+        return
+        
+    
+    # esquina superior derecha
+    if (arriba == "") and (arribaIzquierda != "") and (arribaDerecha == "") and (abajo != "") :
+        clausulas.append(" ".join([negar(variable)     # Si el borde se usa,entonces 
+                                  ,arribaIzquierda]))    # la superior izquierda siempre se debe usar
+        
+        clausulas.append(" ".join([negar(variable)     # No se deben usar los dos inferiores
+                                  ,negar(abajo)        # al mismo tiempo
+                                  ,negar(abajoIzquierda)]))
+        
+        clausulas.append(" ".join([negar(variable)     # Los dos inferiores no pueden 
+                                  ,      abajo         # estar apagados al mismo tiempo
+                                  ,      abajoIzquierda]))
+        
+        return
+    
+    # esquina inferior derecha
+    if (arriba != "") and (arribaIzquierda != "") and (arribaDerecha == "") and (abajo == "") :
+        clausulas.append(" ".join([negar(variable)      # Si el borde se usa,entonces 
+                                  ,abajoIzquierda]))    # la superior izquierda siempre se debe usar
+        
+        clausulas.append(" ".join([negar(variable)     # No se deben usar los dos superiores
+                                  ,negar(arriba)       # al mismo tiempo
+                                  ,negar(arribaIzquierda)]))
+        
+        clausulas.append(" ".join([negar(variable)      # Los dos inferiores no pueden 
+                                  ,      arriba         # estar apagados al mismo tiempo
+                                  ,      arribaIzquierda]))
+        
+        return
+    
+    # esquina inferior izquierda
+    if (arriba != "") and (arribaIzquierda == "") and (arribaDerecha != "") and (abajo == "") :
+        clausulas.append(" ".join([negar(variable)      # Si el borde se usa,entonces 
+                                  ,abajoDerecha]))    # la superior derecha siempre se debe usar
+        
+        clausulas.append(" ".join([negar(variable)     # No se deben usar los dos superiores
+                                  ,negar(arriba)       # al mismo tiempo
+                                  ,negar(arribaDerecha)]))
+        
+        clausulas.append(" ".join([negar(variable)      # Los dos inferiores no pueden 
+                                  ,      arriba         # estar apagados al mismo tiempo
+                                  ,      arribaDerecha]))
+        return
+    
+    # Primera fila
+    if (arriba == "") and (arribaIzquierda != "") and (arribaDerecha != "") and (abajo != "") :
+        
+        clausulas.append(" ".join([negar(variable)           # Las dos superiores no pueden
+                                  ,negar(arribaIzquierda)    # usarse a la vez
+                                  ,negar(arribaDerecha)]))
+        
+        clausulas.append(" ".join([negar(variable)           # Las dos superiores no pueden
+                                  ,      arribaIzquierda    # estar apagadas a la vez
+                                  ,      arribaDerecha]))
+        
+        clausulas.append(" ".join([negar(variable)           # las tres de abajo no pueden
+                                  ,negar(abajo)              # usarse a la vez
+                                  ,negar(abajoIzquierda)
+                                  ,negar(abajoDerecha)]))
+        
+        clausulas.append(" ".join([negar(variable)           # las tres de abajo no pueden
+                                  ,      abajo               # estar apagadas a la vez
+                                  ,      abajoIzquierda
+                                  ,      abajoDerecha]))
+        
+        clausulas.append(" ".join([negar(variable)           # dos de las tres de abajo no pueden
+                                  ,negar(abajo)              # usarse a la vez
+                                  ,negar(abajoIzquierda)]))
+        
+        clausulas.append(" ".join([negar(variable)           # dos de las tres de abajo no pueden
+                                  ,negar(abajoDerecha)       # usarse a la vez
+                                  ,negar(abajoIzquierda)]))
+        
+        clausulas.append(" ".join([negar(variable)           # dos de las tres de abajo no pueden
+                                  ,negar(abajo)              # usarse a la vez
+                                  ,negar(abajoDerecha)]))
+        
+        return
+    
+    # Ultima fila
+    if (arriba != "") and (arribaIzquierda != "") and (arribaDerecha != "") and (abajo == "") :
+        
+        clausulas.append(" ".join([negar(variable)           # Las dos inferiores no pueden
+                                  ,negar(abajoIzquierda)    # usarse a la vez
+                                  ,negar(abajoDerecha)]))
+        
+        clausulas.append(" ".join([negar(variable)           # Las dos inferiores no pueden
+                                  ,      abajoIzquierda    # estar apagadas a la vez
+                                  ,      abajoDerecha]))
+        
+        clausulas.append(" ".join([negar(variable)           # las tres de arriba no pueden
+                                  ,negar(arriba)              # usarse a la vez
+                                  ,negar(arribaIzquierda)
+                                  ,negar(arribaDerecha)]))
+        
+        clausulas.append(" ".join([negar(variable)           # las tres de arriba no pueden
+                                  ,      arriba               # estar apagadas a la vez
+                                  ,      arribaIzquierda
+                                  ,      arribaDerecha]))
+        
+        clausulas.append(" ".join([negar(variable)           # dos de las tres de arriba no pueden
+                                  ,negar(arriba)              # usarse a la vez
+                                  ,negar(arribaIzquierda)]))
+        
+        clausulas.append(" ".join([negar(variable)           # dos de las tres de arriba no pueden
+                                  ,negar(arribaDerecha)       # usarse a la vez
+                                  ,negar(arribaIzquierda)]))
+        
+        clausulas.append(" ".join([negar(variable)           # dos de las tres de arriba no pueden
+                                  ,negar(arriba)              # usarse a la vez
+                                  ,negar(arribaDerecha)]))
+        
+        return
+    
+    # primera columna
+    if (arribaIzquierda == "") and (arriba != "") and (abajo != "") and (arribaDerecha != "") :
+        
+        clausulas.append(" ".join([negar(variable)          # Las dos superiores no 
+                                  ,negar(arriba)            # peden usarse a la vez
+                                  ,negar(arribaDerecha)]))
+        
+        clausulas.append(" ".join([negar(variable)          # Las dos inferiores no 
+                                  ,negar(abajo)             # peden usarse a la vez
+                                  ,negar(abajoDerecha)]))
+        
+        clausulas.append(" ".join([negar(variable)          # Las dos superiores no 
+                                  ,      arriba            # peden estar apagadas
+                                  ,      arribaDerecha]))  # a la vez
+        
+        clausulas.append(" ".join([negar(variable)          # Las dos inferiores no 
+                                  ,      abajo              # estar apagadas a la vez
+                                  ,      abajoDerecha]))
+        
+        return
+    
+    # ultima columna
+    if (arribaIzquierda != "") and (arriba != "") and (abajo != "") and (arribaDerecha == "") :
+        
+        clausulas.append(" ".join([negar(variable)          # Las dos superiores no 
+                                  ,negar(arriba)            # peden usarse a la vez
+                                  ,negar(arribaIzquierda)]))
+        
+        clausulas.append(" ".join([negar(variable)          # Las dos inferiores no 
+                                  ,negar(abajo)             # peden usarse a la vez
+                                  ,negar(abajoIzquierda)]))
+        
+        clausulas.append(" ".join([negar(variable)          # Las dos superiores no 
+                                  ,      arriba            # peden estar apagadas
+                                  ,      arribaIzquierda]))  # a la vez
+        
+        clausulas.append(" ".join([negar(variable)          # Las dos inferiores no 
+                                  ,      abajo              # estar apagadas a la vez
+                                  ,      abajoIzquierda]))
+        
+        return
+    
     #Restricciones para el extremo superior
-    clausulas.append(" ".join([negar(variable)
-                              ,negar(arribaDerecha)
+    clausulas.append(" ".join([negar(variable)            # no pueden usarse todas las 
+                              ,negar(arribaDerecha)       # superiores a la vez
                               ,negar(arriba)
                               ,negar(arribaIzquierda)]))
     
-    clausulas.append(" ".join([negar(variable)
-                              ,negar(arribaIzquierda)
+    clausulas.append(" ".join([negar(variable)            # dos de las superiores no
+                              ,negar(arribaIzquierda)     # pueden prenderse al mismo tiempo
                               ,negar(arriba)
                               ,arribaDerecha]))
     
-    clausulas.append(" ".join([negar(variable)
-                              ,negar(arribaIzquierda)
+    clausulas.append(" ".join([negar(variable)            # dos de las superiores no
+                              ,negar(arribaIzquierda)     # pueden prenderse al mismo tiempo
                               ,arriba
                               ,negar(arribaDerecha)]))
     
-    clausulas.append(" ".join([negar(variable)
-                              ,arribaIzquierda
+    clausulas.append(" ".join([negar(variable)            # dos de las superiores no
+                              ,arribaIzquierda            # pueden prenderse al mismo tiempo
                               ,negar(arriba)
                               ,negar(arribaDerecha)]))
+    
+    clausulas.append(" ".join([negar(variable)            # las superiores no pueden estar
+                              ,arribaIzquierda            # todas apagadas
+                              ,arriba
+                              ,arribaDerecha]))
     
     #Restricciones para el extremo inferior
     clausulas.append(" ".join([negar(variable)
@@ -662,7 +840,11 @@ def generarRestriccionesVertical(clausulas, extremoSuperior, extremoInferior) :
                               ,abajoIzquierda
                               ,negar(abajo)
                               ,negar(abajoDerecha)]))
-
+    
+    clausulas.append(" ".join([negar(variable)            # las inferiores no pueden estar
+                              ,abajoIzquierda             # todas apagadas
+                              ,abajo
+                              ,abajoDerecha]))
 
 
 def generarRestriccionContinuidad() :
@@ -678,5 +860,6 @@ def generarRestriccionContinuidad() :
         elif esVertical(i,j) :
             generarRestriccionesVertical(clausulas, i, j)
         
+    
     
     return "\n".join(clausulas)
