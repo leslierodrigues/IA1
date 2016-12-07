@@ -1,7 +1,29 @@
-N=5
+N=5 #Filas
 numeroColumnas = 5
-M=5
+M=5 #Columnas
 numeroFilas = 5
+
+tablero = [] #Definido para que sea una global
+
+
+# Lee una linea.
+def leerLinea():
+	linea = input()
+	datos = linea.split()
+	N = int(datos[0])
+	numeroFilas = N
+	M = int(datos[1])
+	numeroColumnas = M
+
+	# -1 indica que no hay nada
+	tablero = [[-1 for i in range(M)] for i in range(N)] 
+
+	matriz = datos[2:]
+
+	for i in range(len(matriz)):
+		for j in range(len(matriz[i])):
+			tablero[i][j] = -1 if matriz[i][j] == '.' else int(matriz[i][j])
+
 
 # Ejemplo que dio Blai
 mapaCeldaRestriccionNumeroBordes = {(0,1) : 2, (0,2) : 2, (0,4) : 3
