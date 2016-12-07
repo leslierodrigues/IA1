@@ -263,7 +263,7 @@ def generarRestriccionesHorizonal(clausulas, extremoIzquierdo, extremoDerecho) :
         
         clausulas.append(" ".join([negar(variable)           # Si el borde se usa
                                   ,      abajoIzquierda      # entonces la izquierda inferior debe usarse
-                                  ,negar(abajoDerecha)       # y las demás no pueden usarse
+                                  ,negar(abajoDerecha)       # y las demas no pueden usarse
                                   ,negar(derecha)]))         # al mismo tiempo
         
         clausulas.append(" ".join([negar(variable)           # Si el borde se usa
@@ -277,7 +277,7 @@ def generarRestriccionesHorizonal(clausulas, extremoIzquierdo, extremoDerecho) :
                                   ,      derecha ]))         # 
         
         clausulas.append(" ".join([negar(variable)           # Si el borde se usa
-                                  ,      abajoIzquierda      # entonces los demás bordes no
+                                  ,      abajoIzquierda      # entonces los demas bordes no
                                   ,      abajoDerecha        # pueden estar apagados 
                                   ,      derecha ]))         # todos a la vez
         
@@ -292,7 +292,7 @@ def generarRestriccionesHorizonal(clausulas, extremoIzquierdo, extremoDerecho) :
         
         clausulas.append(" ".join([negar(variable)           # Si el borde se usa
                                   ,      abajoDerecha        # entonces la derecha inferior debe usarse
-                                  ,negar(abajoIzquierda)     # y las demás no pueden usarse
+                                  ,negar(abajoIzquierda)     # y las demas no pueden usarse
                                   ,negar(izquierda)]))       # al mismo tiempo
         
         clausulas.append(" ".join([negar(variable)           # Si el borde se usa
@@ -306,7 +306,7 @@ def generarRestriccionesHorizonal(clausulas, extremoIzquierdo, extremoDerecho) :
                                   ,      izquierda ]))       # 
         
         clausulas.append(" ".join([negar(variable)           # Si el borde se usa
-                                  ,      abajoIzquierda      # entonces los demás bordes no
+                                  ,      abajoIzquierda      # entonces los demas bordes no
                                   ,      abajoDerecha        # pueden estar apagados 
                                   ,      izquierda ]))       # todos a la vez
         
@@ -349,7 +349,7 @@ def generarRestriccionesHorizonal(clausulas, extremoIzquierdo, extremoDerecho) :
                                  , negar(abajoDerecha)]))   # 
         
         clausulas.append(" ".join([negar(variable)          # Si el borde se usa, entonces
-                                 ,       abajoIzquierda     # los demás bordes no pueden
+                                 ,       abajoIzquierda     # los demas bordes no pueden
                                  ,       izquierda          # estar vacios
                                  ,       derecha            #
                                  ,       abajoDerecha ]))   # 
@@ -357,8 +357,8 @@ def generarRestriccionesHorizonal(clausulas, extremoIzquierdo, extremoDerecho) :
         return
     
     #Extremo Derecho toca el borde
-    if (arribaIzquierda != "") and (arribaDerecha != "") and (izquierda != "") 
-        and (derecha == "")    and (abajoDerecha != "") :
+    if ((arribaIzquierda != "") and (arribaDerecha != "") and (izquierda != "") 
+        and (derecha == "")    and (abajoDerecha != "")) :
         
         pass
         
