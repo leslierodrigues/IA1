@@ -29,7 +29,7 @@ def leerLinea():
 mapaCeldaRestriccionNumeroBordes = {(0,1) : 2, (0,2) : 2, (0,4) : 3
                                    ,(1,1) : 2
                                    ,(2,0) : 3, (2,1) : 2
-                                   ,(3,0) : 1, (3,4) : 3
+                                   ,(3,0) : 1, (3,3) : 0, (3,4) : 3
                                    ,(4,1) : 2, (4,2) : 2, (4,3) : 3}
 
 
@@ -59,5 +59,15 @@ Para toda celda c=(i,j) con 1 <= i <= N y 1 <= j < M,
 
 q(i,j,n) <=> q(i,j+1,s)
 '''
+#  bordesDeCeldas es un arreglo de 3 dimensiones 
+#  1era dimension: fila en la que se encuentra la celda 
+#  2da dimension: columna en la que se encuentra la celda 
+#  3era dimension: borde de la celda
+#
+#  bordesDeCeldas[i][j] es una arreglo de tamano 4 que corresponden a cada una
+#                       de las lineas que bordean la celda, en el siguiente orden:
+#                       norte, sur, este, oeste
+            
+bordesDeCeldas = [[[]]]
 
 
