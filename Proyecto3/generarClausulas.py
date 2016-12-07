@@ -3,7 +3,7 @@
 
 """
 Ejecutar en el terminal con execfile de python2
-Se debería crear un archivo input para el sat solver
+Se deberia crear un archivo input para el sat solver
 Para cambiar la instancia que se genera hay que modificar:
     numeroColumnas
     numeroFilas
