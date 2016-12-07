@@ -59,6 +59,7 @@ Para toda celda c=(i,j) con 1 <= i <= N y 1 <= j < M,
 
 q(i,j,n) <=> q(i,j+1,s)
 '''
+
 #  bordesDeCeldas es un arreglo de 3 dimensiones 
 #  1era dimension: fila en la que se encuentra la celda 
 #  2da dimension: columna en la que se encuentra la celda 
