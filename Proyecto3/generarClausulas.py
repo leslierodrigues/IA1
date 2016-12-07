@@ -1,18 +1,16 @@
-
+#!/usr/bin/python
 
 
 """
-1   Elegir Tamano del tablero
-2   mapaBordes = construirVariablesBordes(numeroFilas, numeroColumnas)
-3   mapaCeldaRestriccionNumeroBordes (ahorita esta hecho a mano, pero se debe construir a partir del input)
-4   clausulasNumBordes = construirTodasRestriccionesNumeroBordes()
-5   clausulasLineaContinua =  generarRestriccionContinuidad() #Faltan los casos borde
-6   clausulas = clausulasNumBordes + clausulasLineaContinua
-
-
-Faltan los casos especiales de generarRestriccionesHorizonal y generarRestriccionesVertical
+Ejecutar en el terminal con execfile de python2
+Se debería crear un archivo input para el sat solver
+Para cambiar la instancia que se genera hay que modificar:
+    numeroColumnas
+    numeroFilas
+    mapaCeldaRestriccionNumeroBordes
 
 """
+
 
 def construirTodasRestriccionesNumeroBordes():
     clausulasNumBordes = ""
@@ -27,17 +25,26 @@ numeroFilas = 5
 #mapaCeldaABordes = {(1,1) : ["X","Y","Z","W"]}
 mapaBordes = {(0,1) : "X1"}
 
+def proximaVariable():
+    i = 1
+    while True :
+        yield str(i)
+        i += 1
+
 def construirVariablesBordes(numeroFilas, numeroColumnas) :
     variablesBordes = {}
     ultimoValor = (numeroFilas+1)*(numeroColumnas+1)-1
+    identificadorVar = proximaVariable()
     
     for i in range(0, ultimoValor) :
         
         if  ((i+1) % (numeroColumnas+1) != 0) :
-            variablesBordes[(i,i+1)] = "".join(["X_",str(i),"_",str(i+1)])
+            #variablesBordes[(i,i+1)] = "".join(["X_",str(i),"_",str(i+1)])
+            variablesBordes[(i,i+1)] = identificadorVar.next()
         
         if not(i+numeroColumnas >= ultimoValor) :
-            variablesBordes[(i,i+numeroColumnas+1)] = "".join(["X_",str(i),"_",str(i+numeroColumnas+1)])
+            #variablesBordes[(i,i+numeroColumnas+1)] = "".join(["X_",str(i),"_",str(i+numeroColumnas+1)])
+            variablesBordes[(i,i+numeroColumnas+1)] = identificadorVar.next()
     
     
     
@@ -65,7 +72,7 @@ def mapaCeldaABordes(coordenadaCeldaX, coordenadaCeldaY) :
 
 
 def generarRestriccionCuatroBordes(clausulas, bordes) :
-    #No puede tener un borde
+    #No puede tener cuatro borde
     clausulas.append(" ".join([negar(bordes[0])
                               ,negar(bordes[1])
                               ,negar(bordes[2])
@@ -213,8 +220,22 @@ def generarRestriccionCeldaNM(CoordenadaX, CoordenadaY, numeroDeBordes) :
         #No se permite un solo borde
         generarRestriccionUnBorde(clausulas, bordes)
         
+    elif numeroDeBordes == 0:
+        
+        #No se permiten cuatro bordes
+        generarRestriccionCuatroBordes(clausulas, bordes)
+        
+        #No se permiten tres bordes
+        generarRestriccionTresBordes(clausulas, bordes)
+        
+        #No se permiten dos bordes
+        generarRestriccionDosBordes(clausulas, bordes)
+        
+        #No se permite un solo borde
+        generarRestriccionUnBorde(clausulas, bordes)
+        
     
-    return "\n".join(clausulas)
+    return (" 0\n".join(clausulas))+" 0\n"
 
 def esHorizontal(i,j) : return j==i+1
 
@@ -845,7 +866,8 @@ def generarRestriccionesVertical(clausulas, extremoSuperior, extremoInferior) :
                               ,abajoIzquierda             # todas apagadas
                               ,abajo
                               ,abajoDerecha]))
-
+    
+    return
 
 def generarRestriccionContinuidad() :
     
@@ -862,4 +884,17 @@ def generarRestriccionContinuidad() :
         
     
     
-    return "\n".join(clausulas)
+    return (" 0\n".join(clausulas))+" 0\n"
+
+
+mapaBordes = construirVariablesBordes(numeroFilas, numeroColumnas)
+clausulasNumBordes = construirTodasRestriccionesNumeroBordes()
+clausulasLineaContinua =  generarRestriccionContinuidad() 
+clausulas = clausulasNumBordes + clausulasLineaContinua
+
+with open("inputSatSolver.txt", "w") as f :
+    
+    f.write("p cnf "+str(numeroFilas)+" "+str(numeroColumnas)+"\n")
+    f.write(clausulas)
+    
+
