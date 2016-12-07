@@ -228,15 +228,6 @@ def generarRestriccionesHorizonal(clausulas, extremoIzquierdo, extremoDerecho) :
     i = extremoIzquierdo
     j = extremoDerecho
     
-    #"""
-    #hayCasoBorde = any([(i % (numeroColumnas+1) == 0)
-    #                  , (j+numeroColumnas+1 > (numeroColumnas+1)*(numeroFilas+1))
-    #                  , ((i+1)%(numeroColumnas+1) == 0), ((j+1)%(numeroColumnas+1) == 0)
-    #                  , (i <= numeroColumnas)
-    #                  , (j <= numeroColumnas)])
-    #"""
-    
-    
     
     variable = mapaBordes.get((i,j), "")
     arribaDerecha = mapaBordes.get((j-numeroColumnas-1,j), "")
@@ -246,35 +237,133 @@ def generarRestriccionesHorizonal(clausulas, extremoIzquierdo, extremoDerecho) :
     izquierda = mapaBordes.get((i-1,i), "")
     abajoIzquierda = mapaBordes.get((i,i+numeroColumnas+1), "")
     
-    #Una celda
-    if (izquierda == "") and (arribaIzquierda == "") and (derecha == ""):
-        clausulas.append(" ".join([abajoIzquierda, negar(variable), abajoDerecha]))
+    #Solo hay una celda en el tablero
+    if (izquierda == "") and (arribaIzquierda == "") and (derecha == "") and (arribaDerecha == ""):
+        
+        clausulas.append(" ".join([negar(variable)            # Si el borde se usa
+                                 ,       abajoIzquierda       # entonces la izquierda no puede
+                                 , negar(abajoDerecha)]))     # estar apagada
+        
+        clausulas.append(" ".join([negar(variable)            # Si el borde se usa
+                                 , negar(abajoIzquierda)      # entonces la derecha no puede
+                                 ,       abajoDerecha]))      # estar apagada
+        
+        clausulas.append(" ".join([negar(variable)            # Si el borde se usa
+                                 ,       abajoIzquierda       # entonces los lados no 
+                                 ,       abajoDerecha]))      # pueden estar apagados
+        
         return
     
     #Esquina superior izquierda
-    if (izquierda == "") and (arribaIzquierda == "") :
-        clausulas.append(" ".join([abajoIzquierda, negar(variable),abajoDerecha, negar(derecha)]))
-        clausulas.append(" ".join([abajoIzquierda, negar(variable), negar(abajoDerecha), derecha]))
+    if (izquierda == "") and (arribaIzquierda == "") and (derecha != "") :
+        clausulas.append(" ".join([negar(variable)           # Si el borde se usa
+                                  ,negar(abajoIzquierda)     # entonces todas sus conexiones
+                                  ,negar(abajoDerecha)       # no pueden estar prendidas
+                                  ,negar(derecha)]))         # al mismo tiempo
+        
+        clausulas.append(" ".join([negar(variable)           # Si el borde se usa
+                                  ,      abajoIzquierda      # entonces la izquierda inferior debe usarse
+                                  ,negar(abajoDerecha)       # y las demás no pueden usarse
+                                  ,negar(derecha)]))         # al mismo tiempo
+        
+        clausulas.append(" ".join([negar(variable)           # Si el borde se usa
+                                  ,      abajoIzquierda      # entonces la izquierda inferior debe usarse
+                                  ,      abajoDerecha        # siempre
+                                  ,negar(derecha)]))         # 
+        
+        clausulas.append(" ".join([negar(variable)           # Si el borde se usa
+                                  ,      abajoIzquierda      # entonces la izquierda inferior debe usarse
+                                  ,negar(abajoDerecha)       # siempre
+                                  ,      derecha ]))         # 
+        
+        clausulas.append(" ".join([negar(variable)           # Si el borde se usa
+                                  ,      abajoIzquierda      # entonces los demás bordes no
+                                  ,      abajoDerecha        # pueden estar apagados 
+                                  ,      derecha ]))         # todos a la vez
+        
         return
     
     #Esquina superior  derecha
-    if (derecha == "") and (arribaDerecha == "") :
-        clausulas.append(" ".join([abajoIzquierda, negar(variable),abajoDerecha, negar(izquierda)]))
-        clausulas.append(" ".join([abajoDerecha, negar(variable), negar(abajoIzquierda), izquierda]))
+    if (derecha == "") and (arribaDerecha == "") and (izquierda != "") :
+        clausulas.append(" ".join([negar(variable)           # Si el borde se usa
+                                  ,negar(abajoIzquierda)     # entonces todas sus conexiones
+                                  ,negar(abajoDerecha)       # no pueden estar prendidas
+                                  ,negar(izquierda)]))       # al mismo tiempo
+        
+        clausulas.append(" ".join([negar(variable)           # Si el borde se usa
+                                  ,      abajoDerecha        # entonces la derecha inferior debe usarse
+                                  ,negar(abajoIzquierda)     # y las demás no pueden usarse
+                                  ,negar(izquierda)]))       # al mismo tiempo
+        
+        clausulas.append(" ".join([negar(variable)           # Si el borde se usa
+                                  ,      abajoIzquierda      # entonces la derecha inferior debe usarse
+                                  ,      abajoDerecha        # siempre
+                                  ,negar(izquierda)]))       # 
+        
+        clausulas.append(" ".join([negar(variable)           # Si el borde se usa
+                                  ,      abajoDerecha        # entonces la derecha inferior debe usarse
+                                  ,negar(abajoIzquierda)     # siempre
+                                  ,      izquierda ]))       # 
+        
+        clausulas.append(" ".join([negar(variable)           # Si el borde se usa
+                                  ,      abajoIzquierda      # entonces los demás bordes no
+                                  ,      abajoDerecha        # pueden estar apagados 
+                                  ,      izquierda ]))       # todos a la vez
+        
         return
+    
     
     #Primera Fila
-    if (arribaIzquierda == "") and (arribaDerecha == "") :
-        clausulas.append(" ".join([abajoIzquierda, negar(variable),abajoDerecha, negar(derecha),negar(izquierda)]))
-        clausulas.append(" ".join([negar(abajoIzquierda), negar(variable),abajoDerecha, negar(derecha),izquierda]))
-        clausulas.append(" ".join([negar(abajoIzquierda), negar(variable),negar(abajoDerecha), derecha,izquierda]))
-        clausulas.append(" ".join([abajoIzquierda, negar(variable),negar(abajoDerecha), derecha,negar(izquierda)]))
+    if (arribaIzquierda == "") and (arribaDerecha == "") and (izquierda != "") and (derecha != ""):
+        
+        clausulas.append(" ".join([negar(variable)          # Si el borde se usa, entonces
+                                 , negar(abajoIzquierda)    # los dos bordes de la izquierda
+                                 , negar(izquierda)]))      # no pueden usarse a la vez
+        
+        clausulas.append(" ".join([negar(variable)          # Si el borde se usa, entonces
+                                 , negar(abajoDerecha)      # los dos bordes de la derecha
+                                 , negar(derecha)]))        # no pueden usarse a la vez
+        
+        clausulas.append(" ".join([negar(variable)          # Si el borde se usa, entonces
+                                 ,       abajoIzquierda     # debe haber alguna conexion 
+                                 , negar(izquierda)         # a la derecha
+                                 ,       derecha            #
+                                 ,       abajoDerecha]))    # 
+        
+        clausulas.append(" ".join([negar(variable)          # Si el borde se usa, entonces
+                                 , negar(abajoIzquierda)    # debe haber alguna conexion 
+                                 ,       izquierda          # a la derecha
+                                 ,       derecha            #
+                                 ,       abajoDerecha]))    # 
+        
+        clausulas.append(" ".join([negar(variable)          # Si el borde se usa, entonces
+                                 ,       abajoIzquierda     # debe haber alguna conexion 
+                                 ,       izquierda          # a la izquierda
+                                 , negar(derecha)           #
+                                 ,       abajoDerecha]))    # 
+        
+        clausulas.append(" ".join([negar(variable)          # Si el borde se usa, entonces
+                                 ,       abajoIzquierda     # debe haber alguna conexion 
+                                 ,       izquierda          # a la izquierda
+                                 ,       derecha            #
+                                 , negar(abajoDerecha)]))   # 
+        
+        clausulas.append(" ".join([negar(variable)          # Si el borde se usa, entonces
+                                 ,       abajoIzquierda     # los demás bordes no pueden
+                                 ,       izquierda          # estar vacios
+                                 ,       derecha            #
+                                 ,       abajoDerecha ]))   # 
+        
         return
     
-    #Extremo Derecho toca borde
+    #Extremo Derecho toca el borde
+    if (arribaIzquierda != "") and (arribaDerecha != "") and (izquierda != "") 
+        and (derecha == "")    and (abajoDerecha != "") :
+        
+        pass
+        
     
-    
-    #Restricciones para el extremo derecho
+    #Restricciones para el extremo derecho (No es caso especial)
     clausulas.append(" ".join([negar(variable)
                               ,negar(arribaDerecha)
                               ,negar(derecha)
@@ -295,7 +384,7 @@ def generarRestriccionesHorizonal(clausulas, extremoIzquierdo, extremoDerecho) :
                               ,negar(derecha)
                               ,negar(abajoDerecha)]))
     
-    #Restricciones para el extremo izuierdo
+    #Restricciones para el extremo izuierdo (No es caso especial)
     clausulas.append(" ".join([negar(variable)
                               ,negar(arribaIzquierda)
                               ,negar(izquierda)
