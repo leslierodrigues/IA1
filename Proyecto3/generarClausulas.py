@@ -888,10 +888,13 @@ def generarRestriccionContinuidad() :
 
 
 mapaBordes = construirVariablesBordes(numeroFilas, numeroColumnas)
+print(mapaBordes)
 clausulasNumBordes = construirTodasRestriccionesNumeroBordes()
+print(mapaBordes[(0,1)])
 clausulasLineaContinua =  generarRestriccionContinuidad() 
-clausulas = clausulasNumBordes + clausulasLineaContinua
 
+clausulas = clausulasNumBordes + clausulasLineaContinua
+print(clausulas)
 with open("inputSatSolver.txt", "w") as f :
     
     f.write("p cnf "+str(numeroFilas)+" "+str(numeroColumnas)+"\n")

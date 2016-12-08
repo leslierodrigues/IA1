@@ -202,48 +202,59 @@ def clausulasTipo1():
                                                     negar(q(i,j,k2))]))   
                                                 
             elif tablero[i][j] == 2:
-                pass
-                '''
                 # q(i,j,n) v q(i,j,e) v q(i,j,s) v q(i,j,w)
                 clausulas.append(" ".join([(q(i,j,'n')),
                                            (q(i,j,'s')),
                                            (q(i,j,'e')),
                                            (q(i,j,'w'))]))
+                                           
+                                           
+                # -q(i,j,n) \/ -q(i,j,s) \/ -q(i,j,e)
+                clausulas.append(" ".join([negar(q(i,j,'n')),
+                                           negar(q(i,j,'s')),
+                                           negar(q(i,j,'e'))]))
                 
-                # -q(i,j,n) v -q(i,j,w)
-                # -q(i,j,n) v -q(i,j,s)
-                # -q(i,j,n) v -q(i,j,e)
-                # -q(i,j,e) v -q(i,j,w)
-                # -q(i,j,e) v -q(i,j,s)
-                # -q(i,j,s) v -q(i,j,w)
-                bordes = ['w','s','e','n']
-                while bordes != []:
-                    k1 = bordes.pop()
-                    for k2 in bordes:
-                         clausulas.append(" ".join([negar(q(i,j,k1)),
-                                                    negar(q(i,j,k2))])) 
                 
-                # q(i,j,n) v -q(i,j,s)
-                # q(i,j,n) v -q(i,j,e)
-                # q(i,j,n) v -q(i,j,w)
-                                
-                # q(i,j,s) v -q(i,j,n)
-                # q(i,j,s) v -q(i,j,e)
-                # q(i,j,s) v -q(i,j,w)
+                # -q(i,j,n) \/ -q(i,j,s) \/ -q(i,j,w)
+                clausulas.append(" ".join([negar(q(i,j,'n')),
+                                           negar(q(i,j,'s')),
+                                           negar(q(i,j,'w'))]))
                 
-                # q(i,j,e) v -q(i,j,s)
-                # q(i,j,e) v -q(i,j,m)
-                # q(i,j,e) v -q(i,j,w)
+                                            
+                # q(i,j,n) \/ q(i,j,s) \/ q(i,j,e)
+                clausulas.append(" ".join([(q(i,j,'n')),
+                                           (q(i,j,'s')),
+                                           (q(i,j,'e'))]))
                 
-                # q(i,j,w) v -q(i,j,n)
-                # q(i,j,w) v -q(i,j,s)
-                # q(i,j,w) v -q(i,j,w)
-                for k1 in ['n','s','e','w']:
-                    for k2 in ['n','s','e','w']:
-                        if k1 != k2:
-                            clausulas.append(" ".join([negar(q(i,j,k1)),
-                                                       q(i,j,k2))])) 
-               '''             
+                # q(i,j,n) \/ q(i,j,s) \/ q(i,j,w)
+                clausulas.append(" ".join([(q(i,j,'n')),
+                                           (q(i,j,'s')),
+                                           (q(i,j,'w'))]))
+               
+                # -q(i,j,n) \/ q(i,j,s) \/  q(i,j,w) \/ q(i,j,e)
+                clausulas.append(" ".join([negar(q(i,j,'n')),
+                                           (q(i,j,'s')),
+                                           (q(i,j,'e')),
+                                           (q(i,j,'w'))]))
+                                           
+                # -q(i,j,n) \/ q(i,j,s) \/ -q(i,j,e) \/ -q(i,j,w)
+                clausulas.append(" ".join([negar(q(i,j,'n')),
+                                           (q(i,j,'s')),
+                                           negar(q(i,j,'e')),
+                                           negar(q(i,j,'w'))]))
+               
+                # q(i,j,n) \/ -q(i,j,s) \/  q(i,j,w) \/ q(i,j,e)
+                clausulas.append(" ".join([(q(i,j,'n')),
+                                           negar(q(i,j,'s')),
+                                           (q(i,j,'e')),
+                                           (q(i,j,'w'))]))
+                
+                # q(i,j,n) \/ -q(i,j,s) \/ -q(i,j,e) \/ -q(i,j,w)
+                clausulas.append(" ".join([(q(i,j,'n')),
+                                           negar(q(i,j,'s')),
+                                           negar(q(i,j,'e')),
+                                           negar(q(i,j,'w'))]))
+                
                
             elif tablero[i][j] == 3:
                 
@@ -270,6 +281,45 @@ def clausulasTipo1():
                 for k in ['n','s','e','w']:
                     clausulas.append(" ".join([negar(q(i,j,k))]))
     return clausulas
+
+
+'''
+Cláusulas tipo 2
+----------------
+
+Una solución particiona las celdas en dos grupos: el grupo de celdas
+interiores al perímetro y el grupo de celdas exteriores. Debemos 
+identificar el tipo de cada celda en una solución. Para esto definimos
+símbolos z(c) para cada celda c=(i,j) que denotan cuando una celda es
+exterior (z(c)=TRUE) o interior (z(c)=FALSE). Las siguientes fórmulas
+fuerzan que los símbolos z(c) esten bien definidos en cada solución.
+
+Para cada celda c=(1,j) con 1 <= j <= M en el borde izquierdo,
+
+-q(1,j,w) <=> z(1,j)
+
+Para cada celda c=(N,j) con 1 <= j <= M en el borde derecho,
+
+-q(N,j,e) <=> z(N,j)
+
+Para cada celda c=(i,1) con 1 <= i <= N en el borde inferior,
+
+-q(i,1,s) <=> z(i,1)
+
+Para cada celda c=(i,M) con 1 <= i <= N en el borde superior,
+
+-q(i,M,n) <=> z(i,M)
+
+Para las celdas c=(i,j) con 1 < i < N y 1 < j < M, que no están
+en ningún borde, definimos:
+
+z(i,j) <=> [-q(i,j,n) & z(i,j+1)] v [-q(i,j,e) & z(i+1,j)] v [-q(i,j,s) & z(i,j-1)] v [-q(i,j,w) & z(i-1,j)]
+'''
+# generarVariablesTipoDeCelda(), genera una variable para cada celda,
+# que representara su tipo. 
+
+def generarVariablesTipoDeCelda():
+    variable = N * M * 4 
 
 ################################################################################
 # Para la ejecucion  ----------------------------------------------------------#

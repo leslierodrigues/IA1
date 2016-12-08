@@ -1,0 +1,50 @@
+
+*   q(i,j,n) v q(i,j,e) v q(i,j,s) v q(i,j,w)
+
+--------------------------------------------------------------------------------
+
+( q(i,j,n) /\ q(i,j,s) ) => (-q(i,j,e) /\ -q(i,j,o))
+
+*     -q(i,j,n) \/ -q(i,j,s) \/ -q(i,j,e)
+*     -q(i,j,n) \/ -q(i,j,s) \/ -q(i,j,w)
+
+--------------------------------------------------------------------------------
+     
+( -q(i,j,n) /\ -q(i,j,s) ) => (q(i,j,e) /\ q(i,j,o))
+
+*     q(i,j,n) \/ q(i,j,s) \/ q(i,j,e)
+*     q(i,j,n) \/ q(i,j,s) \/ q(i,j,w)
+
+--------------------------------------------------------------------------------
+     
+( q(i,j,n) /\ -q(i,j,s) ) => ( (-q(i,j,e) /\ q(i,j,o)) \/ (q(i,j,e) /\ -q(i,j,o)) )
+
+    Equivalente a  -q(i,j,n) \/ q(i,j,s) \/ ( (-q(i,j,e) /\ q(i,j,o)) \/ (q(i,j,e) /\ -q(i,j,o)) )
+                   <distrivutividad>
+    Equivalente a  -q(i,j,n) \/ q(i,j,s) \/ ( (-q(i,j,e) /\ q(i,j,o)) \/ q(i,j,e) ) /\ ( (-q(i,j,e) /\ q(i,j,o)) \/ -q(i,j,o))
+                   <distrivutividad>
+    Equivalente a  -q(i,j,n) \/ q(i,j,s) \/ ( (-q(i,j,e) \/ q(i,j,e)) /\ (q(i,j,o) \/ q(i,j,e)) /\  (-q(i,j,e) \/ -q(i,j,o)) /\ (q(i,j,o) \/ -q(i,j,o))  )
+                   < tercero excluido y  p /\ true equivalente p>
+    Equivalente a  -q(i,j,n) \/ q(i,j,s) \/ (  (q(i,j,o) \/ q(i,j,e)) /\  (-q(i,j,e) \/ -q(i,j,o)) )
+                    <distributividad>
+                    (-q(i,j,n) \/ q(i,j,s) \/  q(i,j,o) \/ q(i,j,e) ) /\   (-q(i,j,n) \/ q(i,j,s) \/ -q(i,j,e) \/ -q(i,j,o) )
+    
+    Asi nos queda,
+
+*        -q(i,j,n) \/ q(i,j,s) \/  q(i,j,o) \/ q(i,j,e)
+*        -q(i,j,n) \/ q(i,j,s) \/ -q(i,j,e) \/ -q(i,j,o)
+        
+--------------------------------------------------------------------------------
+
+( -q(i,j,n) /\ q(i,j,s) ) => ( (-q(i,j,e) /\ q(i,j,o)) \/ (q(i,j,e) /\ -q(i,j,o)) )
+
+    Con un procedimiento analogo al anterior, tenemos:
+
+*    q(i,j,n) \/ -q(i,j,s) \/  q(i,j,o) \/ q(i,j,e)
+*    q(i,j,n) \/ -q(i,j,s) \/ -q(i,j,e) \/ -q(i,j,o)
+    
+--------------------------------------------------------------------------------        
+        
+                   
+                                
+
