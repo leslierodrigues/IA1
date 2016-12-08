@@ -60,7 +60,11 @@ Para toda celda c=(i,j) con 1 <= i <= N y 1 <= j < M,
 q(i,j,n) <=> q(i,j+1,s)
 '''
 
-#  bordesDeCeldas es un arreglo de 3 dimensiones 
+# generarVariablesBordesDeCeldas es una funcion que genera una variable
+# por cada borde una celda. 
+# Siendo generadas 4 x numero de celdas
+#
+#  retorna: bordesDeCeldas, un arreglo de 3 dimensiones 
 #  1era dimension: fila en la que se encuentra la celda 
 #  2da dimension: columna en la que se encuentra la celda 
 #  3era dimension: borde de la celda
@@ -68,7 +72,15 @@ q(i,j,n) <=> q(i,j+1,s)
 #  bordesDeCeldas[i][j] es una arreglo de tamano 4 que corresponden a cada una
 #                       de las lineas que bordean la celda, en el siguiente orden:
 #                       norte, sur, este, oeste
-            
-bordesDeCeldas = [[[]]]
 
-
+def generarVariablesBordesDeCeldas():
+                
+    bordesDeCeldas = [[[]]]
+    variable = 0;
+    for i in range(N):
+        for j in range(M):
+            for k in range(4):
+                bordesDeCeldas = variable
+                variable++ 
+                
+    return bordesDeCeldas
