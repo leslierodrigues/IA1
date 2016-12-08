@@ -1,0 +1,39 @@
+La celda es exterior si y solo si
+    no tiene borde norte y la celda adyacente por el norte es exterior
+    no tiene borde este y la celda adyacente por el este es exterior
+    no tiene borde sur y la celda adyacente por el sur es exterior
+    no tiene borde oeste y la celda adyacente por el oeste es exterior
+
+z(i,j) <=> [-q(i,j,n) & z(i-1,j)] v [-q(i,j,e) & z(i,j+1)] v [-q(i,j,s) & z(i+1,j)] v [-q(i,j,w) & z(i,j-1)]
+
+Equivalente a 
+
+-z(i,j) v [-q(i,j,n) & z(i-1,j)] v [-q(i,j,e) & z(i,j+1)] v [-q(i,j,s) & z(i+1,j)] v [-q(i,j,w) & z(i,j-1)]
+&
+z(i,j) v -{[-q(i,j,n) & z(i-1,j)] v [-q(i,j,e) & z(i,j+1)] v [-q(i,j,s) & z(i+1,j)] v [-q(i,j,w) & z(i,j-1)]}
+
+Resolvemos cada parte por separado:
+
+PARTE 1 ------------------------------------------------------------------------
+-z(i,j) v [-q(i,j,n) & z(i-1,j)] v [-q(i,j,e) & z(i,j+1)] v [-q(i,j,s) & z(i+1,j)] v [-q(i,j,w) & z(i+1,j)]
+< propiedad 2-cnf>
+-z(i,j) v {[-q(i,j,n) v -q(i,j,e) v -q(i,j,s) -q(i,j,w)] & [z(i-1,j) v z(i,j+1) v z(i+1,j) v z(i-1,j)]
+<distibutividad del v/& >
+[-z(i,j) v -q(i,j,n) v -q(i,j,e) v -q(i,j,s) -q(i,j,w)]
+& 
+[-z(i,j)v z(i-1,j) v z(i,j+1) v z(i+1,j) v z(i-1,j)]
+
+PARTE 2 ------------------------------------------------------------------------
+z(i,j) v -{[-q(i,j,n) & z(i-1,j)] v [-q(i,j,e) & z(i,j+1)] v [-q(i,j,s) & z(i+1,j)] v [-q(i,j,w) & z(i,j-1)]}
+<de morgan>
+z(i,j) v
+{-[-q(i,j,n) & z(i-1,j)] & [-q(i,j,e) & z(i,j+1) ] &  [-q(i,j,s) & z(i+1,j)] & [-q(i,j,w) & z(i,j-1)]}
+<de morgan>
+z(i,j) v
+{[q(i,j,n) v -z(i-1,j)] & [q(i,j,e) v -z(i,j+1)] &  [q(i,j,s) v -z(i+1,j)] & [q(i,j,w) v -z(i,j-1)]}
+<distibutividad del v/& >
+z(i,j) v [q(i,j,n) v -z(i-1,j)] & 
+z(i,j) v [q(i,j,e) v -z(i,j+1)] &
+z(i,j) v [q(i,j,s) v -z(i+1,j)] &
+z(i,j) v [q(i,j,w) v -z(i,j-1)]
+

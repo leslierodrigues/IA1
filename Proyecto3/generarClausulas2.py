@@ -87,7 +87,6 @@ q(i,j,n) <=> q(i,j+1,s)
 
 def generarVariablesBordesDeCeldas():
     variable = 1
-    # -1 indica que no hay nada
     
     bordesDeCeldas = [[[0 for k in range(4)] for j in range(M)] for i in range(N)]              
     for i in range(N):
@@ -314,21 +313,129 @@ Para las celdas c=(i,j) con 1 < i < N y 1 < j < M, que no están
 en ningún borde, definimos:
 
 z(i,j) <=> [-q(i,j,n) & z(i,j+1)] v [-q(i,j,e) & z(i+1,j)] v [-q(i,j,s) & z(i,j-1)] v [-q(i,j,w) & z(i-1,j)]
+
+z(i,j) <=> [-q(i,j,n) & z(i-1,j)] v [-q(i,j,e) & z(i,j+1)] v [-q(i,j,s) & z(i+1,j)] v [-q(i,j,w) & z(i,j-1)]
 '''
 # generarVariablesTipoDeCelda(), genera una variable para cada celda,
 # que representara su tipo. 
+#
+# retorna: z, una matriz, en la que para todo 0 <= i < N y 0 <= j < M
+#             donde i es la fila y j la columna  donde esta la celda, tenemos 
+#             que z[i][j] almacena la variable asociada a dica celda.
+#               - True, si la celda es exterior
+#               - False, si la celda es interior
 
 def generarVariablesTipoDeCelda():
-    variable = N * M * 4 
+    # variable, la variable actual generada, se inicializa en N * M * 4 + 1 
+    # dado que la ultima variable generada fue N * M * 4 (en generarVariablesBordesDeCeldas())
+    variable = N * M * 4 + 1
+    z = []             
+    for i in range(N):
+        z += [[]]
+        for j in range(M):
+            z[i] += [str(variable)]
+            variable+=1               
+    return z    
+    
+def clausulasTipo2():
+
+    # Para cada celda  en el borde izquierdo, -q(i,0,w) <=> z(i,0)
+    # Es decir:     q(i,0,w) \/ z(i,0)
+    #              -q(i,0,w) \/ -z(i,0)
+    # Para cada celda en el borde derecho,-q(i,N,e) <=> z(i,N)
+    # Es decir:    q(i,N-1,e) \/ z(i,N-1)
+    #             -q(i,N-1,e) \/ -z(i,N-1)  
+    
+    for i in range(N):
+        # q(i,0,w) \/ z(i,0), celda en el borde izquierdo
+        clausulas.append(" ".join([q(i,0,'w'),
+                                   z[i][0]]))
+        
+        # -q(i,0,w) \/ -z(i,0), celda en el borde izquierdo
+        clausulas.append(" ".join([negar(q(i,0,'w')),
+                                   negar(z[i][0])]))
+        # q(i,N-1,e) \/ z(i,N-1), celda en el borde derecho
+        clausulas.append(" ".join([q(i,N-1,'e'),
+                                   z[i][N-1]]))
+        # -q(i,N-1,e) \/ -z(N-1,j),  celda en el borde derecho
+        clausulas.append(" ".join([negar(q(i,N-1,'e')),
+                                   negar(z[i][N-1])]))
+    
+    # Para cada celda en el borde superior,-q(0,j,n) <=> z(0,j)
+    # Para cada celda en el borde inferior, -q(M-1,j,s) <=> z(M-1,j)
+    for j in range(M):
+        # q(0,j,n) \/ z(0,j), celda en el borde superior
+        clausulas.append(" ".join([q(0,j,'n'),
+                                   z[0][j]]))
+        # -q(0,j,n) \/ -z(0,j), celda en el borde superior
+        clausulas.append(" ".join([negar(q(0,j,'n')),
+                                   negar(z[0][j])]))
+        # q(0,j,s) \/ z(0,j), celda en el borde inferior
+        clausulas.append(" ".join([q(M-1,j,'s'),
+                                   z[M-1][j]]))
+        # -q(0,j,s) \/ -z(N-1,j),  celda en el borde inferior
+        clausulas.append(" ".join([negar(q(M-1,j,'s')),
+                                   negar(z[M-1][j])]))    
+    temp = [] # almacena las variables de una clausula
+    #Para toda celda que no este en el borde
+    for i in range(1,N-1):
+            for j in range(1,M-1):
+                # La celda no es exterior o no tiene alguno de sus bordes                
+                #-z(i,j) v -q(i,j,n) v -q(i,j,e) v -q(i,j,s) -q(i,j,w)    
+                temp += [negar(z[i][j])]
+                for k in ['n','e','s','w']:
+                    temp += [negar(q(i,j,k))]
+                clausulas.append(" ".join(temp))   
+                
+                # La celda no es exterior o alguna de sus adyancentes es exterior
+                # [-z(i,j)v z(i-1,j) v z(i,j+1) v z(i+1,j) v z(i,j)]
+                clausulas.append(" ".join([negar(z[i][j]),
+                                           z[i-1][j],
+                                           z[i][j+1],
+                                           z[i+1][j],
+                                           z[i][j-1]]))
+                                           
+                # La celda es exterior o no tiene borde superior o
+                # la celda que es adyacente a ella por el norte no es exterior                           
+                # z(i,j) v [q(i,j,n) v -z(i-1,j)]
+                clausulas.append(" ".join([z[i][j],
+                                           q(i,j,'n'),
+                                           negar(z[i-1][j])]))
+                
+                #z(i,j) v [q(i,j,e) v -z(i,j+1)]
+                clausulas.append(" ".join([z[i][j],
+                                           q(i,j,'e'),
+                                           negar(z[i][j+1])]))
+                                           
+                #z(i,j) v [q(i,j,s) v -z(i+1,j)]
+                clausulas.append(" ".join([z[i][j],
+                                           q(i,j,'s'),
+                                           negar(z[i+1][j])]))
+                
+                #z(i,j) v [q(i,j,w) v -z(i,j-1)]
+                clausulas.append(" ".join([z[i][j],
+                                           q(i,j,'s'),
+                                           negar(z[i][j-1])]))
+                
+                
+                
+    return clausulas    
+    
 
 ################################################################################
 # Para la ejecucion  ----------------------------------------------------------#
 
+
 tablero = leerLinea()
 
+# Generar variables
 bordesDeCeldas = generarVariablesBordesDeCeldas() 
-print(bordesDeCeldas)
-clausulas = clausulasTipo0() + clausulasTipo1()
+z = generarVariablesTipoDeCelda()
+
+# Generar clausulas
+#clausulas = clausulasTipo0()
+#clausulas = clausulasTipo1()
+clausulas = clausulasTipo2()
 print(clausulas)
 
 
