@@ -433,8 +433,8 @@ bordesDeCeldas = generarVariablesBordesDeCeldas()
 z = generarVariablesTipoDeCelda()
 
 # Generar clausulas
-#clausulas = clausulasTipo0()
-#clausulas = clausulasTipo1()
+clausulas = clausulasTipo0()
+clausulas = clausulasTipo1()
 clausulas = clausulasTipo2()
 print(clausulas)
 
