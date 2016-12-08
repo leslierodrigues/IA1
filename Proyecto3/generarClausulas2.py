@@ -35,7 +35,7 @@ def leerLinea():
 	for i in range(len(matriz)):
 		for j in range(len(matriz[i])):
 			tablero[i][j] = -1 if matriz[i][j] == '.' else int(matriz[i][j])
-
+	return tablero
 
 # Ejemplo que dio Blai
 mapaCeldaRestriccionNumeroBordes = {(0,1) : 2, (0,2) : 2, (0,4) : 3
@@ -144,11 +144,141 @@ def clausulasTipo0():
 
     return clausulas
 
+'''
+Cláusulas tipo 1
+----------------
+
+Para cada celda c=(i,j) y etiqueta n en { 0, 1, 2, 3, 4 }, se deben
+agregar fórmulas que fuerzen la presencia de n segmentos alrededor de
+la celda c. Por ejemplo, si n = 0, se deben agregar las fórmulas:
+
+-q(i,j,n)
+-q(i,j,e)
+-q(i,j,s)
+-q(i,j,w)
+
+y si n=1, se deben agregar las fórmulas:
+
+q(i,j,n) v q(i,j,e) v q(i,j,s) v q(i,j,w)
+-q(i,j,n) v -q(i,j,e)
+-q(i,j,n) v -q(i,j,s)
+-q(i,j,n) v -q(i,j,w)
+-q(i,j,e) v -q(i,j,s)
+-q(i,j,e) v -q(i,j,w)
+-q(i,j,s) v -q(i,j,w)
+'''
+
+def clausulasTipo1():
+
+    for i in range(N):
+        for j in range(M):
+            
+            # Si una celda tiene 0 bordes
+            if tablero[i][j] == 0:
+                # -q(i,j,n) /\ -q(i,j,e) /\ -q(i,j,s) /\ -q(i,j,w)
+                for k in ['n','s','e','w']:
+                    clausulas.append(" ".join([negar(q(i,j,k))]))
+               
+            elif tablero[i][j] == 1:
+                
+                # q(i,j,n) v q(i,j,e) v q(i,j,s) v q(i,j,w)
+                clausulas.append(" ".join([(q(i,j,'n')),
+                                           (q(i,j,'s')),
+                                           (q(i,j,'e')),
+                                           (q(i,j,'w'))]))
+                
+                
+                # -q(i,j,n) v -q(i,j,w)
+                # -q(i,j,n) v -q(i,j,s)
+                # -q(i,j,n) v -q(i,j,e)
+                # -q(i,j,e) v -q(i,j,w)
+                # -q(i,j,e) v -q(i,j,s)
+                # -q(i,j,s) v -q(i,j,w)
+                bordes = ['w','s','e','n']
+                while bordes != []:
+                    k1 = bordes.pop()
+                    for k2 in bordes:
+                         clausulas.append(" ".join([negar(q(i,j,k1)),
+                                                    negar(q(i,j,k2))]))   
+                                                
+            elif tablero[i][j] == 2:
+                pass
+                '''
+                # q(i,j,n) v q(i,j,e) v q(i,j,s) v q(i,j,w)
+                clausulas.append(" ".join([(q(i,j,'n')),
+                                           (q(i,j,'s')),
+                                           (q(i,j,'e')),
+                                           (q(i,j,'w'))]))
+                
+                # -q(i,j,n) v -q(i,j,w)
+                # -q(i,j,n) v -q(i,j,s)
+                # -q(i,j,n) v -q(i,j,e)
+                # -q(i,j,e) v -q(i,j,w)
+                # -q(i,j,e) v -q(i,j,s)
+                # -q(i,j,s) v -q(i,j,w)
+                bordes = ['w','s','e','n']
+                while bordes != []:
+                    k1 = bordes.pop()
+                    for k2 in bordes:
+                         clausulas.append(" ".join([negar(q(i,j,k1)),
+                                                    negar(q(i,j,k2))])) 
+                
+                # q(i,j,n) v -q(i,j,s)
+                # q(i,j,n) v -q(i,j,e)
+                # q(i,j,n) v -q(i,j,w)
+                                
+                # q(i,j,s) v -q(i,j,n)
+                # q(i,j,s) v -q(i,j,e)
+                # q(i,j,s) v -q(i,j,w)
+                
+                # q(i,j,e) v -q(i,j,s)
+                # q(i,j,e) v -q(i,j,m)
+                # q(i,j,e) v -q(i,j,w)
+                
+                # q(i,j,w) v -q(i,j,n)
+                # q(i,j,w) v -q(i,j,s)
+                # q(i,j,w) v -q(i,j,w)
+                for k1 in ['n','s','e','w']:
+                    for k2 in ['n','s','e','w']:
+                        if k1 != k2:
+                            clausulas.append(" ".join([negar(q(i,j,k1)),
+                                                       q(i,j,k2))])) 
+               '''             
+               
+            elif tablero[i][j] == 3:
+                
+                # -q(i,j,n) v -q(i,j,e) v -q(i,j,s) v -q(i,j,w)
+                clausulas.append(" ".join([(negar(q(i,j,'n'))),
+                                           (negar(q(i,j,'s'))),
+                                           (negar(q(i,j,'e'))),
+                                           (negar(q(i,j,'w')))]))
+                
+                # q(i,j,n) v q(i,j,w)
+                # q(i,j,n) v q(i,j,s)
+                # q(i,j,n) v q(i,j,e)
+                # q(i,j,e) v q(i,j,w)
+                # q(i,j,e) v q(i,j,s)
+                # q(i,j,s) v q(i,j,w)
+                bordes = ['w','s','e','n']
+                while bordes != []:
+                    k1 = bordes.pop()
+                    for k2 in bordes:
+                         clausulas.append(" ".join([(q(i,j,k1)),
+                                                    (q(i,j,k2))])) 
+            elif tablero[i][j] == 4:
+                # q(i,j,n) /\ q(i,j,e) /\ q(i,j,s) /\ q(i,j,w)
+                for k in ['n','s','e','w']:
+                    clausulas.append(" ".join([negar(q(i,j,k))]))
+    return clausulas
+
 ################################################################################
 # Para la ejecucion  ----------------------------------------------------------#
 
-bordesDeCeldas = generarVariablesBordesDeCeldas() 
-clausulas = clausulasTipo0()
+tablero = leerLinea()
 
+bordesDeCeldas = generarVariablesBordesDeCeldas() 
+print(bordesDeCeldas)
+clausulas = clausulasTipo0() + clausulasTipo1()
+print(clausulas)
 
 
