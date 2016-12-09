@@ -594,7 +594,7 @@ import subprocess
 subprocess.call(["minisat","inputSatSolver.txt","outputSatSolver.txt","-verb=0"])
 
 # Leemos los valores del output
-valores = ["" for i in range(N*M*4 + 1)]
+valores = ["" for i in range(N*M*4*5)]
 
 with open("outputSatSolver.txt","r") as f :
 
@@ -606,7 +606,7 @@ with open("outputSatSolver.txt","r") as f :
 
     # Colocamos los valores en strings porque los vamos a necesitar
     #  asi despues
-    for i in range(N*M*4):
+    for i in range(len(numeros)):
         actual = int(numeros[i])
         if actual > 0:
             valores[actual] = "1"
@@ -628,10 +628,12 @@ for h in range(numeroFilas+1):
     i = h
     if h == numeroFilas:
         lado = "s"
-        i = h-1
+        for j in range(M):
+            horizontales[h] += valores[int(q(numeroFilas-1,j,"s"))]
+    else:
+        for j in range(M):
+            horizontales[h] += valores[int(q(h,j,"n"))]
 
-    for j in range(M):
-        horizontales[h] += valores[int(q(i,j,lado))]
 
 
 
@@ -641,9 +643,10 @@ lado = "w"
 for v in range(numeroFilas):
     for j in range(M+1):
         if j == M:
-            j = M - 1
-            lado = "e"
-        verticales[v] += valores[int(q(i,j,lado))]
+            verticales[v] += valores[int(q(v,M-1,"e"))]
+        else:
+            verticales[v] += valores[int(q(v,j,"w"))]
+
 
 # Imprimimos las respuestas:
 # Dimensiones
