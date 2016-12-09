@@ -279,7 +279,7 @@ def clausulasTipo1():
             elif tablero[i][j] == 4:
                 # q(i,j,n) /\ q(i,j,e) /\ q(i,j,s) /\ q(i,j,w)
                 for k in ['n','s','e','w']:
-                    clausulas.append(" ".join([negar(q(i,j,k))]))
+                    clausulas.append(" ".join([(q(i,j,k))]))
     return clausulas
 
 
@@ -415,7 +415,7 @@ def clausulasTipo2():
                 
                 #z(i,j) v [q(i,j,w) v -z(i,j-1)]
                 clausulas.append(" ".join([z[i][j],
-                                           q(i,j,'s'),
+                                           q(i,j,'w'),
                                            negar(z[i][j-1])]))
                 
                 
@@ -476,15 +476,21 @@ def generarVariablesAlcances():
     return r
 
 def r(c1,c2):
-    if (c1,c2) in r:
-        alcance = alcances((c1,c2))
-    else 
-        alcance = alcances((c2,c1))
+    if (c1,c2) in alcances:
+        alcance = alcances[(c1,c2)]
+    else: 
+        alcance = alcances[(c2,c1)]
     return alcance
 
 def clausulasTipo3():
+
     #r(c,c') & -q(c',n) => r(c,c'')
     #-r(c,c') v q(c',n) v r(c,c'')
+    for i1 in range(N):
+        for j1 in range(M):
+            for i2 in range(N):
+                for j2 in range(M):
+                      #print(r((i1,j1),(i1,j2)))                   
     
     pass
     
