@@ -10,10 +10,10 @@
 #                       norte, sur, este, oeste
 bordesDeCeldas = []
 
-N=5 #Filas
-numeroColumnas = 5
-M=5 #Columnas
-numeroFilas = 5
+N=0 #Filas
+numeroColumnas = 0
+M=0 #Columnas
+numeroFilas = 0
 
 tablero = [] #Definido para que sea una global
 clausulas = [] # Variable global que almacena las clausulas
@@ -35,7 +35,7 @@ def leerLinea():
 	for i in range(len(matriz)):
 		for j in range(len(matriz[i])):
 			tablero[i][j] = -1 if matriz[i][j] == '.' else int(matriz[i][j])
-	return tablero
+	return [N,M,tablero]
 
 # Ejemplo que dio Blai
 mapaCeldaRestriccionNumeroBordes = {(0,1) : 2, (0,2) : 2, (0,4) : 3
@@ -563,7 +563,10 @@ def clausulasTipo4():
 # Para la ejecucion  ----------------------------------------------------------#
 
 
-tablero = leerLinea()
+N,M,tablero = leerLinea()
+
+numeroFilas = N
+numeroColumnas = M
 
 # Generar variables
 bordesDeCeldas = generarVariablesBordesDeCeldas() 
@@ -572,11 +575,11 @@ alcances = generarVariablesAlcances()
 
 
 # Generar clausulas
-clausulas = clausulasTipo0()
-clausulas = clausulasTipo1()
-clausulas = clausulasTipo2()
-clausulas = clausulasTipo3()
-clausulas = clausulasTipo4()
+clausulasTipo0()
+clausulasTipo1()
+clausulasTipo2()
+clausulasTipo3()
+clausulasTipo4()
 
 
 
@@ -625,7 +628,6 @@ verticales = ["" for i in range(numeroFilas)]
 #  excepto la final, en la cual vemos la sur.
 lado = "n"
 for h in range(numeroFilas+1):
-    i = h
     if h == numeroFilas:
         lado = "s"
         for j in range(M):
