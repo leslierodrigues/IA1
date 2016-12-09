@@ -572,12 +572,84 @@ clausulas = clausulasTipo1()
 clausulas = clausulasTipo2()
 clausulas = clausulasTipo3()
 clausulas = clausulasTipo4()
+
+
+
+
+
 with open("inputSatSolver.txt", "w") as f :
     
     f.write("p cnf "+str(450)+" "+str(len(clausulas))+"\n")
     for clausula in clausulas:
         f.write(clausula+" 0\n")
 f.close()
+
+# Llamamos a un subproceso para resolver el sat con minisat
+import subprocess
+subprocess.call(["minisat","inputSatSolver.txt","outputSatSolver.txt","-verb=0"])
+
+# Leemos los valores del output
+valores = ["" for i in range(N*M*4 + 1)]
+
+with open("outputSatSolver.txt","r") as f :
+
+    contenidos = f.readlines()
+    # La primera linea es la palabra SAT, la segunda es los valores que queremos.
+    linea = contenidos[1]
+
+    numeros = linea.split()
+
+    # Colocamos los valores en strings porque los vamos a necesitar
+    #  asi despues
+    for i in range(N*M*4):
+        actual = int(numeros[i])
+        if actual > 0:
+            valores[actual] = "1"
+        else:
+            valores[-actual] = "0"
+
+
+
+respuesta = ""
+
+horizontales = ["" for i in range(numeroFilas+1)]
+verticales = ["" for i in range(numeroFilas)]
+
+
+# Llenamos las lineas horizontales viendo las casillas norte de cada fila
+#  excepto la final, en la cual vemos la sur.
+lado = "n"
+for h in range(numeroFilas+1):
+    i = h
+    if h == numeroFilas:
+        lado = "s"
+        i = h-1
+
+    for j in range(M):
+        horizontales[h] += valores[int(q(i,j,lado))]
+
+
+
+# LLenamos las lineas verticales de manera parecida, llenando las casillas
+#  oeste de cada columna excepto la final, en la cual se ve el borde este.
+lado = "w"
+for v in range(numeroFilas):
+    for j in range(M+1):
+        if j == M:
+            j = M - 1
+            lado = "e"
+        verticales[v] += valores[int(q(i,j,lado))]
+
+# Imprimimos las respuestas:
+# Dimensiones
+print(str(N) + " " + str(M), end = " ")
+
+# Lineas horizontales y verticales
+for i in range(numeroFilas):
+    print(horizontales[i], end=" ")
+    print(verticales[i], end = " ")
+print(horizontales[numeroFilas])
+
 
 
 
