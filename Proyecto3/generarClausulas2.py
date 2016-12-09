@@ -455,7 +455,7 @@ def generarVariablesAlcances():
         for j1 in range(M):
             for i2 in range(N):
                 for j2 in range(M):
-                    r[((i1,j1),(i2,j2))] = variable  
+                    r[((i1,j1),(i2,j2))] = str(variable)  
                     variable += 1
     return r
 '''
@@ -471,29 +471,89 @@ def generarVariablesAlcances():
                     # para evitar repeticiones
                     key = (min(c1,c2),max(c1,c2))
                     if key not in r:
-                        r[key] = variable  
+                        r[key] = str(variable)  
                         variable += 1
+        print("variables:",variable)
     return r
 
 def r(c1,c2):
     if (c1,c2) in alcances:
         alcance = alcances[(c1,c2)]
-    else: 
+    elif (c2,c1) in alcances:
         alcance = alcances[(c2,c1)]
+    else:
+        alcance = None
+       
     return alcance
 
 def clausulasTipo3():
-
-    #r(c,c') & -q(c',n) => r(c,c'')
-    #-r(c,c') v q(c',n) v r(c,c'')
+    
+    #r(c1,c2) & -q(c2,k) => r(c1,c3)
+    #-r(c1,c2) v q(c2,k) v r(c1,c3)
+    
     for i1 in range(N):
         for j1 in range(M):
             for i2 in range(N):
                 for j2 in range(M):
-                      #print(r((i1,j1),(i1,j2)))                   
+                                            
+                    # si c2 no esta en el borde superior del tablero
+                    if i2 > 0:               
+                        c3 = (i2-1,j2) # Celda adyacente a c2 por el lado norte
+                        clausulas.append(" ".join([negar(r((i1,j1),(i2,j2))),
+                                                  q(i2,j2,'n'), #segmento entre c2 y c3
+                                                  r((i1,j2),c3)]))
+                                                          
+                    # si c2 no esta en el borde inferior del tablero
+                    if i2 < N-1:
+                         c3 = (i2+1,j2) # Celda adyacente a c2 por el lado sur
+                         clausulas.append(" ".join([negar(r((i1,j1),(i2,j2))),
+                                                  q(i2,j2,'s'), #segmento entre c2 y c3
+                                                  r((i1,j2),c3)]))
+                         
+                    # si c2 no esta en el borde derecho del tablero
+                    if j2 < M-1:
+                         c3 = (i2,j2+1) # Celda adyacente a c2 por el lado este
+                         clausulas.append(" ".join([negar(r((i1,j1),(i2,j2))),
+                                                  q(i2,j2,'e'), #segmento entre c2 y c3
+                                                  r((i1,j2),c3)]))
+                                                 
+                   # si c2 no esta en el borde izquierdo del tablero
+                    if j2 > 0:               
+                        c3 = (i2,j2-1) # Celda adyacente a c2 por el lado oeste
+                        clausulas.append(" ".join([negar(r((i1,j1),(i2,j2))),
+                                                  q(i2,j2,'w'), #segmento entre c2 y c3
+                                                  r((i1,j2),c3)]))
+                                                      
+    return clausulas                     
+                        
+'''
+Cláusulas tipo 4
+----------------
+
+Finalmente, debemos que indicar que cada par de celdas interiores tienen
+que ser alcazables la una de la otra. Para cada par de celdas c y c':
+
+z(c) & z(c') => r(c,c')
+
+'''
+
+def clausulasTipo4():
     
-    pass
+    # z(c1) & z(c2) => r(c1,c2)
+    # -z(c1) v -z(c2) v r(c1,c2)
     
+    for i1 in range(N):
+        for j1 in range(M):
+            for i2 in range(N):
+                for j2 in range(M):
+                    for k in ['n','s','e','w']:  
+                        clausulas.append(" ".join([negar(z[i1][j1]),
+                                                  negar(z[i2][j2]), 
+                                                  r((i1,j1),(i2,j2))]))               
+                    
+                                                      
+    return clausulas
+
 ################################################################################
 # Para la ejecucion  ----------------------------------------------------------#
 
@@ -505,20 +565,28 @@ bordesDeCeldas = generarVariablesBordesDeCeldas()
 z = generarVariablesTipoDeCelda()
 alcances = generarVariablesAlcances()
 
+
 # Generar clausulas
 clausulas = clausulasTipo0()
 clausulas = clausulasTipo1()
 clausulas = clausulasTipo2()
-print(clausulas)
-print(len(alcances))
+clausulas = clausulasTipo3()
+clausulas = clausulasTipo4()
+with open("inputSatSolver.txt", "w") as f :
+    
+    f.write("p cnf "+str(450)+" "+str(len(clausulas))+"\n")
+    for clausula in clausulas:
+        f.write(clausula+" 0\n")
+f.close()
+
 
 
 '''
 def imprimirTablero:
-	sttr = ""
-	for i in range(len(tablero)):
-		sttr = ""
-		for j in range(len(tablero[i])):
-			sttr += " " + ("." if tablero[i][j] == -1 else str(tablero[i][j]))
-		print(sttr)
+  sttr = ""
+  for i in range(len(tablero)):
+    sttr = ""
+    for j in range(len(tablero[i])):
+      sttr += " " + ("." if tablero[i][j] == -1 else str(tablero[i][j]))
+    print(sttr)
 '''
