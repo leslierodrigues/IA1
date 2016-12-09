@@ -420,8 +420,73 @@ def clausulasTipo2():
                 
                 
     return clausulas    
-    
 
+'''
+
+Cláusulas tipo 3
+----------------
+
+Tenemos que describir cuando una celda es alcanzable desde otra
+celda de forma inductiva. Utilizamos el símbolo r(c,c') para denotar
+que la celda c' es alcanzable desde la celda c. Inicialmente, toda
+celda c es alcanzable desde ella misma:
+
+r(c,c)
+
+Para el caso inductivo, definimos el alcance a partir de la adyacencia
+de las celdas y la transitividad de la relación. Por ejemplo, si la celda
+c' es alcanzable desde la celda c, y la celda c'' es adyancente a c'
+por el lado norte, entonces:
+
+r(c,c') & -q(c',n) => r(c,c'')
+
+ya que si c' es alcanzable desde c y no existe un segmento entre c' y c'',
+entonces c'' también debe ser alcanzable desde c. Similarmente definimos
+fórmulas para las otras direcciones e, s, y w.
+
+'''
+
+'''
+def generarVariablesAlcances():
+    variable = N * M * 4 + N * M + 1 
+    r = dict()
+    for i1 in range(N):
+        for j1 in range(M):
+            for i2 in range(N):
+                for j2 in range(M):
+                    r[((i1,j1),(i2,j2))] = variable  
+                    variable += 1
+    return r
+'''
+def generarVariablesAlcances():
+    variable = N * M * 4 + N * M + 1 
+    r = dict()
+    for i1 in range(N):
+        for j1 in range(M):
+            for i2 in range(N):
+                for j2 in range(M):
+                    c1 = (i1,j1)
+                    c2 = (i2,j2)
+                    # para evitar repeticiones
+                    key = (min(c1,c2),max(c1,c2))
+                    if key not in r:
+                        r[key] = variable  
+                        variable += 1
+    return r
+
+def r(c1,c2):
+    if (c1,c2) in r:
+        alcance = alcances((c1,c2))
+    else 
+        alcance = alcances((c2,c1))
+    return alcance
+
+def clausulasTipo3():
+    #r(c,c') & -q(c',n) => r(c,c'')
+    #-r(c,c') v q(c',n) v r(c,c'')
+    
+    pass
+    
 ################################################################################
 # Para la ejecucion  ----------------------------------------------------------#
 
@@ -431,11 +496,11 @@ tablero = leerLinea()
 # Generar variables
 bordesDeCeldas = generarVariablesBordesDeCeldas() 
 z = generarVariablesTipoDeCelda()
-
+alcances = generarVariablesAlcances()
 # Generar clausulas
 clausulas = clausulasTipo0()
 clausulas = clausulasTipo1()
 clausulas = clausulasTipo2()
-print(clausulas)
+print(len(alcances))
 
 
