@@ -44,6 +44,7 @@ mapaCeldaRestriccionNumeroBordes = {(0,1) : 2, (0,2) : 2, (0,4) : 3
                                    ,(3,0) : 1, (3,3) : 0, (3,4) : 3
                                    ,(4,1) : 2, (4,2) : 2, (4,3) : 3}
 
+
 # Niega una variable
 def negar(nombreVariable) :
     if nombreVariable == "" :
@@ -432,10 +433,21 @@ tablero = leerLinea()
 bordesDeCeldas = generarVariablesBordesDeCeldas() 
 z = generarVariablesTipoDeCelda()
 
+
+
 # Generar clausulas
 clausulas = clausulasTipo0()
 clausulas = clausulasTipo1()
 clausulas = clausulasTipo2()
-print(clausulas)
+#print(clausulas)
 
 
+'''
+def imprimirTablero:
+	sttr = ""
+	for i in range(len(tablero)):
+		sttr = ""
+		for j in range(len(tablero[i])):
+			sttr += " " + ("." if tablero[i][j] == -1 else str(tablero[i][j]))
+		print(sttr)
+'''
