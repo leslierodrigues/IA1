@@ -454,7 +454,7 @@ def generarVariablesAlcances():
         for j1 in range(M):
             for i2 in range(N):
                 for j2 in range(M):
-                    r[((i1,j1),(i2,j2))] = variable  
+                    r[((i1,j1),(i2,j2))] = str(variable)  
                     variable += 1
     return r
 '''
@@ -470,28 +470,60 @@ def generarVariablesAlcances():
                     # para evitar repeticiones
                     key = (min(c1,c2),max(c1,c2))
                     if key not in r:
-                        r[key] = variable  
+                        r[key] = str(variable)  
                         variable += 1
     return r
 
 def r(c1,c2):
     if (c1,c2) in alcances:
         alcance = alcances[(c1,c2)]
-    else: 
+    elif (c2,c1) in alcances:
         alcance = alcances[(c2,c1)]
+    else:
+        alcance = None
+       
     return alcance
 
 def clausulasTipo3():
-
-    #r(c,c') & -q(c',n) => r(c,c'')
-    #-r(c,c') v q(c',n) v r(c,c'')
+    
+    #r(c1,c2) & -q(c2,k) => r(c1,c3)
+    #-r(c1,c2) v q(c2,k) v r(c1,c3)
+    
     for i1 in range(N):
         for j1 in range(M):
             for i2 in range(N):
                 for j2 in range(M):
-                      #print(r((i1,j1),(i1,j2)))                   
-    
-                      pass
+                                            
+                    # si c2 no esta en el borde superior del tablero
+                    if i2 > 0:               
+                        c3 = (i2-1,j2) # Celda adyacente a c2 por el lado norte
+                        clausulas.append(" ".join([negar(r((i1,j1),(i2,j2))),
+                                                  q(i2,j2,'n'), #segmento entre c2 y c3
+                                                  r((i2,j2),c3)]))
+                                                          
+                    # si c2 no esta en el borde inferior del tablero
+                    if i2 < N-1:
+                         c3 = (i2+1,j2) # Celda adyacente a c2 por el lado sur
+                         clausulas.append(" ".join([negar(r((i1,j1),(i2,j2))),
+                                                  q(i2,j2,'s'), #segmento entre c2 y c3
+                                                  r((i2,j2),c3)]))
+                         
+                    # si c2 no esta en el borde derecho del tablero
+                    if j2 < M-1:
+                         c3 = (i2,j2+1) # Celda adyacente a c2 por el lado este
+                         clausulas.append(" ".join([negar(r((i1,j1),(i2,j2))),
+                                                  q(i2,j2,'e'), #segmento entre c2 y c3
+                                                  r((i2,j2),c3)]))
+                                                 
+                   # si c2 no esta en el borde izquierdo del tablero
+                    if j2 > 0:               
+                        c3 = (i2,j2-1) # Celda adyacente a c2 por el lado oeste
+                        clausulas.append(" ".join([negar(r((i1,j1),(i2,j2))),
+                                                  q(i2,j2,'w'), #segmento entre c2 y c3
+                                                  r((i2,j2),c3)]))
+                                                      
+    return clausulas                     
+                        
     
 ################################################################################
 # Para la ejecucion  ----------------------------------------------------------#
@@ -503,10 +535,11 @@ tablero = leerLinea()
 bordesDeCeldas = generarVariablesBordesDeCeldas() 
 z = generarVariablesTipoDeCelda()
 alcances = generarVariablesAlcances()
+
 # Generar clausulas
 #clausulas = clausulasTipo0()
 #clausulas = clausulasTipo1()
 #clausulas = clausulasTipo2()
-print(clausulasTipo3())
+#clausulas = clausulasTipo3()
 
 
