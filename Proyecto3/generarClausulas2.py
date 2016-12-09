@@ -388,7 +388,7 @@ def clausulasTipo2():
             for j in range(1,M-1):
                 # La celda no es exterior o no tiene alguno de sus bordes                
                 #-z(i,j) v -q(i,j,n) v -q(i,j,e) v -q(i,j,s) -q(i,j,w)    
-                temp += [negar(z[i][j])]
+                temp = [negar(z[i][j])]
                 for k in ['n','e','s','w']:
                     temp += [negar(q(i,j,k))]
                 clausulas.append(" ".join(temp))   
