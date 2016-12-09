@@ -142,10 +142,10 @@ def clausulasTipo0():
                                            negar(q(i,j+1,'w'))]))
             # Si se tienen celdas a la derecha
             if i < M -1:
-                clausulas.append(" ".join([negar(q(i,j,'n')),
-                                           (q(i+1,j,'s'))]))    
-                clausulas.append(" ".join([(q(i,j,'n')),
-                                           negar(q(i+1,j,'s'))]))                         
+                clausulas.append(" ".join([negar(q(i,j,'s')),
+                                           (q(i+1,j,'n'))]))    
+                clausulas.append(" ".join([(q(i,j,'s')),
+                                           negar(q(i+1,j,'n'))]))                         
 
     return clausulas
 
