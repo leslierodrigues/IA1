@@ -134,12 +134,17 @@ def clausulasTipo0():
         for j in range(M):
             # Si se tienen celdas a la izquierda
             if j < N - 1:
-                clausulas.append(" ".join([negar(q(i,j+1,'e')),
-                                           (q(i,j,'w'))]))
+                clausulas.append(" ".join([negar(q(i,j,'e')),
+                                           (q(i,j+1,'w'))]))
+
+                clausulas.append(" ".join([(q(i,j,'e')),
+                                           negar(q(i,j+1,'w'))]))
             # Si se tienen celdas a la derecha
             if i < M -1:
-                clausulas.append(" ".join([negar(q(i+1,j,'n')),
-                                       (q(i,j,'s'))]))                           
+                clausulas.append(" ".join([negar(q(i,j,'n')),
+                                           (q(i+1,j,'s'))]))    
+                clausulas.append(" ".join([(q(i,j,'n')),
+                                           negar(q(i+1,j,'s'))]))                         
 
     return clausulas
 
