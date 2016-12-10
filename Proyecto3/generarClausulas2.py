@@ -74,11 +74,11 @@ interpretación:
 
 Para toda celda c=(i,j) con 1 <= i < N y 1 <= j <= M,
 
-q(i,j,e) <=> q(i+1,j,w)
+q(i,j,n) <=> q(i+1,j,s)
 
 Para toda celda c=(i,j) con 1 <= i <= N y 1 <= j < M,
 
-q(i,j,n) <=> q(i,j+1,s)
+q(i,j,e) <=> q(i,j+1,w)
 '''
 
 # generarVariablesBordesDeCeldas es una funcion que genera una variable
@@ -546,7 +546,7 @@ def clausulasTipo4():
     
     # z(c1) & z(c2) => r(c1,c2)
     # -z(c1) v -z(c2) v r(c1,c2)
-    
+    # Igualmente !z(c1) & !z(c2) => r(c1,c2)
     for i1 in range(N):
         for j1 in range(M):
             for i2 in range(N):
@@ -554,6 +554,9 @@ def clausulasTipo4():
                     for k in ['n','s','e','w']:  
                         clausulas.append(" ".join([negar(z[i1][j1]),
                                                   negar(z[i2][j2]), 
+                                                  r((i1,j1),(i2,j2))]))               
+                        clausulas.append(" ".join([z[i1][j1],
+                                                  z[i2][j2], 
                                                   r((i1,j1),(i2,j2))]))               
                     
                                                       
