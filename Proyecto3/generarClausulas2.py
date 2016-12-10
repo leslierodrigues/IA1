@@ -381,67 +381,45 @@ def clausulasTipo2():
                                    negar(z[N-1][j])]))    
     temp = [] # almacena las variables de una clausula
     #Para toda celda que no este en el borde
-    '''    for i in range(1,N-1):
-            for j in range(1,M-1):
-                # La celda no es exterior o no tiene alguno de sus bordes                
-                #-z(i,j) v -q(i,j,n) v -q(i,j,e) v -q(i,j,s) -q(i,j,w)    
-                #temp = [negar(z[i][j])]
-                #for k in ['n','e','s','w']:
-                #    temp += [negar(q(i,j,k))]
-                #clausulas.append(" ".join(temp))   
-                
-                
-                # La celda no es exterior o alguna de sus adyancentes es exterior
-                # [-z(i,j)v z(i-1,j) v z(i,j+1) v z(i+1,j) v z(i,j)]
-                #clausulas.append(" ".join([negar(z[i][j]),
-                #                           z[i-1][j],
-                #                           z[i][j+1],
-                #                           z[i+1][j],
-                #                           z[i][j-1]]))
-                
-                c = itertools.combinations([negar(q(i,j,'n')),
-                                           negar(q(i,j,'e')), 
-                                           negar(q(i,j,'s')), 
-                                           negar(q(i,j,'w')), 
-                                           z[i-1][j], 
-                                           z[i][j+1],
-                                           z[i+1][j], 
-                                           z[i][j-1]],    4)
-                cd = [[negar(z[i][j])]+list(x) for x in c]
-                #clausulas += [" ".join(y) for y in cd]'''
+
     for i in range(N):
-            for j in range(M):
-                
-                # La celda es exterior o no tiene borde superior o
-                # la celda que es adyacente a ella por el norte no es exterior                           
-                # z(i,j) v [q(i,j,n) v -z(i-1,j)]
+        for j in range(M):
+            temp = [negar(z[i][j])]
+            for k in ['n','e','s','w']:
+                temp += [negar(q(i,j,k))]
+            clausulas.append(" ".join(temp))
 
-                if (i > 0):
-                    clausulas.append(" ".join([z[i][j],
-                                           q(i,j,'n'),
-                                           negar(z[i-1][j])]))
-                
+            
+            # La celda es exterior o no tiene borde superior o
+            # la celda que es adyacente a ella por el norte no es exterior                           
+            # z(i,j) v [q(i,j,n) v -z(i-1,j)]
 
-                #z(i,j) v [q(i,j,e) v -z(i,j+1)]
-                if (j < M-1):
-                    clausulas.append(" ".join([z[i][j],
-                                           q(i,j,'e'),
-                                           negar(z[i][j+1])]))
-                                           
-                #z(i,j) v [q(i,j,s) v -z(i+1,j)]
-                if (i < N-1):
-                    clausulas.append(" ".join([z[i][j],
-                                           q(i,j,'s'),
-                                           negar(z[i+1][j])]))
-                
-                #z(i,j) v [q(i,j,w) v -z(i,j-1)]
-                if (j > 0):
-                    clausulas.append(" ".join([z[i][j],
-                                           q(i,j,'w'),
-                                           negar(z[i][j-1])]))
-                
-                
-                
+            if (i > 0):
+                clausulas.append(" ".join([z[i][j],
+                                       q(i,j,'n'),
+                                       negar(z[i-1][j])]))
+            
+
+            #z(i,j) v [q(i,j,e) v -z(i,j+1)]
+            if (j < M-1):
+                clausulas.append(" ".join([z[i][j],
+                                       q(i,j,'e'),
+                                       negar(z[i][j+1])]))
+                                       
+            #z(i,j) v [q(i,j,s) v -z(i+1,j)]
+            if (i < N-1):
+                clausulas.append(" ".join([z[i][j],
+                                       q(i,j,'s'),
+                                       negar(z[i+1][j])]))
+            
+            #z(i,j) v [q(i,j,w) v -z(i,j-1)]
+            if (j > 0):
+                clausulas.append(" ".join([z[i][j],
+                                       q(i,j,'w'),
+                                       negar(z[i][j-1])]))
+            
+            
+            
         
     return clausulas    
 
@@ -516,15 +494,44 @@ def r(c1,c2):
 
 def clausulasTipo3():
     
-    #r(c1,c2) & -q(c2,k) => r(c1,c3)
-    #-r(c1,c2) v q(c2,k) v r(c1,c3)
-    
+
+    # r(c1,c1)
+    # q(c1,k) => !r(c1,c2)
     for i1 in range(N):
         for j1 in range(M):
             c1 = (i1,j1)
             clausulas.append(r(c1,c1))
-            for i2 in range(i1+1,N):
-                for j2 in range(j1+1,M):
+            # si c1 no esta en el borde superior del tablero
+            if i1 > 0:               
+                c2 = (i1-1,j1) # Celda adyacente a c1 por el lado norte
+                clausulas.append(" ".join([negar(r(c1,c2)),
+                                          negar(q(i1,j1,'n'))])) #segmento entre c1 y c2
+            # si c1 no esta en el borde inferior del tablero
+            if i1 < N-1:
+                c2 = (i1+1,j1) # Celda adyacente a c1 por el lado sur
+                clausulas.append(" ".join([negar(r(c1,c2)),
+                                          negar(q(i1,j1,'s'))])) #segmento entre c1 y c2
+            # si c1 no esta en el borde derecho del tablero
+            if j1 < M-1:
+                c2 = (i1,j1+1) # Celda adyacente a c1 por el lado este
+                clausulas.append(" ".join([negar(r(c1,c2)),
+                                          negar(q(i1,j1,'e'))])) #segmento entre c1 y c2                                         
+           # si c1 no esta en el borde izquierdo del tablero
+            if j1 > 0:               
+                c2 = (i1,j1-1) # Celda adyacente a c1 por el lado oeste
+                clausulas.append(" ".join([negar(r(c1,c2)),
+                                          negar(q(i1,j1,'w'))])) #segmento entre c1 y c2
+
+
+    #r(c1,c2) & -q(c2,k) => r(c1,c3)
+    #-r(c1,c2) v q(c2,k) v r(c1,c3)
+
+    for i1 in range(N):
+        for j1 in range(M):
+            c1 = (i1,j1)
+#            clausulas.append(r(c1,c1))
+            for i2 in range(N):
+                for j2 in range(M):
                     c2 = (i2,j2)                        
                     # si c2 no esta en el borde superior del tablero
                     if i2 > 0:               
@@ -553,21 +560,18 @@ def clausulasTipo3():
                         clausulas.append(" ".join([negar(r(c1,c2)),
                                                   q(i2,j2,'w'), #segmento entre c2 y c3
                                                   r(c1,c3)]))
-
     '''
     # Segunda implicacion:
     # r(c1,c2) => r(c1,c3) & !q(c3,k) | r(c1,c4) & !q(c4,k) | ...
     for i1 in range(N):
         for j1 in range(M):
             c1 = (i1,j1)
-            for i2 in range(i1,N):
-                for j2 in range(j1,M):
+            for i2 in range(N):
+                for j2 in range(M):
                     c2 = (i2,j2)
                     if (c1 == c2):
                         continue
-                    temp = negar(r(c1,c2))
                     
-
                     # Populamos los arreglos para hacer mas comodas
                     # las clausulas.
 
@@ -594,6 +598,7 @@ def clausulasTipo3():
                     # Clausulas:
 
                     # !(r(c1,c2) | r(c1,c3) | r(c1,c4) | r(c1,c5) | r(c1,c6))
+                    temp = negar(r(c1,c2))
                     for i in adyancentes:
                         temp += " " + r(c1,i[0])
                     clausulas.append(temp)
@@ -613,14 +618,10 @@ def clausulasTipo3():
 
                     # Combinaciones de dos q's diferentes con 2 r's
 
-                    count1 = 0
-                    count2 = 0
-
-                    while count1 < len(dirs):
-                        count2 = count1 +1
-                        while count2 < len(dirs):
-                            dir1 = dirs[count1]
-                            dir2 = dirs[count2]
+                    for k1 in range(len(dirs)):
+                        for k2 in range(k1+1,len(dirs)):
+                            dir1 = dirs[k1]
+                            dir2 = dirs[k2]
                             if direcciones[dir1] and direcciones[dir2]:
                                 temp = negar(r(c1,c2))
                                 for i in adyancentes:
@@ -630,21 +631,14 @@ def clausulasTipo3():
                                 temp += " " + negar(q(i2,j2,dir2))
                                 clausulas.append(temp)
 
-                            count2 += 1
-                        count1+=1
-
                     # Combinaciones de tres q's con 1 r
-                    count1 = 0
-                    count2 = 0
-                    count3 = 0
-                    while count1 < len(dirs):
-                        count2 = count1 +1
-                        while count2 < len(dirs):
-                            count3 = count2 + 1
-                            while count3 < len(dirs):
-                                dir1 = dirs[count1]
-                                dir2 = dirs[count2]
-                                dir3 = dirs[count3]
+
+                    for k1 in range(len(dirs)):
+                        for k2 in range(k1+1,len(dirs)):
+                            for k3 in range(k2+1,len(dirs)):
+                                dir1 = dirs[k1]
+                                dir2 = dirs[k2]
+                                dir3 = dirs[k3]
                                 if direcciones[dir1] and direcciones[dir2] and direcciones[dir3]:
                                     temp = negar(r(c1,c2))
                                     for i in adyancentes:
@@ -655,10 +649,6 @@ def clausulasTipo3():
                                     temp += " " + negar(q(i2,j2,dir2))
                                     clausulas.append(temp)
 
-                                count3 += 1
-                            count2 += 1
-                        count1 += 1
-
                     # Combinacion de 4 qs
 
                     temp = negar(r(c1,c2))
@@ -668,27 +658,7 @@ def clausulasTipo3():
                     clausulas.append(temp)
     '''
     return clausulas
-'''
-!rc2 | (rc3 &qc3) | (rc4 & qc4) | (rc5 & qc5) | (rc6 & qc6)
 
-!a or ( b and c) or (d and e) or (f and g) or (h and i)
-(¬a ∨ b ∨ d ∨ f ∨ h) /
-(¬a ∨ b ∨ d ∨ f ∨ i) /
-(¬a ∨ b ∨ d ∨ g ∨ h) /
-(¬a ∨ b ∨ d ∨ g ∨ i)   /
-(¬a ∨ b ∨ e ∨ f ∨ h) /
-(¬a ∨ b ∨ e ∨ f ∨ i)   /
-(¬a ∨ b ∨ e ∨ g ∨ h)   /  
-(¬a ∨ b ∨ e ∨ g ∨ i)   
-(¬a ∨ c ∨ d ∨ f ∨ h) /
-(¬a ∨ c ∨ d ∨ f ∨ i)   /
-(¬a ∨ c ∨ d ∨ g ∨ h)   /
-(¬a ∨ c ∨ d ∨ g ∨ i)   
-(¬a ∨ c ∨ e ∨ f ∨ h)   /
-(¬a ∨ c ∨ e ∨ f ∨ i)
-(¬a ∨ c ∨ e ∨ g ∨ h)
-(¬a ∨ c ∨ e ∨ g ∨ i)     
-'''
 
 '''
 Cláusulas tipo 4
@@ -707,15 +677,23 @@ def clausulasTipo4():
     
     # -z(c1) & -z(c2) => r(c1,c2)
     # z(c1) v z(c2) v r(c1,c2)
+
+    # Ademas 
+    # -z(c1) & z(c2) => -r(c1,c2)
+    # -z(c1) v z(c2) v -r(c1,c2)
     for i1 in range(N):
         for j1 in range(M):
+            c1 = (i1,j1)
             for i2 in range(N):
                 for j2 in range(M):
-                    for k in ['n','s','e','w']:  
-                        clausulas.append(" ".join([z[i1][j1],
-                                                  z[i2][j2], 
-                                                  r((i1,j1),(i2,j2))]))               
-                    
+                    c2 = (i2,j2)
+                    clausulas.append(" ".join([z[i1][j1],
+                                              z[i2][j2], 
+                                              r(c1,c2)]))               
+                    clausulas.append(" ".join([negar(z[i1][j1]),
+                                              z[i2][j2], 
+                                              negar(r(c1,c2))]))               
+
                     
     return clausulas
 
@@ -753,7 +731,7 @@ def clausulasTipo5():
             if i != 0:
             	#De la esquina superior derecha no pueden salir tres lineas (por el este de la celda de arriba
                 clausulas.append(" ".join([negar(q(i,j,'e')),negar(q(i,j,'n')),negar(q(i-1,j,'e'))]))
-                            
+
             if i != N-1:
             	#De la esquina inferior derecha no pueden salir tres lineas (por el este de la celda de abajo)
                 clausulas.append(" ".join([negar(q(i,j,'e')),negar(q(i,j,'s')),negar(q(i+1,j,'e'))]))
@@ -960,9 +938,19 @@ for i in range(numeroFilas):
     print(verticales[i], end = " ")
 print(horizontales[numeroFilas])
 
+for i in range(N):
+    temp = ""
+    for j in range(M):
+        temp += valores[int(z[i][j])] + " "
+    print(temp)
 
+print("")
 
-
+for i in range(N):
+    temp = ""
+    for j in range(M):
+        temp += valores[int(r((0,2),(i,j)))] + " "
+    print(temp)
 '''
 def imprimirTablero:
   sttr = ""
