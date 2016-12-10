@@ -612,27 +612,35 @@ def clausulasTipo5():
         for j in range(0,M):
             
             if j!= M-1:
+            	#De la esquina inferior derecha no pueden salir tres lineas (por el sur de la celda de la derecha)
                 clausulas.append(" ".join([negar(q(i,j,'s')),negar(q(i,j,'e')),negar(q(i,j+1,'s'))]))
             
             if j != 0:
+            	#De la esquina inferior izquierda no pueden salir tres lineas (por el sur la celda de la izquierda)
                 clausulas.append(" ".join([negar(q(i,j,'s')),negar(q(i,j,'w')),negar(q(i,j-1,'s'))]))
             
             if i != 0:
+            	#De la esquina superior izquierda no pueden salir tres lineas (por el oeste de la celda de arriba)
                 clausulas.append(" ".join([negar(q(i,j,'w')),negar(q(i,j,'n')),negar(q(i-1,j,'w'))]))
             
             if i != N-1:
+            	#De la esquina inferior izquierda no pueden salir tres lineas (por el oeste de la celda de abajo)
                 clausulas.append(" ".join([negar(q(i,j,'w')),negar(q(i,j,'s')),negar(q(i+1,j,'w'))]))
             
             if j != M-1:
+            	#De la esquina superior derecha no pueden salir tres lineas (por el norte de la celda de la derecha)
                 clausulas.append(" ".join([negar(q(i,j,'n')),negar(q(i,j,'e')),negar(q(i,j+1,'n'))]))
             
             if j != 0:
+            	#De la esquina superior izquierda no pueden salir tres lineas (por el norte de la celda de la izquierda)
                 clausulas.append(" ".join([negar(q(i,j,'n')),negar(q(i,j,'w')),negar(q(i,j-1,'n'))]))
             
             if i != 0:
+            	#De la esquina superior derecha no pueden salir tres lineas (por el este de la celda de arriba
                 clausulas.append(" ".join([negar(q(i,j,'e')),negar(q(i,j,'n')),negar(q(i-1,j,'e'))]))
             
             if i != N-1:
+            	#De la esquina inferior derecha no pueden salir tres lineas (por el este de la celda de abajo)
                 clausulas.append(" ".join([negar(q(i,j,'e')),negar(q(i,j,'s')),negar(q(i+1,j,'e'))]))
             
             
