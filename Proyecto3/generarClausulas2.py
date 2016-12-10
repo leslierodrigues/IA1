@@ -661,34 +661,84 @@ def clausulasTipo6():
             if j!= M-1:
                 if i!= N-1:
                     clausulas.append(" ".join([negar(q(i,j,'s')),q(i,j,'e'),q(i,j+1,'s'),q(i+1,j,'e')]))
-                    #clausulas.append(" ".join([negar(q(i,j,'s')),q(i,j,'e'),q(i,j+1,'s'),q(i+1,j+1,'w')]))
+                else :
+                    clausulas.append(" ".join([negar(q(i,j,'s')),q(i,j,'e'),q(i,j+1,'s')]))
+                
+            else:
+                if i!=N-1:
+                    clausulas.append(" ".join([negar(q(i,j,'s')),q(i,j,'e'),q(i+1,j,'e')]))
+                else :
+                    clausulas.append(" ".join([negar(q(i,j,'s')),q(i,j,'e')]))
             if j != 0:
                 if i!= N-1:
                     clausulas.append(" ".join([negar(q(i,j,'s')),q(i,j,'w'),q(i,j-1,'s'),q(i+1,j,'w')]))
-                    #clausulas.append(" ".join([negar(q(i,j,'s')),q(i,j,'w'),q(i,j-1,'s'),q(i+1,j-1,'e')]))
+                else :
+                    clausulas.append(" ".join([negar(q(i,j,'s')),q(i,j,'w'),q(i,j-1,'s')]))
+            else:
+                if i!= N-1:
+                    clausulas.append(" ".join([negar(q(i,j,'s')),q(i,j,'w'),q(i+1,j,'w')]))
+                else:
+                    clausulas.append(" ".join([negar(q(i,j,'s')),q(i,j,'w')]))
             if i != 0:
                 if j!= 0:
                     clausulas.append(" ".join([negar(q(i,j,'w')),q(i,j,'n'),q(i-1,j,'w'),q(i,j-1,'n')]))
-                    #clausulas.append(" ".join([negar(q(i,j,'w')),q(i,j,'n'),q(i-1,j,'w'),q(i-1,j-1,'s')]))
+                else :
+                    clausulas.append(" ".join([negar(q(i,j,'w')),q(i,j,'n'),q(i-1,j,'w')]))
+            else:
+                if j!=0:
+                    clausulas.append(" ".join([negar(q(i,j,'w')),q(i,j,'n'),q(i,j-1,'n')]))
+                else:
+                    clausulas.append(" ".join([negar(q(i,j,'w')),q(i,j,'n')]))
             if i != N-1:
                 if j!= 0:
                     clausulas.append(" ".join([negar(q(i,j,'w')),q(i,j,'s'),q(i+1,j,'w'),q(i,j-1,'s')]))
-            
+                else:
+                    clausulas.append(" ".join([negar(q(i,j,'w')),q(i,j,'s'),q(i+1,j,'w')]))
+            else:
+                if j!= 0:
+                    clausulas.append(" ".join([negar(q(i,j,'w')),q(i,j,'s'),q(i,j-1,'s')]))
+                else:
+                    clausulas.append(" ".join([negar(q(i,j,'w')),q(i,j,'s')]))
             if j != M-1:
                 if i != 0:
                     clausulas.append(" ".join([negar(q(i,j,'n')),q(i,j,'e'),q(i,j+1,'n'),q(i-1,j,'e')]))
-            
+                else:
+                    clausulas.append(" ".join([negar(q(i,j,'n')),q(i,j,'e'),q(i,j+1,'n')]))
+            else:
+                if i != 0:
+                    clausulas.append(" ".join([negar(q(i,j,'n')),q(i,j,'e'),q(i-1,j,'e')]))
+                else:
+                    clausulas.append(" ".join([negar(q(i,j,'n')),q(i,j,'e')]))
             if j != 0:
                 if i != 0:
                     clausulas.append(" ".join([negar(q(i,j,'n')),q(i,j,'w'),q(i,j-1,'n'),q(i-1,j,'w')]))
-            
+                else:
+                    clausulas.append(" ".join([negar(q(i,j,'n')),q(i,j,'w'),q(i,j-1,'n')]))
+            else:
+                if i != 0:
+                    clausulas.append(" ".join([negar(q(i,j,'n')),q(i,j,'w'),q(i-1,j,'w')]))
+                else:
+                    clausulas.append(" ".join([negar(q(i,j,'n')),q(i,j,'w')]))
             if i != 0:
                 if j != M-1:
                     clausulas.append(" ".join([negar(q(i,j,'e')),q(i,j,'n'),q(i-1,j,'e'),q(i,j+1,'n')]))
-            
+                else :
+                    clausulas.append(" ".join([negar(q(i,j,'e')),q(i,j,'n'),q(i-1,j,'e')]))
+            else:
+                if j != M-1:
+                    clausulas.append(" ".join([negar(q(i,j,'e')),q(i,j,'n'),q(i,j+1,'n')]))
+                else :
+                    clausulas.append(" ".join([negar(q(i,j,'e')),q(i,j,'n')]))
             if i != N-1:
                 if j != M-1:
                     clausulas.append(" ".join([negar(q(i,j,'e')),q(i,j,'s'),q(i+1,j,'e'),q(i,j+1,'s')]))
+                else :
+                    clausulas.append(" ".join([negar(q(i,j,'e')),q(i,j,'s'),q(i+1,j,'e')]))
+            else:
+                if j != M-1:
+                    clausulas.append(" ".join([negar(q(i,j,'e')),q(i,j,'s'),q(i,j+1,'s')]))
+                else :
+                    clausulas.append(" ".join([negar(q(i,j,'e')),q(i,j,'s')]))
             
             
             
