@@ -721,58 +721,51 @@ def clausulasTipo4():
 
 
 def clausulasTipo5():
-    
-    
-    for i in range(N):
-        for j in range(M):
-#            for k in ['n','s','w','e']:
 
+    # Un punto no puede tener tres lineas
+    for i in range(0,N):
+        for j in range(0,M):
+            
             if j!= M-1:
-                clausulas.append(" ".join([negar(q(i,j,'s')),
-                                            negar(q(i,j,'e')),
-                                            negar(q(i,j+1,'s'))]))
+            	#De la esquina inferior derecha no pueden salir tres lineas (por el sur de la celda de la derecha)
+                clausulas.append(" ".join([negar(q(i,j,'s')),negar(q(i,j,'e')),negar(q(i,j+1,'s'))]))
             
             if j != 0:
-                clausulas.append(" ".join([negar(q(i,j,'s')),
-                                            negar(q(i,j,'w')),
-                                            negar(q(i,j-1,'s'))]))
+            	#De la esquina inferior izquierda no pueden salir tres lineas (por el sur la celda de la izquierda)
+                clausulas.append(" ".join([negar(q(i,j,'s')),negar(q(i,j,'w')),negar(q(i,j-1,'s'))]))
             
             if i != 0:
-                clausulas.append(" ".join([negar(q(i,j,'w')),
-                                            negar(q(i,j,'n')),
-                                            negar(q(i-1,j,'w'))]))
+            	#De la esquina superior izquierda no pueden salir tres lineas (por el oeste de la celda de arriba)
+                clausulas.append(" ".join([negar(q(i,j,'w')),negar(q(i,j,'n')),negar(q(i-1,j,'w'))]))
             
             if i != N-1:
-                clausulas.append(" ".join([negar(q(i,j,'w')),
-                                            negar(q(i,j,'s')),
-                                            negar(q(i+1,j,'w'))]))
+            	#De la esquina inferior izquierda no pueden salir tres lineas (por el oeste de la celda de abajo)
+                clausulas.append(" ".join([negar(q(i,j,'w')),negar(q(i,j,'s')),negar(q(i+1,j,'w'))]))
             
             if j != M-1:
-                clausulas.append(" ".join([negar(q(i,j,'n')),
-                                            negar(q(i,j,'e')),
-                                            negar(q(i,j+1,'n'))]))
+            	#De la esquina superior derecha no pueden salir tres lineas (por el norte de la celda de la derecha)
+                clausulas.append(" ".join([negar(q(i,j,'n')),negar(q(i,j,'e')),negar(q(i,j+1,'n'))]))
             
             if j != 0:
-                clausulas.append(" ".join([negar(q(i,j,'n')),
-                                            negar(q(i,j,'w')),
-                                            negar(q(i,j-1,'n'))]))
+            	#De la esquina superior izquierda no pueden salir tres lineas (por el norte de la celda de la izquierda)
+                clausulas.append(" ".join([negar(q(i,j,'n')),negar(q(i,j,'w')),negar(q(i,j-1,'n'))]))
             
             if i != 0:
-                clausulas.append(" ".join([negar(q(i,j,'e')),
-                                            negar(q(i,j,'n')),
-                                            negar(q(i-1,j,'e'))]))
-            
+            	#De la esquina superior derecha no pueden salir tres lineas (por el este de la celda de arriba
+                clausulas.append(" ".join([negar(q(i,j,'e')),negar(q(i,j,'n')),negar(q(i-1,j,'e'))]))
+                            
             if i != N-1:
+            	#De la esquina inferior derecha no pueden salir tres lineas (por el este de la celda de abajo)
                 clausulas.append(" ".join([negar(q(i,j,'e')),negar(q(i,j,'s')),negar(q(i+1,j,'e'))]))
                 
     
     
 
 def clausulasTipo6():
-    
+    # Un punto no puede tener una sola linea
     for i in range(0,N):
         for j in range(0,M):
-            
+        	# Si hay una linea al sur, se chequea hacia la derecha y abajo 
             if j!= M-1:
                 if i!= N-1:
                     clausulas.append(" ".join([negar(q(i,j,'s')),q(i,j,'e'),q(i,j+1,'s'),q(i+1,j,'e')]))
@@ -784,6 +777,7 @@ def clausulasTipo6():
                     clausulas.append(" ".join([negar(q(i,j,'s')),q(i,j,'e'),q(i+1,j,'e')]))
                 else :
                     clausulas.append(" ".join([negar(q(i,j,'s')),q(i,j,'e')]))
+            # Si hay una linea al sur, se chequea hacia la izquierda y abajo
             if j != 0:
                 if i!= N-1:
                     clausulas.append(" ".join([negar(q(i,j,'s')),q(i,j,'w'),q(i,j-1,'s'),q(i+1,j,'w')]))
@@ -794,6 +788,7 @@ def clausulasTipo6():
                     clausulas.append(" ".join([negar(q(i,j,'s')),q(i,j,'w'),q(i+1,j,'w')]))
                 else:
                     clausulas.append(" ".join([negar(q(i,j,'s')),q(i,j,'w')]))
+            # Si hay una linea al oeste, se chequea hacia la izquierda y arriba
             if i != 0:
                 if j!= 0:
                     clausulas.append(" ".join([negar(q(i,j,'w')),q(i,j,'n'),q(i-1,j,'w'),q(i,j-1,'n')]))
@@ -804,6 +799,7 @@ def clausulasTipo6():
                     clausulas.append(" ".join([negar(q(i,j,'w')),q(i,j,'n'),q(i,j-1,'n')]))
                 else:
                     clausulas.append(" ".join([negar(q(i,j,'w')),q(i,j,'n')]))
+            # Si hay una linea al oeste, se chequea hacia la izquierda y abajo
             if i != N-1:
                 if j!= 0:
                     clausulas.append(" ".join([negar(q(i,j,'w')),q(i,j,'s'),q(i+1,j,'w'),q(i,j-1,'s')]))
@@ -814,6 +810,7 @@ def clausulasTipo6():
                     clausulas.append(" ".join([negar(q(i,j,'w')),q(i,j,'s'),q(i,j-1,'s')]))
                 else:
                     clausulas.append(" ".join([negar(q(i,j,'w')),q(i,j,'s')]))
+            # Si hay una linea al norte, se chequea hacia la derecha y arriba
             if j != M-1:
                 if i != 0:
                     clausulas.append(" ".join([negar(q(i,j,'n')),q(i,j,'e'),q(i,j+1,'n'),q(i-1,j,'e')]))
@@ -824,6 +821,7 @@ def clausulasTipo6():
                     clausulas.append(" ".join([negar(q(i,j,'n')),q(i,j,'e'),q(i-1,j,'e')]))
                 else:
                     clausulas.append(" ".join([negar(q(i,j,'n')),q(i,j,'e')]))
+            # Si hay una linea al norte, se chequea hacia la izquierda y arriba
             if j != 0:
                 if i != 0:
                     clausulas.append(" ".join([negar(q(i,j,'n')),q(i,j,'w'),q(i,j-1,'n'),q(i-1,j,'w')]))
@@ -834,6 +832,7 @@ def clausulasTipo6():
                     clausulas.append(" ".join([negar(q(i,j,'n')),q(i,j,'w'),q(i-1,j,'w')]))
                 else:
                     clausulas.append(" ".join([negar(q(i,j,'n')),q(i,j,'w')]))
+            # Si hay una linea al este, se chequea hacia la derecha y arriba
             if i != 0:
                 if j != M-1:
                     clausulas.append(" ".join([negar(q(i,j,'e')),q(i,j,'n'),q(i-1,j,'e'),q(i,j+1,'n')]))
@@ -844,6 +843,7 @@ def clausulasTipo6():
                     clausulas.append(" ".join([negar(q(i,j,'e')),q(i,j,'n'),q(i,j+1,'n')]))
                 else :
                     clausulas.append(" ".join([negar(q(i,j,'e')),q(i,j,'n')]))
+            # Si hay una linea al este, se chequea hacia la derecha y abajo
             if i != N-1:
                 if j != M-1:
                     clausulas.append(" ".join([negar(q(i,j,'e')),q(i,j,'s'),q(i+1,j,'e'),q(i,j+1,'s')]))
