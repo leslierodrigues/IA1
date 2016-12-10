@@ -510,10 +510,10 @@ def clausulasTipo3():
                                                           
                     # si c2 no esta en el borde inferior del tablero
                     if i2 < N-1:
-                         c3 = (i2+1,j2) # Celda adyacente a c2 por el lado sur
-                         clausulas.append(" ".join([negar(r((i1,j1),(i2,j2))),
-                                                  q(i2,j2,'s'), #segmento entre c2 y c3
-                                                  r((i1,j2),c3)]))
+                        c3 = (i2+1,j2) # Celda adyacente a c2 por el lado sur
+                        clausulas.append(" ".join([negar(r((i1,j1),(i2,j2))),
+                                                    q(i2,j2,'s'), #segmento entre c2 y c3
+                                                    r((i1,j2),c3)]))
                          
                     # si c2 no esta en el borde derecho del tablero
                     if j2 < M-1:
@@ -528,8 +528,27 @@ def clausulasTipo3():
                         clausulas.append(" ".join([negar(r((i1,j1),(i2,j2))),
                                                   q(i2,j2,'w'), #segmento entre c2 y c3
                                                   r((i1,j2),c3)]))
-                                                      
-    return clausulas                     
+
+    # Con los primeros pasos definidos, podemos hacer un floyd warshall
+    # r(c1,c2) /\ r(c2,c3) => r(c1,c3)
+    # !r(c1,c2) \/ !r(c2,c3) \/ r(c1,c3)
+    for i1 in range(N):
+        for j1 in range(M):
+            c1 = (i1,j1)
+            for i2 in range(N):
+                for j2 in range(M):
+                    c2 = (i2,j2)
+                    for i3 in range(N):
+                        for j3 in range(M):
+                            c3 = (i3,j3)
+                            clausulas.append(" ".join([negar(r(c1,c2)),
+                                                        negar(r(c2,c3)),
+                                                        r(c1,c3)]))
+
+
+    return clausulas
+
+
                         
 '''
 Cláusulas tipo 4
