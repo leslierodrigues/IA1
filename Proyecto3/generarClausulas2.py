@@ -408,7 +408,7 @@ def clausulasTipo2():
                                            z[i+1][j], 
                                            z[i][j-1]],    4)
                 cd = [[negar(z[i][j])]+list(x) for x in c]
-                clausulas += [" ".join(y) for y in cd]
+                #clausulas += [" ".join(y) for y in cd]
 
 
     for i in range(0,N):
@@ -601,8 +601,44 @@ def clausulasTipo4():
                                                   z[i2][j2], 
                                                   r((i1,j1),(i2,j2))]))               
                     
-                                                      
+                    
     return clausulas
+
+
+def clausulasTipo5():
+    
+    
+    for i in range(0,N):
+        for j in range(0,M):
+            
+            if j!= M-1:
+                clausulas.append(" ".join([negar(q(i,j,'s')),negar(q(i,j,'e')),negar(q(i,j+1,'s'))]))
+            
+            if j != 0:
+                clausulas.append(" ".join([negar(q(i,j,'s')),negar(q(i,j,'w')),negar(q(i,j-1,'s'))]))
+            
+            if i != 0:
+                clausulas.append(" ".join([negar(q(i,j,'w')),negar(q(i,j,'n')),negar(q(i-1,j,'w'))]))
+            
+            if i != N-1:
+                clausulas.append(" ".join([negar(q(i,j,'w')),negar(q(i,j,'s')),negar(q(i+1,j,'w'))]))
+            
+            if j != M-1:
+                clausulas.append(" ".join([negar(q(i,j,'n')),negar(q(i,j,'e')),negar(q(i,j+1,'n'))]))
+            
+            if j != 0:
+                clausulas.append(" ".join([negar(q(i,j,'n')),negar(q(i,j,'w')),negar(q(i,j-1,'n'))]))
+            
+            if i != 0:
+                clausulas.append(" ".join([negar(q(i,j,'e')),negar(q(i,j,'n')),negar(q(i-1,j,'e'))]))
+            
+            if i != N-1:
+                clausulas.append(" ".join([negar(q(i,j,'e')),negar(q(i,j,'s')),negar(q(i+1,j,'e'))]))
+        
+    
+    
+    
+
 
 ################################################################################
 # Para la ejecucion  ----------------------------------------------------------#
@@ -625,7 +661,7 @@ clausulasTipo1()
 clausulasTipo2()
 clausulasTipo3()
 clausulasTipo4()
-
+clausulasTipo5()
 
 with open("inputSatSolver.txt", "w") as f :
     
