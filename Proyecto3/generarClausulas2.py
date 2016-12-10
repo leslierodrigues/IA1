@@ -542,21 +542,6 @@ def clausulasTipo3():
                                                   q(i2,j2,'w'), #segmento entre c2 y c3
                                                   r((i1,j2),c3)]))
 
-    # Con los primeros pasos definidos, podemos hacer un floyd warshall
-    # r(c1,c2) /\ r(c2,c3) => r(c1,c3)
-    # !r(c1,c2) \/ !r(c2,c3) \/ r(c1,c3)
-    for i1 in range(N):
-        for j1 in range(M):
-            c1 = (i1,j1)
-            for i2 in range(N):
-                for j2 in range(M):
-                    c2 = (i2,j2)
-                    for i3 in range(N):
-                        for j3 in range(M):
-                            c3 = (i3,j3)
-                            clausulas.append(" ".join([negar(r(c1,c2)),
-                                                        negar(r(c2,c3)),
-                                                        r(c1,c3)]))
 
 
     return clausulas
