@@ -601,15 +601,6 @@ z = generarVariablesTipoDeCelda()
 alcances = generarVariablesAlcances()
 
 
-print(z)
-temp = ""
-for x in z:
-    for y in x:
-        temp += " " + negar(y)
-
-clausulas.append(temp)
-
-
 # Generar clausulas
 clausulasTipo0()
 clausulasTipo1()
@@ -617,7 +608,6 @@ clausulasTipo2()
 clausulasTipo3()
 clausulasTipo4()
 
-print(r((4,4),(0,4)))
 
 
 
