@@ -648,12 +648,50 @@ def clausulasTipo5():
                                             negar(q(i-1,j,'e'))]))
             
             if i != N-1:
-                clausulas.append(" ".join([negar(q(i,j,'e')),
-                                            negar(q(i,j,'s')),
-                                            negar(q(i+1,j,'e'))]))
-        
+                clausulas.append(" ".join([negar(q(i,j,'e')),negar(q(i,j,'s')),negar(q(i+1,j,'e'))]))
+                
     
     
+
+def clausulasTipo6():
+    
+    for i in range(0,N):
+        for j in range(0,M):
+            
+            if j!= M-1:
+                if i!= N-1:
+                    clausulas.append(" ".join([negar(q(i,j,'s')),q(i,j,'e'),q(i,j+1,'s'),q(i+1,j,'e')]))
+                    #clausulas.append(" ".join([negar(q(i,j,'s')),q(i,j,'e'),q(i,j+1,'s'),q(i+1,j+1,'w')]))
+            if j != 0:
+                if i!= N-1:
+                    clausulas.append(" ".join([negar(q(i,j,'s')),q(i,j,'w'),q(i,j-1,'s'),q(i+1,j,'w')]))
+                    #clausulas.append(" ".join([negar(q(i,j,'s')),q(i,j,'w'),q(i,j-1,'s'),q(i+1,j-1,'e')]))
+            if i != 0:
+                if j!= 0:
+                    clausulas.append(" ".join([negar(q(i,j,'w')),q(i,j,'n'),q(i-1,j,'w'),q(i,j-1,'n')]))
+                    #clausulas.append(" ".join([negar(q(i,j,'w')),q(i,j,'n'),q(i-1,j,'w'),q(i-1,j-1,'s')]))
+            if i != N-1:
+                if j!= 0:
+                    clausulas.append(" ".join([negar(q(i,j,'w')),q(i,j,'s'),q(i+1,j,'w'),q(i,j-1,'s')]))
+            
+            if j != M-1:
+                if i != 0:
+                    clausulas.append(" ".join([negar(q(i,j,'n')),q(i,j,'e'),q(i,j+1,'n'),q(i-1,j,'e')]))
+            
+            if j != 0:
+                if i != 0:
+                    clausulas.append(" ".join([negar(q(i,j,'n')),q(i,j,'w'),q(i,j-1,'n'),q(i-1,j,'w')]))
+            
+            if i != 0:
+                if j != M-1:
+                    clausulas.append(" ".join([negar(q(i,j,'e')),q(i,j,'n'),q(i-1,j,'e'),q(i,j+1,'n')]))
+            
+            if i != N-1:
+                if j != M-1:
+                    clausulas.append(" ".join([negar(q(i,j,'e')),q(i,j,'s'),q(i+1,j,'e'),q(i,j+1,'s')]))
+            
+            
+            
     
 
 
@@ -679,6 +717,8 @@ clausulasTipo2()
 clausulasTipo3()
 clausulasTipo4()
 clausulasTipo5()
+clausulasTipo6()
+
 
 with open("inputSatSolver.txt", "w") as f :
     
