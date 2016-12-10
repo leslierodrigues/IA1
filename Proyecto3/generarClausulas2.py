@@ -1,4 +1,4 @@
-
+import itertools
 
 #  bordesDeCeldas,es un arreglo de 3 dimensiones 
 #  1era dimension: fila en la que se encuentra la celda 
@@ -344,7 +344,8 @@ def generarVariablesTipoDeCelda():
     return z    
     
 def clausulasTipo2():
-
+    global clausulas
+    
     # Para cada celda  en el borde izquierdo, -q(i,0,w) <=> z(i,0)
     # Es decir:     q(i,0,w) \/ z(i,0)
     #              -q(i,0,w) \/ -z(i,0)
@@ -356,7 +357,6 @@ def clausulasTipo2():
         # q(i,0,w) \/ z(i,0), celda en el borde izquierdo
         clausulas.append(" ".join([q(i,0,'w'),
                                    z[i][0]]))
-        
         # -q(i,0,w) \/ -z(i,0), celda en el borde izquierdo
         clausulas.append(" ".join([negar(q(i,0,'w')),
                                    negar(z[i][0])]))
@@ -388,19 +388,31 @@ def clausulasTipo2():
             for j in range(1,M-1):
                 # La celda no es exterior o no tiene alguno de sus bordes                
                 #-z(i,j) v -q(i,j,n) v -q(i,j,e) v -q(i,j,s) -q(i,j,w)    
-                temp = [negar(z[i][j])]
-                for k in ['n','e','s','w']:
-                    temp += [negar(q(i,j,k))]
-                clausulas.append(" ".join(temp))   
+                #temp = [negar(z[i][j])]
+                #for k in ['n','e','s','w']:
+                #    temp += [negar(q(i,j,k))]
+                #clausulas.append(" ".join(temp))   
+                
                 
                 # La celda no es exterior o alguna de sus adyancentes es exterior
                 # [-z(i,j)v z(i-1,j) v z(i,j+1) v z(i+1,j) v z(i,j)]
-                clausulas.append(" ".join([negar(z[i][j]),
-                                           z[i-1][j],
+                #clausulas.append(" ".join([negar(z[i][j]),
+                #                           z[i-1][j],
+                #                           z[i][j+1],
+                #                           z[i+1][j],
+                #                           z[i][j-1]]))
+                
+                c = itertools.combinations([negar(q(i,j,'n')),
+                                           negar(q(i,j,'e')), 
+                                           negar(q(i,j,'s')), 
+                                           negar(q(i,j,'w')), 
+                                           z[i-1][j], 
                                            z[i][j+1],
-                                           z[i+1][j],
-                                           z[i][j-1]]))
-                                           
+                                           z[i+1][j], 
+                                           z[i][j-1]],    4)
+                cd = [[negar(z[i][j])]+list(x) for x in c]
+                clausulas += [" ".join(y) for y in cd]
+                
                 # La celda es exterior o no tiene borde superior o
                 # la celda que es adyacente a ella por el norte no es exterior                           
                 # z(i,j) v [q(i,j,n) v -z(i-1,j)]
@@ -424,7 +436,8 @@ def clausulasTipo2():
                                            negar(z[i][j-1])]))
                 
                 
-                
+            
+        
     return clausulas    
 
 '''
