@@ -121,7 +121,7 @@ def q(i,j,k):
     return bordesDeCeldas[i][j][k]
 
 
-# clausulasTipo1, genera las clausulas de tipo 0
+# clausulasTipo0, genera las clausulas de tipo 0
 #
 # ejemplo de traduccion de una restriccion:
 #       q(i,j+1,e) <=> q(i,j,w)
@@ -524,6 +524,7 @@ def clausulasTipo3():
     for i1 in range(N):
         for j1 in range(M):
             c1 = (i1,j1)
+            clausulas.append(r(c1,c1))
             for i2 in range(N):
                 for j2 in range(M):
                     c2 = (i2,j2)                        
@@ -543,8 +544,8 @@ def clausulasTipo3():
                          
                     # si c2 no esta en el borde derecho del tablero
                     if j2 < M-1:
-                         c3 = (i2,j2+1) # Celda adyacente a c2 por el lado este
-                         clausulas.append(" ".join([negar(r(c1,c2)),
+                        c3 = (i2,j2+1) # Celda adyacente a c2 por el lado este
+                        clausulas.append(" ".join([negar(r(c1,c2)),
                                                   q(i2,j2,'e'), #segmento entre c2 y c3
                                                   r(c1,c3)]))
                                                  
@@ -555,6 +556,23 @@ def clausulasTipo3():
                                                   q(i2,j2,'w'), #segmento entre c2 y c3
                                                   r(c1,c3)]))
 
+
+'''
+    # Segunda implicacion:
+    # r(c1,c2) => r(c1,c3) & q(c3,k) | r(c1,c4) & q(c4,k) | ...
+    for i1 in range(N):
+        for j1 in range(M):
+            c1 = (i1,j1)
+            for i2 in range(N):
+                for j2 in range(M):
+                    c2 = (i2,j2)
+                    temp = negar(r(c1,c2))
+                    if (i2 > 0):
+                        c3 = (i2-1,j2)
+                        temp += " " + q(i2,j2,"s")
+
+    return clausulas
+'''
 
                         
 '''
