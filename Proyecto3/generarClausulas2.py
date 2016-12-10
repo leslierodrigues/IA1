@@ -408,7 +408,7 @@ def clausulasTipo2():
                                            z[i+1][j], 
                                            z[i][j-1]],    4)
                 cd = [[negar(z[i][j])]+list(x) for x in c]
-                clausulas += [" ".join(y) for y in cd]
+                #clausulas += [" ".join(y) for y in cd]
 
 
     for i in range(0,N):
@@ -583,51 +583,39 @@ def clausulasTipo4():
                                                   z[i2][j2], 
                                                   r((i1,j1),(i2,j2))]))               
                     
-                                                      
+                    
     return clausulas
 
 
 def clausulasTipo5():
     
-    for j in range(0,M-1):
-        clausulas.append(" ".join([negar(q(0,j,'e')),negar(q(0,j,'n')),negar(q(0,j+1,'n'))]))
-        clausulas.append(" ".join([negar(q(0,j,'e')),negar(q(0,j,'s')),negar(q(0,j+1,'s'))]))
-        
-        clausulas.append(" ".join([negar(q(0,j,'w')),negar(q(0,j,'n')),negar(q(1,j,'w'))]))
-        clausulas.append(" ".join([negar(q(0,j,'e')),negar(q(0,j,'n')),negar(q(1,j,'e'))]))
-        
-        clausulas.append(" ".join([negar(q(N-1,j,'w')),negar(q(N-1,j,'n')),negar(q(N-2,j,'w'))]))
-        clausulas.append(" ".join([negar(q(N-1,j,'e')),negar(q(N-1,j,'n')),negar(q(N-2,j,'e'))]))
-        
-        clausulas.append(" ".join([negar(q(N-1,j,'e')),negar(q(N-1,j,'n')),negar(q(N-1,j+1,'n'))]))
-        clausulas.append(" ".join([negar(q(N-1,j,'e')),negar(q(N-1,j,'s')),negar(q(N-1,j+1,'s'))]))
     
-    #clausulas.append(" ".join([negar(q(0,0,'s')),negar(q(0,0,'e')),negar(q(1,0,'e'))]))
-    #clausulas.append(" ".join([negar(q(N-1,0,'n')),negar(q(N-1,0,'e')),negar(q(N-2,0,'e'))]))
-    for i in range(0,N-1):
-        
-        clausulas.append(" ".join([negar(q(i,0,'n')),negar(q(i,0,'e')),negar(q(i,1,'n'))]))
-        clausulas.append(" ".join([negar(q(i,0,'s')),negar(q(i,0,'e')),negar(q(i,1,'s'))]))
-        
-        clausulas.append(" ".join([negar(q(i,0,'w')),negar(q(i,0,'s')),negar(q(i+1,0,'w'))]))
-        clausulas.append(" ".join([negar(q(i,0,'e')),negar(q(i,0,'s')),negar(q(i+1,0,'e'))]))
-        
-        clausulas.append(" ".join([negar(q(i,M-2,'n')),negar(q(i,M-2,'e')),negar(q(i,M-1,'n'))]))
-        clausulas.append(" ".join([negar(q(i,M-2,'s')),negar(q(i,M-2,'e')),negar(q(i,M-1,'s'))]))
-        
-        clausulas.append(" ".join([negar(q(i,M-1,'w')),negar(q(i,M-1,'s')),negar(q(i+1,M-1,'w'))]))
-        clausulas.append(" ".join([negar(q(i,M-1,'e')),negar(q(i,M-1,'s')),negar(q(i+1,M-1,'e'))]))
-        
-    for i in range(1,N-1):
-        for j in range(1,M-1):
-            clausulas.append(" ".join([negar(q(i,j,'s')),negar(q(i,j,'e')),negar(q(i,j+1,'s'))]))
-            clausulas.append(" ".join([negar(q(i,j,'s')),negar(q(i,j,'w')),negar(q(i,j-1,'s'))]))
-            clausulas.append(" ".join([negar(q(i,j,'w')),negar(q(i,j,'n')),negar(q(i-1,j,'w'))]))
-            clausulas.append(" ".join([negar(q(i,j,'w')),negar(q(i,j,'s')),negar(q(i+1,j,'w'))]))
-            clausulas.append(" ".join([negar(q(i,j,'n')),negar(q(i,j,'e')),negar(q(i,j+1,'n'))]))
-            clausulas.append(" ".join([negar(q(i,j,'n')),negar(q(i,j,'w')),negar(q(i,j-1,'n'))]))
-            clausulas.append(" ".join([negar(q(i,j,'e')),negar(q(i,j,'n')),negar(q(i-1,j,'e'))]))
-            clausulas.append(" ".join([negar(q(i,j,'e')),negar(q(i,j,'s')),negar(q(i+1,j,'e'))]))
+    for i in range(0,N):
+        for j in range(0,M):
+            
+            if j!= M-1:
+                clausulas.append(" ".join([negar(q(i,j,'s')),negar(q(i,j,'e')),negar(q(i,j+1,'s'))]))
+            
+            if j != 0:
+                clausulas.append(" ".join([negar(q(i,j,'s')),negar(q(i,j,'w')),negar(q(i,j-1,'s'))]))
+            
+            if i != 0:
+                clausulas.append(" ".join([negar(q(i,j,'w')),negar(q(i,j,'n')),negar(q(i-1,j,'w'))]))
+            
+            if i != N-1:
+                clausulas.append(" ".join([negar(q(i,j,'w')),negar(q(i,j,'s')),negar(q(i+1,j,'w'))]))
+            
+            if j != M-1:
+                clausulas.append(" ".join([negar(q(i,j,'n')),negar(q(i,j,'e')),negar(q(i,j+1,'n'))]))
+            
+            if j != 0:
+                clausulas.append(" ".join([negar(q(i,j,'n')),negar(q(i,j,'w')),negar(q(i,j-1,'n'))]))
+            
+            if i != 0:
+                clausulas.append(" ".join([negar(q(i,j,'e')),negar(q(i,j,'n')),negar(q(i-1,j,'e'))]))
+            
+            if i != N-1:
+                clausulas.append(" ".join([negar(q(i,j,'e')),negar(q(i,j,'s')),negar(q(i+1,j,'e'))]))
         
     
     
