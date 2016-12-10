@@ -325,10 +325,7 @@ z(i,j) <=> [-q(i,j,n) & z(i-1,j)] v [-q(i,j,e) & z(i,j+1)] v [-q(i,j,s) & z(i+1,
 # generarVariablesTipoDeCelda(), genera una variable para cada celda,
 # que representara su tipo. 
 #
-# retorna: z, una matriz, en la que para todo 0 <= i < N y 0 <= j < M
-#             donde i es la fila y j la columna  donde esta la celda, tenemos 
-#             que z[i][j] almacena la variable asociada a dica celda.
-#               - True, si la celda es exterior
+# retorna:      - True, si la celda es exterior
 #               - False, si la celda es interior
 
 def generarVariablesTipoDeCelda():
@@ -412,31 +409,41 @@ def clausulasTipo2():
                                            z[i][j-1]],    4)
                 cd = [[negar(z[i][j])]+list(x) for x in c]
                 clausulas += [" ".join(y) for y in cd]
+
+
+    for i in range(0,N):
+            for j in range(0,M):
                 
                 # La celda es exterior o no tiene borde superior o
                 # la celda que es adyacente a ella por el norte no es exterior                           
                 # z(i,j) v [q(i,j,n) v -z(i-1,j)]
-                clausulas.append(" ".join([z[i][j],
+
+                if (i > 0):
+                    clausulas.append(" ".join([z[i][j],
                                            q(i,j,'n'),
                                            negar(z[i-1][j])]))
                 
+
                 #z(i,j) v [q(i,j,e) v -z(i,j+1)]
-                clausulas.append(" ".join([z[i][j],
+                if (j < M-1):
+                    clausulas.append(" ".join([z[i][j],
                                            q(i,j,'e'),
                                            negar(z[i][j+1])]))
                                            
                 #z(i,j) v [q(i,j,s) v -z(i+1,j)]
-                clausulas.append(" ".join([z[i][j],
+                if (i < N-1):
+                    clausulas.append(" ".join([z[i][j],
                                            q(i,j,'s'),
                                            negar(z[i+1][j])]))
                 
                 #z(i,j) v [q(i,j,w) v -z(i,j-1)]
-                clausulas.append(" ".join([z[i][j],
+                if (j > 0):
+                    clausulas.append(" ".join([z[i][j],
                                            q(i,j,'w'),
                                            negar(z[i][j-1])]))
                 
                 
-            
+                
         
     return clausulas    
 
@@ -458,6 +465,11 @@ c' es alcanzable desde la celda c, y la celda c'' es adyancente a c'
 por el lado norte, entonces:
 
 r(c,c') & -q(c',n) => r(c,c'')
+
+Esto es un si y solo si, por lo tanto necesitamos la otra implicacion:
+
+r(c,c') & -q(c',n) <= r(c,c'')
+!
 
 ya que si c' es alcanzable desde c y no existe un segmento entre c' y c'',
 entonces c'' también debe ser alcanzable desde c. Similarmente definimos
@@ -511,40 +523,37 @@ def clausulasTipo3():
     
     for i1 in range(N):
         for j1 in range(M):
+            c1 = (i1,j1)
             for i2 in range(N):
                 for j2 in range(M):
-                                            
+                    c2 = (i2,j2)                        
                     # si c2 no esta en el borde superior del tablero
                     if i2 > 0:               
                         c3 = (i2-1,j2) # Celda adyacente a c2 por el lado norte
-                        clausulas.append(" ".join([negar(r((i1,j1),(i2,j2))),
+                        clausulas.append(" ".join([negar(r(c1,c2)),
                                                   q(i2,j2,'n'), #segmento entre c2 y c3
-                                                  r((i1,j2),c3)]))
-                                                          
+                                                  r(c1,c3)]))
+
                     # si c2 no esta en el borde inferior del tablero
                     if i2 < N-1:
                         c3 = (i2+1,j2) # Celda adyacente a c2 por el lado sur
-                        clausulas.append(" ".join([negar(r((i1,j1),(i2,j2))),
+                        clausulas.append(" ".join([negar(r(c1,c2)),
                                                     q(i2,j2,'s'), #segmento entre c2 y c3
-                                                    r((i1,j2),c3)]))
+                                                    r(c1,c3)]))
                          
                     # si c2 no esta en el borde derecho del tablero
                     if j2 < M-1:
                          c3 = (i2,j2+1) # Celda adyacente a c2 por el lado este
-                         clausulas.append(" ".join([negar(r((i1,j1),(i2,j2))),
+                         clausulas.append(" ".join([negar(r(c1,c2)),
                                                   q(i2,j2,'e'), #segmento entre c2 y c3
-                                                  r((i1,j2),c3)]))
+                                                  r(c1,c3)]))
                                                  
                    # si c2 no esta en el borde izquierdo del tablero
                     if j2 > 0:               
                         c3 = (i2,j2-1) # Celda adyacente a c2 por el lado oeste
-                        clausulas.append(" ".join([negar(r((i1,j1),(i2,j2))),
+                        clausulas.append(" ".join([negar(r(c1,c2)),
                                                   q(i2,j2,'w'), #segmento entre c2 y c3
-                                                  r((i1,j2),c3)]))
-
-
-
-    return clausulas
+                                                  r(c1,c3)]))
 
 
                         
@@ -555,23 +564,21 @@ Cláusulas tipo 4
 Finalmente, debemos que indicar que cada par de celdas interiores tienen
 que ser alcazables la una de la otra. Para cada par de celdas c y c':
 
-z(c) & z(c') => r(c,c')
+recordemos -z(c) significa que c es interna
+
+-z(c) & -z(c') => r(c,c')
 
 '''
 
 def clausulasTipo4():
     
-    # z(c1) & z(c2) => r(c1,c2)
-    # -z(c1) v -z(c2) v r(c1,c2)
-    # Igualmente !z(c1) & !z(c2) => r(c1,c2)
+    # -z(c1) & -z(c2) => r(c1,c2)
+    # z(c1) v z(c2) v r(c1,c2)
     for i1 in range(N):
         for j1 in range(M):
             for i2 in range(N):
                 for j2 in range(M):
                     for k in ['n','s','e','w']:  
-                        clausulas.append(" ".join([negar(z[i1][j1]),
-                                                  negar(z[i2][j2]), 
-                                                  r((i1,j1),(i2,j2))]))               
                         clausulas.append(" ".join([z[i1][j1],
                                                   z[i2][j2], 
                                                   r((i1,j1),(i2,j2))]))               
@@ -594,6 +601,15 @@ z = generarVariablesTipoDeCelda()
 alcances = generarVariablesAlcances()
 
 
+print(z)
+temp = ""
+for x in z:
+    for y in x:
+        temp += " " + negar(y)
+
+clausulas.append(temp)
+
+
 # Generar clausulas
 clausulasTipo0()
 clausulasTipo1()
@@ -601,7 +617,7 @@ clausulasTipo2()
 clausulasTipo3()
 clausulasTipo4()
 
-
+print(r((4,4),(0,4)))
 
 
 
