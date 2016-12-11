@@ -35,7 +35,7 @@ def leerLinea():
 	for i in range(len(matriz)):
 		for j in range(len(matriz[i])):
 			tablero[i][j] = -1 if matriz[i][j] == '.' else int(matriz[i][j])
-	return [N,M,tablero]
+	return [N,M,tablero,linea]
 
 # Ejemplo que dio Blai
 mapaCeldaRestriccionNumeroBordes = {(0,1) : 2, (0,2) : 2, (0,4) : 3
@@ -379,8 +379,6 @@ def clausulasTipo2():
         # -q(0,j,s) \/ -z(N-1,j),  celda en el borde inferior
         clausulas.append(" ".join([negar(q(N-1,j,'s')),
                                    negar(z[N-1][j])]))    
-    temp = [] # almacena las variables de una clausula
-    #Para toda celda que no este en el borde
 
     for i in range(N):
         for j in range(M):
@@ -391,9 +389,8 @@ def clausulasTipo2():
 
             
             # La celda es exterior o no tiene borde superior o
-            # la celda que es adyacente a ella por el norte no es exterior                           
+            # la celda que es adyacente a ella por el norte no es exterior
             # z(i,j) v [q(i,j,n) v -z(i-1,j)]
-
             if (i > 0):
                 clausulas.append(" ".join([z[i][j],
                                        q(i,j,'n'),
@@ -417,10 +414,13 @@ def clausulasTipo2():
                 clausulas.append(" ".join([z[i][j],
                                        q(i,j,'w'),
                                        negar(z[i][j-1])]))
-            
-            
-            
-        
+
+            clausulas.append(" ".join([negar(z[i][j]),
+                                       (z[i-1][j] if i > 0 else ""),
+                                       (z[i][j+1] if j < M-1 else ""),
+                                       (z[i+1][j] if i < N-1 else ""),
+                                       (z[i][j-1] if j > 0 else "")]))
+
     return clausulas    
 
 '''
@@ -445,7 +445,6 @@ r(c,c') & -q(c',n) => r(c,c'')
 Esto es un si y solo si, por lo tanto necesitamos la otra implicacion:
 
 r(c,c') & -q(c',n) <= r(c,c'')
-!
 
 ya que si c' es alcanzable desde c y no existe un segmento entre c' y c'',
 entonces c'' también debe ser alcanzable desde c. Similarmente definimos
@@ -479,8 +478,7 @@ def generarVariablesAlcances():
                     if key not in r:
                         r[key] = str(variable)  
                         variable += 1
-        print("variables:",variable)
-    return r
+    return [r,variable-1]
 
 def r(c1,c2):
     if (c1,c2) in alcances:
@@ -522,14 +520,12 @@ def clausulasTipo3():
                 clausulas.append(" ".join([negar(r(c1,c2)),
                                           negar(q(i1,j1,'w'))])) #segmento entre c1 y c2
 
-
     #r(c1,c2) & -q(c2,k) => r(c1,c3)
     #-r(c1,c2) v q(c2,k) v r(c1,c3)
 
     for i1 in range(N):
         for j1 in range(M):
             c1 = (i1,j1)
-#            clausulas.append(r(c1,c1))
             for i2 in range(N):
                 for j2 in range(M):
                     c2 = (i2,j2)                        
@@ -560,7 +556,7 @@ def clausulasTipo3():
                         clausulas.append(" ".join([negar(r(c1,c2)),
                                                   q(i2,j2,'w'), #segmento entre c2 y c3
                                                   r(c1,c3)]))
-    '''
+    
     # Segunda implicacion:
     # r(c1,c2) => r(c1,c3) & !q(c3,k) | r(c1,c4) & !q(c4,k) | ...
     for i1 in range(N):
@@ -569,9 +565,10 @@ def clausulasTipo3():
             for i2 in range(N):
                 for j2 in range(M):
                     c2 = (i2,j2)
+                    
                     if (c1 == c2):
                         continue
-                    
+
                     # Populamos los arreglos para hacer mas comodas
                     # las clausulas.
 
@@ -597,7 +594,7 @@ def clausulasTipo3():
 
                     # Clausulas:
 
-                    # !(r(c1,c2) | r(c1,c3) | r(c1,c4) | r(c1,c5) | r(c1,c6))
+                    # !r(c1,c2) | r(c1,c3) | r(c1,c4) | r(c1,c5) | r(c1,c6
                     temp = negar(r(c1,c2))
                     for i in adyancentes:
                         temp += " " + r(c1,i[0])
@@ -656,7 +653,6 @@ def clausulasTipo3():
                         if direcciones[k]:
                             temp += " " + negar(q(i2,j2,k))
                     clausulas.append(temp)
-    '''
     return clausulas
 
 
@@ -670,6 +666,9 @@ que ser alcazables la una de la otra. Para cada par de celdas c y c':
 recordemos -z(c) significa que c es interna
 
 -z(c) & -z(c') => r(c,c')
+r(c,c') => (z(c) & z(c)) or (-z(c) & -z(c))
+!r(c,c') or (z(c) and z(c)) or (z(c) and z(c))
+
 
 '''
 
@@ -693,8 +692,10 @@ def clausulasTipo4():
                     clausulas.append(" ".join([negar(z[i1][j1]),
                                               z[i2][j2], 
                                               negar(r(c1,c2))]))               
+                    clausulas.append(" ".join([z[i1][j1],
+                                              negar(z[i2][j2]), 
+                                              negar(r(c1,c2))]))               
 
-                    
     return clausulas
 
 
@@ -842,7 +843,7 @@ def clausulasTipo6():
 # Para la ejecucion  ----------------------------------------------------------#
 
 
-N,M,tablero = leerLinea()
+N,M,tablero,leido = leerLinea()
 
 numeroFilas = N
 numeroColumnas = M
@@ -850,7 +851,7 @@ numeroColumnas = M
 # Generar variables
 bordesDeCeldas = generarVariablesBordesDeCeldas() 
 z = generarVariablesTipoDeCelda()
-alcances = generarVariablesAlcances()
+alcances,variables = generarVariablesAlcances()
 
 
 # Generar clausulas
@@ -865,10 +866,9 @@ clausulasTipo6()
 
 with open("inputSatSolver.txt", "w") as f :
     
-    f.write("p cnf "+str(450)+" "+str(len(clausulas))+"\n")
+    f.write("p cnf "+str(variables)+" "+str(len(clausulas))+"\n")
     for clausula in clausulas:
         f.write(clausula+" 0\n")
-f.close()
 
 # Llamamos a un subproceso para resolver el sat con minisat
 import subprocess
@@ -930,14 +930,20 @@ for v in range(numeroFilas):
 
 # Imprimimos las respuestas:
 # Dimensiones
-print(str(N) + " " + str(M), end = " ")
-
 # Lineas horizontales y verticales
+output = str(N) + " " + str(M) + " "
 for i in range(numeroFilas):
-    print(horizontales[i], end=" ")
-    print(verticales[i], end = " ")
-print(horizontales[numeroFilas])
+    output += horizontales[i] + " " + verticales[i] + " "
+output += horizontales[numeroFilas]
 
+print(output)
+
+with open("testfile","w+",) as hola:
+    hola.write(leido + "\n")
+    hola.write(output + "\n")
+
+
+'''
 for i in range(N):
     temp = ""
     for j in range(M):
@@ -949,8 +955,9 @@ print("")
 for i in range(N):
     temp = ""
     for j in range(M):
-        temp += valores[int(r((0,2),(i,j)))] + " "
+        temp += valores[int(r((0,0),(i,j)))] + " "
     print(temp)
+'''
 '''
 def imprimirTablero:
   sttr = ""

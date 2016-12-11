@@ -1,14 +1,18 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-'''
-tablero = input("Coloque el input:")
 
-resultado = input("Coloque el output")
-'''
-tablero = "5 5 ..32. 222.3 0..1. 2.2.. .2323"
+#by Erick Silva
 
-resultado = "5 5 11011 101101 10101 010010 01101 000101 01101 010010 10101 101101 11011"
+
+tablero = input()
+
+resultado = input()
+
+#tablero = "5 5 ..32. 222.3 0..1. 2.2.. .2323"
+
+#resultado = "5 5 00100 011110 10001 011010 00111 001000 01001 011010 10100 011111 00001"
+
 
 
 tablero = tablero.split()
