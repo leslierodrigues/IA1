@@ -18,9 +18,11 @@ numeroFilas = 0
 tablero = [] #Definido para que sea una global
 clausulas = [] # Variable global que almacena las clausulas
 
+import sys
+
 # Lee una linea.
 def leerLinea():
-	linea = input()
+	linea = sys.argv[-1]
 	datos = linea.split()
 	N = int(datos[0])
 	numeroFilas = N
