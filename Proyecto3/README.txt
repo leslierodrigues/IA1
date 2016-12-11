@@ -45,7 +45,7 @@ Script Auxiliar
     
     Ejecución
     
-        ./recorrerInput.sh <Nombre de Archivo de Salida>
+        ./recorrerInput.sh > <Nombre de Archivo de Salida>
         
     Resultado
     
