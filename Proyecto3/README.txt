@@ -55,7 +55,10 @@ Script Auxiliar
         - Si un lado de una celda se usa, entonces el lado correspondiente de la
             celda adyacente también se usa
         - Cada celda debe tener el número de bordes que le corresponden
-        
+        - Las celdas son o internas o externas
+        - Las celdas del mismo tipo son alcanzables entre sí
+        - Las celdas del borde que no tengan líneas en su frontera con el borde
+             son externas.
 
     RESULTADOS
     
