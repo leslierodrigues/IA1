@@ -489,36 +489,28 @@ def clausulasTipo3():
 
     # r(c1,c1)
     # q(c1,k) => !r(c1,c2)
-    for i1 in range(N):
-        for j1 in range(M):
-            c1 = (i1,j1)
-            clausulas.append(r(c1,c1))
+
+    xs = [1,-1,0,0]
+    ys = [0,0,-1,1]
+    ds = ["s","n","w","e"]
+    for i in range(N):
+        for j in range(M):
+            c = (i,j)
+            clausulas.append(r(c,c))
+            # iteramos sobre las direcciones.
+            for cont in range(4):
+                x = i + xs[cont] # valor x de la nueva celda
+                y = j + ys[cont] # valor y de la nueva celda
+                k = ds[cont] #Direccion tomada
+                if x >= 0 and x < N and y >= 0 and y < M:               
+                    c2 = (x,y) # Celda adyacente a c1 por el lado k
+                    clausulas.append(" ".join([negar(r(c,c2)),
+                                                negar(q(i,j,k))])) #segmento entre c1 y c2
 
 
-            # si c1 no esta en el borde superior del tablero
-            if i1 > 0:               
-                c2 = (i1-1,j1) # Celda adyacente a c1 por el lado norte
-                clausulas.append(" ".join([negar(r(c1,c2)),
-                                          negar(q(i1,j1,'n'))])) #segmento entre c1 y c2
-            # si c1 no esta en el borde inferior del tablero
-            if i1 < N-1:
-                c2 = (i1+1,j1) # Celda adyacente a c1 por el lado sur
-                clausulas.append(" ".join([negar(r(c1,c2)),
-                                          negar(q(i1,j1,'s'))])) #segmento entre c1 y c2
-            # si c1 no esta en el borde derecho del tablero
-            if j1 < M-1:
-                c2 = (i1,j1+1) # Celda adyacente a c1 por el lado este
-                clausulas.append(" ".join([negar(r(c1,c2)),
-                                          negar(q(i1,j1,'e'))])) #segmento entre c1 y c2                                         
-           # si c1 no esta en el borde izquierdo del tablero
-            if j1 > 0:               
-                c2 = (i1,j1-1) # Celda adyacente a c1 por el lado oeste
-                clausulas.append(" ".join([negar(r(c1,c2)),
-                                          negar(q(i1,j1,'w'))])) #segmento entre c1 y c2
 
     #r(c1,c2) & -q(c2,k) => r(c1,c3)
     #-r(c1,c2) v q(c2,k) v r(c1,c3)
-
     for i1 in range(N):
         for j1 in range(M):
             c1 = (i1,j1)
@@ -552,104 +544,6 @@ def clausulasTipo3():
                         clausulas.append(" ".join([negar(r(c1,c2)),
                                                   q(i2,j2,'w'), #segmento entre c2 y c3
                                                   r(c1,c3)]))
-    '''
-    # Segunda implicacion:
-    # r(c1,c2) => r(c1,c3) & !q(c3,k) | r(c1,c4) & !q(c4,k) | ...
-    for i1 in range(N):
-        for j1 in range(M):
-            c1 = (i1,j1)
-            for i2 in range(N):
-                for j2 in range(M):
-                    c2 = (i2,j2)
-                    
-                    if (c1 == c2):
-                        continue
-
-                    # Populamos los arreglos para hacer mas comodas
-                    # las clausulas.
-
-                    adyancentes = []
-                    direcciones = {i:False for i in ["n","s","e","w"]}
-                    dirs = ["n","s","e","w"]
-
-                    if (i2 > 0):
-                        adyancentes.append([(i2-1,j2),"n"])
-                        direcciones["n"] = True
-
-                    if (j2 > 0):
-                        adyancentes.append([(i2,j2-1),"w"])
-                        direcciones["w"] = True
-
-                    if (j2 < M-1):
-                        adyancentes.append([(i2,j2+1),"e"])
-                        direcciones["e"] = True
-
-                    if (i2 < N-1):
-                        adyancentes.append([(i2+1,j2),"s"])
-                        direcciones["s"] = True
-
-                    # Clausulas:
-
-                    # !r(c1,c2) | r(c1,c3) | r(c1,c4) | r(c1,c5) | r(c1,c6
-                    temp = negar(r(c1,c2))
-                    for i in adyancentes:
-                        temp += " " + r(c1,i[0])
-                    clausulas.append(temp)
-
-                    # !(r(c1,c2) | r(c1,c3) | r(c1,c4) | r(c1,c5) | !q(c2,"n"))
-                    # !(r(c1,c2) | r(c1,c3) | r(c1,c4) | !q(c2,"e")) | r(c1,c6))
-                    # !(r(c1,c2) | r(c1,c3) | !q(c2,"w")) | r(c1,c5) | r(c1,c6))
-                    # !(r(c1,c2) | !q(c2,"s")) | r(c1,c4) | r(c1,c5) | r(c1,c6))
-                    for k in dirs:
-                        if direcciones[k]:
-                            temp = negar(r(c1,c2))
-                            for i in adyancentes:
-                                if (i[1] != k):
-                                    temp += " " + r(c1,i[0])
-                            temp += " " + negar(q(i2,j2,k))
-                            clausulas.append(temp)
-
-                    # Combinaciones de dos q's diferentes con 2 r's
-
-                    for k1 in range(len(dirs)):
-                        for k2 in range(k1+1,len(dirs)):
-                            dir1 = dirs[k1]
-                            dir2 = dirs[k2]
-                            if direcciones[dir1] and direcciones[dir2]:
-                                temp = negar(r(c1,c2))
-                                for i in adyancentes:
-                                    if i[1] != dir1 and i[1] != dir2:
-                                        temp += " " + r(c1,i[0])
-                                temp += " " + negar(q(i2,j2,dir1))
-                                temp += " " + negar(q(i2,j2,dir2))
-                                clausulas.append(temp)
-
-                    # Combinaciones de tres q's con 1 r
-
-                    for k1 in range(len(dirs)):
-                        for k2 in range(k1+1,len(dirs)):
-                            for k3 in range(k2+1,len(dirs)):
-                                dir1 = dirs[k1]
-                                dir2 = dirs[k2]
-                                dir3 = dirs[k3]
-                                if direcciones[dir1] and direcciones[dir2] and direcciones[dir3]:
-                                    temp = negar(r(c1,c2))
-                                    for i in adyancentes:
-                                        if i[1] != dir1 and i[1] != dir2 and i[1] != dir3:
-                                            temp += " " + r(c1,i[0])
-                                    temp += " " + negar(q(i2,j2,dir1))
-                                    temp += " " + negar(q(i2,j2,dir2))
-                                    temp += " " + negar(q(i2,j2,dir2))
-                                    clausulas.append(temp)
-
-                    # Combinacion de 4 qs
-
-                    temp = negar(r(c1,c2))
-                    for k in dirs:
-                        if direcciones[k]:
-                            temp += " " + negar(q(i2,j2,k))
-                    clausulas.append(temp)
-    '''
 
     return clausulas
 
@@ -880,7 +774,8 @@ with open("outputSatSolver.txt","r") as f :
 
     contenidos = f.readlines()
     # La primera linea es la palabra SAT, la segunda es los valores que queremos.
-    if contenidos[0] == "SAT":
+    if contenidos[0] == "SAT\n":
+        unsat = False
         linea = contenidos[1]
 
         numeros = linea.split()
@@ -899,6 +794,7 @@ with open("outputSatSolver.txt","r") as f :
 if (unsat):
     print(str(N) + " " + str(M) + " Insatisfacible.")
     exit(0)
+
 
 respuesta = ""
 
