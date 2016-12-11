@@ -1,7 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import itertools
+"""
+ Integrantes del Equipo:
+    
+    Erick Silva         11-10969
+                                
+    Leslie Rodrigues    10-10613
+                                
+    Georvic Tur         12-11402
+"""
 
 #  bordesDeCeldas,es un arreglo de 3 dimensiones 
 #  1era dimension: fila en la que se encuentra la celda 
