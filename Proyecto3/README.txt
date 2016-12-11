@@ -57,9 +57,7 @@ Script Auxiliar
     
         Todos los casos de prueba provistos eran satisfacibles salvo por el 
         siguiente: "5 5 .202. .3.2. .2..3 ..... ....4"
-        
-        Esto se debe a la presencia del 4 allí.
-        
+                
         No se asegura que exista un único bucle.
     
     
