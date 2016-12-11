@@ -890,7 +890,7 @@ def clausulasTipo8():
     for i in range(N):
         for j in range(M):
             c1 = (i,j)
-            temp = [negar(z[i][j])]
+            temp = [negar(z[i][j)]
             for i2 in range(1,N-1):
                 temp += [r(c1,(i2,M-1))]
                 temp += [r(c1,(i2,0))]
@@ -1037,7 +1037,7 @@ print("")
 for i in range(N):
     temp = ""
     for j in range(M):
-        temp += valores[int(r((0,4),(i,j)))] + " "
+        temp += valores[int(r((2,2),(i,j)))] + " "
     print(temp)
 
 '''
