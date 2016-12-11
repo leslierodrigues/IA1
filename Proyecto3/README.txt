@@ -15,7 +15,7 @@ Ejecución
     
     donde la línea de entrada tiene el siguiente formato
         
-        <Número de Filas> <Número de Columnas> (([0-3.]{Número de Columnas})\s){Número de Filas}
+        <Número de Filas> <Número de Columnas> (([0-4.]{Número de Columnas})\s){Número de Filas}
         
         Ejemplo: 5 5 .2.2. .2.1. 30202 3.... ...2.
         
@@ -23,8 +23,11 @@ Ejecución
     La salida indica si el caso pasado como argumento es satisfacible.
     Ejemplo para el caso de arriba:
         
-        "SATISFIABLE
-        5 5 11011 101101 10000 011101 10100 100001 10101 011110 10001 101101 11011"
+        "5 5 11011 101101 10000 011101 10100 100001 10101 011110 10001 101101 11011"
+    
+    De no ser satisfacible, se genera la siguiente salida:
+        
+        5 5 Insatisfacible.
     
 Script Auxiliar
     
@@ -51,6 +54,7 @@ Script Auxiliar
         - Sólo se permiten líneas cerradas
         - Si un lado de una celda se usa, entonces el lado correspondiente de la
             celda adyacente también se usa
+        - Cada celda debe tener el número de bordes que le corresponden
         
 
     RESULTADOS
@@ -58,7 +62,6 @@ Script Auxiliar
         Todos los casos de prueba provistos eran satisfacibles salvo por el 
         siguiente: "5 5 .202. .3.2. .2..3 ..... ....4"
         
-        Esto se debe a la presencia del 4 allí.
         
         No se asegura que exista un único bucle.
     
