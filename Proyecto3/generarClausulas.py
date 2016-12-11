@@ -36,7 +36,7 @@ def leerLinea():
 	
 	if len(sys.argv) != 2:
 		print("Formato de entrada: ")
-		print("<Número de Filas> <Número de Columnas> (([0-3.]{Número de Columnas})\s){Número de Filas}")
+		print("<Número de Filas> <Número de Columnas> (([0-4.]{Número de Columnas})\s){Número de Filas}")
 		sys.exit(0)
 	linea = sys.argv[-1]
 	datos = linea.split()
@@ -783,7 +783,13 @@ with open("inputSatSolver.txt", "w") as f :
 
 # Llamamos a un subproceso para resolver el sat con minisat
 import subprocess
-subprocess.call(["minisat","inputSatSolver.txt","outputSatSolver.txt","-verb=0"])
+import os
+
+# Abrimos el archivo devnull (la papelera) y redirigimos el output hacia alla.
+with open(os.devnull,"w") as FNULL:
+  subprocess.call(["minisat","inputSatSolver.txt","outputSatSolver.txt","-verb=0"],stdout=FNULL)
+
+
 
 # Leemos los valores del output
 valores = ["" for i in range(variables+1)]
