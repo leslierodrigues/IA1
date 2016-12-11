@@ -55,13 +55,6 @@ def leerLinea():
 			tablero[i][j] = -1 if matriz[i][j] == '.' else int(matriz[i][j])
 	return [N,M,tablero,linea]
 
-# Ejemplo que dio Blai
-mapaCeldaRestriccionNumeroBordes = {(0,1) : 2, (0,2) : 2, (0,4) : 3
-                                   ,(1,1) : 2
-                                   ,(2,0) : 3, (2,1) : 2
-                                   ,(3,0) : 1, (3,3) : 0, (3,4) : 3
-                                   ,(4,1) : 2, (4,2) : 2, (4,3) : 3}
-
 
 # Niega una variable
 def negar(nombreVariable) :
@@ -398,6 +391,7 @@ def clausulasTipo2():
         clausulas.append(" ".join([negar(q(N-1,j,'s')),
                                    negar(z[N-1][j])]))    
 
+
     for i in range(N):
         for j in range(M):
             temp = [negar(z[i][j])]
@@ -409,28 +403,56 @@ def clausulasTipo2():
             # La celda es exterior o no tiene borde superior o
             # la celda que es adyacente a ella por el norte no es exterior
             # z(i,j) v [q(i,j,n) v -z(i-1,j)]
+            # z(i,j) <=> q(i,j,n) v -z(i-1,j)
+            # -z
+
+            # Ademas, q(c1,c2) => z(c1) xor z(c2)
+            # esto es:
+            # (¬z(c1) ∨ ¬z(c2) ∨ ¬q(c1,c2))
+            # (z(c1) ∨ z(c2) ∨ ¬q(c1,c2))
             if (i > 0):
                 clausulas.append(" ".join([z[i][j],
                                        q(i,j,'n'),
                                        negar(z[i-1][j])]))
-            
+                clausulas.append(" ".join([negar(z[i][j]),
+                                       negar(q(i,j,'n')),
+                                       negar(z[i-1][j])]))
+                clausulas.append(" ".join([z[i][j],
+                                       negar(q(i,j,'n')),
+                                       z[i-1][j]]))
 
             #z(i,j) v [q(i,j,e) v -z(i,j+1)]
             if (j < M-1):
                 clausulas.append(" ".join([z[i][j],
                                        q(i,j,'e'),
                                        negar(z[i][j+1])]))
-                                       
+                clausulas.append(" ".join([negar(z[i][j]),
+                                       negar(q(i,j,'e')),
+                                       negar(z[i][j+1])]))
+                clausulas.append(" ".join([z[i][j],
+                                       negar(q(i,j,'e')),
+                                       z[i][j+1]]))
             #z(i,j) v [q(i,j,s) v -z(i+1,j)]
             if (i < N-1):
                 clausulas.append(" ".join([z[i][j],
                                        q(i,j,'s'),
                                        negar(z[i+1][j])]))
-            
+                clausulas.append(" ".join([negar(z[i][j]),
+                                       negar(q(i,j,'s')),
+                                       negar(z[i+1][j])]))
+                clausulas.append(" ".join([z[i][j],
+                                       negar(q(i,j,'s')),
+                                       z[i+1][j]]))
             #z(i,j) v [q(i,j,w) v -z(i,j-1)]
             if (j > 0):
                 clausulas.append(" ".join([z[i][j],
                                        q(i,j,'w'),
+                                       negar(z[i][j-1])]))
+                clausulas.append(" ".join([negar(z[i][j]),
+                                       negar(q(i,j,'w')),
+                                       negar(z[i][j-1])]))
+                clausulas.append(" ".join([negar(z[i][j]),
+                                       negar(q(i,j,'w')),
                                        negar(z[i][j-1])]))
 
     return clausulas    
@@ -515,6 +537,7 @@ def clausulasTipo3():
         for j in range(M):
             c = (i,j)
             clausulas.append(r(c,c))
+    
             # iteramos sobre las direcciones.
             for cont in range(4):
                 x = i + xs[cont] # valor x de la nueva celda
@@ -524,9 +547,10 @@ def clausulasTipo3():
                     c2 = (x,y) # Celda adyacente a c1 por el lado k
                     clausulas.append(" ".join([negar(r(c,c2)),
                                                 negar(q(i,j,k))])) #segmento entre c1 y c2
+    
 
 
-
+    
     #r(c1,c2) & -q(c2,k) => r(c1,c3)
     #-r(c1,c2) v q(c2,k) v r(c1,c3)
     for i1 in range(N):
@@ -562,9 +586,105 @@ def clausulasTipo3():
                         clausulas.append(" ".join([negar(r(c1,c2)),
                                                   q(i2,j2,'w'), #segmento entre c2 y c3
                                                   r(c1,c3)]))
+    
+    '''
+    # Segunda implicacion:
+    # r(c1,c2) => r(c1,c3) & !q(c3,k) | r(c1,c4) & !q(c4,k) | ...
+    # !rc3 | qc3 and !rc4 | qc4 and ... => !rc1c2
+    for i1 in range(N):
+        for j1 in range(M):
+            c1 = (i1,j1)
+            for i2 in range(N):
+                for j2 in range(M):
+                    c2 = (i2,j2)
+                    if (c1 == c2):
+                        continue
+                    # Populamos los arreglos para hacer mas comodas
+                    # las clausulas.
 
+                    adyancentes = []
+                    direcciones = {i:False for i in ["n","s","e","w"]}
+                    dirs = ["n","s","e","w"]
+
+                    if (i2 > 0):
+                        adyancentes.append([(i2-1,j2),"n"])
+                        direcciones["n"] = True
+
+                    if (j2 > 0):
+                        adyancentes.append([(i2,j2-1),"w"])
+                        direcciones["w"] = True
+
+                    if (j2 < M-1):
+                        adyancentes.append([(i2,j2+1),"e"])
+                        direcciones["e"] = True
+
+                    if (i2 < N-1):
+                        adyancentes.append([(i2+1,j2),"s"])
+                        direcciones["s"] = True
+
+                    # Clausulas:
+
+                    # !r(c1,c2) | r(c1,c3) | r(c1,c4) | r(c1,c5) | r(c1,c6)
+                    temp = negar(r(c1,c2))
+                    for i in adyancentes:
+                        temp += " " + r(c1,i[0])
+                    clausulas.append(temp)
+
+                    # !(r(c1,c2) | r(c1,c3) | r(c1,c4) | r(c1,c5) | !q(c2,"n"))
+                    # !(r(c1,c2) | r(c1,c3) | r(c1,c4) | !q(c2,"e")) | r(c1,c6))
+                    # !(r(c1,c2) | r(c1,c3) | !q(c2,"w")) | r(c1,c5) | r(c1,c6))
+                    # !(r(c1,c2) | !q(c2,"s")) | r(c1,c4) | r(c1,c5) | r(c1,c6))
+                    for k in dirs:
+                        if direcciones[k]:
+                            temp = negar(r(c1,c2))
+                            for i in adyancentes:
+                                if (i[1] != k):
+                                    temp += " " + r(c1,i[0])
+                            temp += " " + negar(q(i2,j2,k))
+                            clausulas.append(temp)
+
+                    # Combinaciones de dos q's diferentes con 2 r's
+
+                    for k1 in range(len(dirs)):
+                        for k2 in range(k1+1,len(dirs)):
+                            dir1 = dirs[k1]
+                            dir2 = dirs[k2]
+                            if direcciones[dir1] and direcciones[dir2]:
+                                temp = negar(r(c1,c2))
+                                for i in adyancentes:
+                                    if i[1] != dir1 and i[1] != dir2:
+                                        temp += " " + r(c1,i[0])
+                                temp += " " + negar(q(i2,j2,dir1))
+                                temp += " " + negar(q(i2,j2,dir2))
+                                clausulas.append(temp)
+
+                    # Combinaciones de tres q's con 1 r
+
+                    for k1 in range(len(dirs)):
+                        for k2 in range(k1+1,len(dirs)):
+                            for k3 in range(k2+1,len(dirs)):
+                                dir1 = dirs[k1]
+                                dir2 = dirs[k2]
+                                dir3 = dirs[k3]
+                                if direcciones[dir1] and direcciones[dir2] and direcciones[dir3]:
+                                    temp = negar(r(c1,c2))
+                                    for i in adyancentes:
+                                        if i[1] != dir1 and i[1] != dir2 and i[1] != dir3:
+                                            temp += " " + r(c1,i[0])
+                                    temp += " " + negar(q(i2,j2,dir1))
+                                    temp += " " + negar(q(i2,j2,dir2))
+                                    temp += " " + negar(q(i2,j2,dir2))
+                                    clausulas.append(temp)
+
+                    # Combinacion de 4 qs
+
+                    temp = negar(r(c1,c2))
+                    for k in dirs:
+                        if direcciones[k]:
+                            temp += " " + negar(q(i2,j2,k))
+                    clausulas.append(temp)
+    '''
     return clausulas
-
 
 '''
 Cláusulas tipo 4
@@ -589,7 +709,7 @@ def clausulasTipo4():
 
     # Ademas 
     # -z(c1) & z(c2) => -r(c1,c2)
-    # -z(c1) v z(c2) v -r(c1,c2)
+    # z(c1) v -z(c2) v -r(c1,c2)
     for i1 in range(N):
         for j1 in range(M):
             c1 = (i1,j1)
@@ -601,11 +721,7 @@ def clausulasTipo4():
                                               r(c1,c2)]))
                     clausulas.append(" ".join([negar(z[i1][j1]),
                                               z[i2][j2], 
-                                              negar(r(c1,c2))]))               
-                    clausulas.append(" ".join([z[i1][j1],
-                                              negar(z[i2][j2]), 
-                                              negar(r(c1,c2))]))  
-             
+                                              negar(r(c1,c2))]))             
 
     return clausulas
 
@@ -746,8 +862,49 @@ def clausulasTipo6():
                     clausulas.append(" ".join([negar(q(i,j,'e')),q(i,j,'s')]))
             
             
-            
+def clausulasTipo7():
+    global clausulas
+    import itertools
+    for i in range(1,N-1):
+        for j in range(1,M-1):
+            lista_a_combinar = []
+            lista_a_combinar.append(z[i-1][j])
+            lista_a_combinar.append(negar(q(i,j,'n')))
+            lista_a_combinar.append(z[i][j-1])
+            lista_a_combinar.append(negar(q(i,j,'w')))
+            lista_a_combinar.append(z[i+1][j])
+            lista_a_combinar.append(negar(q(i,j,'s')))
+            lista_a_combinar.append(z[i][j+1])
+            lista_a_combinar.append(negar(q(i,j,'e')))
+
+            c = itertools.combinations(lista_a_combinar, 4)
+            cd = [[negar(z[i][j])]+list(x) for x in c if set(x) != set([negar(q(i,j,'n')),
+                                                                        negar(q(i,j,'e')),
+                                                                        negar(q(i,j,'s')),
+                                                                        negar(q(i,j,'w'))])]
+            clausulas += [" ".join(y) for y in cd]
     
+def clausulasTipo8():
+    # Todas las celdas fuera del loop tienen que conectarse a una en el borde.
+    global clausulas
+    for i in range(N):
+        for j in range(M):
+            c1 = (i,j)
+            temp = [negar(z[i][j])]
+            for i2 in range(1,N-1):
+                temp += [r(c1,(i2,M-1))]
+                temp += [r(c1,(i2,0))]
+            for j2 in range(1,M-1):
+                temp += [r(c1,(N-1,j2))]
+                temp += [r(c1,(0,j2))]
+
+            #esquinas
+            temp += [r(c1,(0,0))]
+            temp += [r(c1,(0,M-1))]
+            temp += [r(c1,(N-1,M-1))]
+            temp += [r(c1,(N-1,0))]
+
+            clausulas.append(" ".join(temp))
 
 
 ################################################################################
@@ -773,7 +930,8 @@ clausulasTipo3()
 clausulasTipo4()
 clausulasTipo5()
 clausulasTipo6()
-
+#clausulasTipo7()
+clausulasTipo8()
 
 with open("inputSatSolver.txt", "w") as f :
     
@@ -867,7 +1025,7 @@ with open("testfile","w+",) as hola:
     hola.write(output + "\n")
 
 
-'''
+
 for i in range(N):
     temp = ""
     for j in range(M):
@@ -879,9 +1037,9 @@ print("")
 for i in range(N):
     temp = ""
     for j in range(M):
-        temp += valores[int(r((0,0),(i,j)))] + " "
+        temp += valores[int(r((0,4),(i,j)))] + " "
     print(temp)
-'''
+
 '''
 def imprimirTablero:
   sttr = ""
