@@ -415,12 +415,6 @@ def clausulasTipo2():
                                        q(i,j,'w'),
                                        negar(z[i][j-1])]))
 
-            clausulas.append(" ".join([negar(z[i][j]),
-                                       (z[i-1][j] if i > 0 else ""),
-                                       (z[i][j+1] if j < M-1 else ""),
-                                       (z[i+1][j] if i < N-1 else ""),
-                                       (z[i][j-1] if j > 0 else "")]))
-
     return clausulas    
 
 '''
@@ -556,7 +550,7 @@ def clausulasTipo3():
                         clausulas.append(" ".join([negar(r(c1,c2)),
                                                   q(i2,j2,'w'), #segmento entre c2 y c3
                                                   r(c1,c3)]))
-    
+    '''
     # Segunda implicacion:
     # r(c1,c2) => r(c1,c3) & !q(c3,k) | r(c1,c4) & !q(c4,k) | ...
     for i1 in range(N):
@@ -653,6 +647,8 @@ def clausulasTipo3():
                         if direcciones[k]:
                             temp += " " + negar(q(i2,j2,k))
                     clausulas.append(temp)
+    '''
+
     return clausulas
 
 
@@ -688,13 +684,15 @@ def clausulasTipo4():
                     c2 = (i2,j2)
                     clausulas.append(" ".join([z[i1][j1],
                                               z[i2][j2], 
-                                              r(c1,c2)]))               
+                                              r(c1,c2)]))
+                    '''            
                     clausulas.append(" ".join([negar(z[i1][j1]),
                                               z[i2][j2], 
                                               negar(r(c1,c2))]))               
                     clausulas.append(" ".join([z[i1][j1],
                                               negar(z[i2][j2]), 
-                                              negar(r(c1,c2))]))               
+                                              negar(r(c1,c2))]))  
+                    '''             
 
     return clausulas
 
