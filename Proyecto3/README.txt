@@ -3,6 +3,11 @@
 Requerimientos
     
     - Paquete de Minisat en Linux
+    
+        Para instalar Minisat en linux, se necesita ejecutar la siguiente orden:
+            
+            sudo apt-get install minisat
+    
     - generarClausulas.py
 
 
@@ -56,9 +61,52 @@ Script Auxiliar
             celda adyacente también se usa
         - Cada celda debe tener el número de bordes que le corresponden
         - Las celdas son o internas o externas
-        - Las celdas del mismo tipo son alcanzables entre sí
+        - Las celdas del mismo tipo son alcanzables entre sí: Cabe destacar que
+            no pudimos asegurar que sólo haya un bucle.
         - Las celdas del borde que no tengan líneas en su frontera con el borde
              son externas.
+
+        Descripción de los Métodos Asociados a las Clausulas:
+            
+            clausulasTipo0
+                
+                -Si una celda tiene un segmento, entonces la celda adyacente
+                también tiene el segmento correspondiente
+            
+            clausulasTipo1
+                
+                -Se asegura que cada celda tenga el número de segmentos
+                que indica la entrada el programa
+            
+            clausulasTipo2
+                
+                -Las celdas de la frontera que no tengan segmentos del lado del
+                borde externo son de tipo exterior.
+                
+                -Las celdas alcanzables desde otras celdas exteriores son también
+                exteriores
+                
+            clausulasTipo3 (No pudimos asegurar que sólo haya un único bucle)
+            
+                -Las celdas que no tengan segmentos entre sí son alcanzables
+                
+                -Para cada par de celdas alcanzables existe una tercera que es
+                adyacente a la segunda y puede alcanzarla
+            
+            clausulasTipo4 (No pudimos asegurar que sólo haya un único bucle)
+            
+                -Las celdas del mismo tipo se pueden alcanzar entre sí
+                -Las celdas de tipo distinto no se pueden alcanzar entre sí
+            
+            clausulasTipo5
+            
+                -Las esquinas no puede tener tres segmentos o más
+            
+            clausulasTipo6
+            
+                -Las esquinas no pueden tener un único segmento
+            
+            
 
     RESULTADOS
     
