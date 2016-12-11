@@ -22,7 +22,7 @@ Ejecución
         
         <Número de Filas> <Número de Columnas> (([0-4.]{Número de Columnas})\s){Número de Filas}
         
-        Ejemplo: 5 5 .2.2. .2.1. 30202 3.... ...2.
+        Ejemplo: "5 5 .2.2. .2.1. 30202 3.... ...2."
         
     
     La salida indica si el caso pasado como argumento es satisfacible.
@@ -45,7 +45,7 @@ Script Auxiliar
     
     Ejecución
     
-        . recorrerInput > <Nombre de Archivo de Salida>
+        ./recorrerInput.sh <Nombre de Archivo de Salida>
         
     Resultado
     
@@ -60,9 +60,9 @@ Script Auxiliar
         - Si un lado de una celda se usa, entonces el lado correspondiente de la
             celda adyacente también se usa
         - Cada celda debe tener el número de bordes que le corresponden
-        - Las celdas son o internas o externas
-        - Las celdas del mismo tipo son alcanzables entre sí: Cabe destacar que
-            no pudimos asegurar que sólo haya un bucle.
+        - Las celdas son internas o externas, y no ambas
+        - Las celdas del mismo tipo (externa o unterna) son alcanzables entre sí:
+          Cabe destacar que no pudimos asegurar que sólo haya un bucle.
         - Las celdas del borde que no tengan líneas en su frontera con el borde
              son externas.
 
@@ -76,7 +76,7 @@ Script Auxiliar
             clausulasTipo1
                 
                 -Se asegura que cada celda tenga el número de segmentos
-                que indica la entrada el programa
+                que indica la entrada del programa
             
             clausulasTipo2
                 
