@@ -493,6 +493,8 @@ def clausulasTipo3():
         for j1 in range(M):
             c1 = (i1,j1)
             clausulas.append(r(c1,c1))
+
+
             # si c1 no esta en el borde superior del tablero
             if i1 > 0:               
                 c2 = (i1-1,j1) # Celda adyacente a c1 por el lado norte
@@ -685,14 +687,13 @@ def clausulasTipo4():
                     clausulas.append(" ".join([z[i1][j1],
                                               z[i2][j2], 
                                               r(c1,c2)]))
-                    '''            
                     clausulas.append(" ".join([negar(z[i1][j1]),
                                               z[i2][j2], 
                                               negar(r(c1,c2))]))               
                     clausulas.append(" ".join([z[i1][j1],
                                               negar(z[i2][j2]), 
                                               negar(r(c1,c2))]))  
-                    '''             
+             
 
     return clausulas
 
@@ -873,26 +874,31 @@ import subprocess
 subprocess.call(["minisat","inputSatSolver.txt","outputSatSolver.txt","-verb=0"])
 
 # Leemos los valores del output
-valores = ["" for i in range(N*M*4*5)]
+valores = ["" for i in range(variables+1)]
 
 with open("outputSatSolver.txt","r") as f :
 
     contenidos = f.readlines()
     # La primera linea es la palabra SAT, la segunda es los valores que queremos.
-    linea = contenidos[1]
+    if contenidos[0] == "SAT":
+        linea = contenidos[1]
 
-    numeros = linea.split()
+        numeros = linea.split()
 
-    # Colocamos los valores en strings porque los vamos a necesitar
-    #  asi despues
-    for i in range(len(numeros)):
-        actual = int(numeros[i])
-        if actual > 0:
-            valores[actual] = "1"
-        else:
-            valores[-actual] = "0"
+        # Colocamos los valores en strings porque los vamos a necesitar
+        #  asi despues
+        for i in range(len(numeros)):
+            actual = int(numeros[i])
+            if actual > 0:
+                valores[actual] = "1"
+            else:
+                valores[-actual] = "0"
+    else:
+        unsat = True
 
-
+if (unsat):
+    print(str(N) + " " + str(M) + " Insatisfacible.")
+    exit(0)
 
 respuesta = ""
 
