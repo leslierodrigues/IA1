@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import itertools
 
 #  bordesDeCeldas,es un arreglo de 3 dimensiones 
