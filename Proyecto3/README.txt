@@ -34,24 +34,8 @@ Ejecución
         
         5 5 Insatisfacible.
     
-Script Auxiliar
-    
-    Requerimientos 
-        - Paquete de Minisat en Linux
-        - Los siquientes Archivos en un mismo directorio:
-            - generarClausulas.py
-            - recorrerInput.sh
-            - input.txt (archivo cuyas líneas son entradas válidas de generarClausulas.py)
-    
-    Ejecución
-    
-        ./recorrerInput.sh > <Nombre de Archivo de Salida>
-        
-    Resultado
-    
-        Se obtienen pares de líneas con el input en la primera y en la segunda
-        el resultado del solver.
-        
+
+Descripción de generarClausulas.py
 
     CLAUSULAS
         
@@ -116,4 +100,60 @@ Script Auxiliar
 
         No se asegura que exista un único bucle.
     
+
+
+SCRIPTS ADICIONALES
+
+Script Auxiliar (recorrerInput.sh)
     
+    Requerimientos 
+        - Paquete de Minisat en Linux
+        - Los siquientes Archivos en un mismo directorio:
+            - generarClausulas.py
+            - recorrerInput.sh
+            - input.txt (archivo cuyas líneas son entradas válidas de generarClausulas.py)
+    
+    Ejecución
+    
+        ./recorrerInput.sh > <Nombre de Archivo de Salida>
+        
+    Resultado
+    
+        Se obtienen pares de líneas con el input en la primera y en la segunda
+        el resultado del solver.
+        
+
+Script Auxiliar (graficar.py)
+
+    Descripción
+    
+        Pequeno programa auxiliar que usa matplotlib para graficar el tablero 
+        a partir de un input y un resultado, por defecto, el archivo principal 
+        guarda en testfile los datos necesarios para graficar el problema en 
+        caso de ser satisfacible
+    
+    Requerimientos
+    
+        -Python3
+        -Tener instaladas las librerías de python3:
+            - matplotlib
+            - numpy
+        -Input del tablero. Ejemplo: "5 5 .2.2. .2.1. 30202 3.... ...2."
+        -Output de Minisat para el input de arriba. 
+            Ejemplo: "5 5 11011 101101 10000 011101 10100 100001 10101 011110 10001 101101 11011"
+        
+    Ejecución
+        
+        1- Se debe usar la siguiente orden:
+            python3 graficar.py
+        2- Se debe introducir la información del tablero sobre el número de
+            segmentos por celda.
+        3- Se debe introducir la información del tablero sobre los segmentos
+            que satisfacen las clausulas.
+
+    Resultados
+        
+        Se muestra una vista con el tablero dibujado con una asignación
+        que satisface las restricciones.
+
+
