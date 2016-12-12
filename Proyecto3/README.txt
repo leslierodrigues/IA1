@@ -37,7 +37,62 @@ Ejecución
 
 Descripción de generarClausulas.py
 
-    CLAUSULAS
+    REPRESENTACIÓN
+    
+        Para un ejemplo concreto de cómo se representa el tablero en el código
+        se puede ver el documento llamado "tablero.pdf"
+        
+        Variables y Funciones más Importantes
+        
+            N : número de filas del tablero
+            M : número de columnas del tablero
+            
+            tablero : matriz que guarda el número de segmentos (tablero[i][j])
+                que debe tener cada celda (<i,j>)
+            
+            bordesDeCeldas : matriz que relaciona cada celda con sus cuatro
+                segmentos. No se usa directamente.
+            
+            q(i,j,k) : función que retorna el nombre de la variable representante
+                del segmento "k" de la celda <i,j>. El segmento "k" puede tener
+                los valores: "n", "s", "e" y "w" (north, south, east and west)
+            
+            generarVariablesBordesDeCeldas() : genera los nombres de las variables
+                que indican cuáles segmentos se usan
+            
+            z : matriz que guarda el nombre de la variable representante del
+                tipo de celda. z[i][j] es la variable que indica si <i,j> es una
+                celda externa o no.
+            
+            generarVariablesTipoDeCelda() : genera los nombres de las variables
+                que indican el tipo de cada celda
+            
+            alcances : diccionario que devuelve el nombre de la variable que indica
+                si el par de celdas que sirven como "key" al diccionario son
+                alcanzables entre sí.
+            
+            generarVariablesAlcances() : genera los nombres de las variables
+                que indican si dos celdas son alcanzables entre sí.
+            
+            r((i1,j1),(i2,j2)) : devuelve el nombre de la variable que indica
+                si la celda <i2,j2> es alcanzable desde la celda <i1,j1>
+            
+            negar(nombreVariable) : devuelve el nombre de la variable, pero negado
+            
+            clausulas : lista cuyos elementos son las cláusulas que serán la entrada
+                de minisat. Cada cláusula tiene forma de un string generado con
+                ayuda de las variables y métodos mencionados arriba.
+            
+            Archivos Temporales: 
+                
+                inputSatSolver.txt : guarda la entrada que usará directamente 
+                    minisat cuando sea invocado desde el script. Contiene
+                    un header y las cláusulas construidas.
+                
+                outputSatSolver.txt : guarda la salida de minisat.
+            
+            
+    CLÁUSULAS
         
         - Sólo se permiten puntos con cero o dos líneas
         - Sólo se permiten líneas cerradas
@@ -50,7 +105,7 @@ Descripción de generarClausulas.py
         - Las celdas del borde que no tengan líneas en su frontera con el borde
              son externas.
 
-        Descripción de los Métodos Asociados a las Clausulas:
+        Descripción de los Métodos Asociados a las Cláusulas:
             
             clausulasTipo0
                 
@@ -77,6 +132,10 @@ Descripción de generarClausulas.py
                 -Para cada par de celdas alcanzables, si existe una tercera que es
                 adyacente a la segunda, entonces ésta puede se alcanzada por 
                 la primera y la segunda
+                
+                - Sin embargo, una definicion inductiva de alcanzable no nos 
+                sirve para la codificacion logica, puesto solo se dan 
+                implicaciones que no piden nada concreto del modelo.
             
             clausulasTipo4 (No pudimos asegurar que sólo haya un único bucle)
             
@@ -93,8 +152,12 @@ Descripción de generarClausulas.py
             
             
 
+
     RESULTADOS
-    
+        
+        Se corrío el generarClausulas.py con todas la líneas del archivo "input.txt"
+        y se guardaron los resultados en el archivo "output.txt"
+        
         Todos los casos de prueba provistos eran satisfacibles salvo por el 
         siguiente: "5 5 .202. .3.2. .2..3 ..... ....4"
 
