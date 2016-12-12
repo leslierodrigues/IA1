@@ -91,7 +91,22 @@ Descripción de generarClausulas.py
                 
                 outputSatSolver.txt : guarda la salida de minisat.
             
-            
+    VARIABLES
+        
+        Las variables se pueden clasificar en 3 tipos:
+            - De la variable 1 a la N x M x 4: identifican si un segmento de una 
+              celda se encuentra. Para cada celda se tienen 4 variables de este tipo,
+              las cuales se almacenan en orden: norte,sur,este, oeste.
+              Las celdas se recorren izquierda a derecha, empezando por 
+              la celda (0,0) y terminando en la (N,M)
+            - De la variable N x M x 4 +1 hasta las N x M x 4 + N * M:
+              representan si una celda es exterior. Las celdas se recorren en
+              el mismo orden que el anterior (pero sin considerar los segmentos(
+            - Las ultimas variables muestran si dos celdas son alcanzables entre
+              si. No se tienen caminos repitidos, es decir, una misma variable
+              representa c1 es alcanzable desde c2 y c2 es alancazable desde c1.
+              
+              
     CLÁUSULAS
         
         - Sólo se permiten puntos con cero o dos líneas
