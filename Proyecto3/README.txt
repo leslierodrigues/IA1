@@ -90,12 +90,12 @@ Script Auxiliar
             
                 -Las celdas que no tengan segmentos entre sí son alcanzables
                 
-                -Para cada par de celdas alcanzables existe una tercera que es
-                adyacente a la segunda y puede alcanzarla
+                -Para cada par de celdas alcanzables, si existe una tercera que es
+                adyacente a la segunda, entonces puede alcanzarla
             
             clausulasTipo4 (No pudimos asegurar que sólo haya un único bucle)
             
-                -Las celdas del mismo tipo se pueden alcanzar entre sí
+                -Las celdas internas se pueden alcanzar entre sí
                 -Las celdas de tipo distinto no se pueden alcanzar entre sí
             
             clausulasTipo5
