@@ -91,7 +91,8 @@ Script Auxiliar
                 -Las celdas que no tengan segmentos entre sí son alcanzables
                 
                 -Para cada par de celdas alcanzables, si existe una tercera que es
-                adyacente a la segunda, entonces puede alcanzarla
+                adyacente a la segunda, entonces ésta puede se alcanzada por 
+                la primera y la segunda
             
             clausulasTipo4 (No pudimos asegurar que sólo haya un único bucle)
             
